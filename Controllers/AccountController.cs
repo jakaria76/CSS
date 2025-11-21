@@ -36,9 +36,7 @@ namespace CSS.Controllers
             if (info == null) return RedirectToAction("Login");
 
             var signInResult = await _signInManager.ExternalLoginSignInAsync(
-                info.LoginProvider,
-                info.ProviderKey,
-                isPersistent: false);
+                info.LoginProvider, info.ProviderKey, false);
 
             if (signInResult.Succeeded) return LocalRedirect(returnUrl);
 
@@ -46,6 +44,7 @@ namespace CSS.Controllers
             if (email == null) return RedirectToAction("Login");
 
             var user = await _userManager.FindByEmailAsync(email);
+
             if (user == null)
             {
                 user = new ApplicationUser
@@ -60,7 +59,51 @@ namespace CSS.Controllers
             }
 
             await _userManager.AddLoginAsync(user, info);
-            await _signInManager.SignInAsync(user, isPersistent: false);
+            await _signInManager.SignInAsync(user, false);
+
+            return LocalRedirect(returnUrl);
+        }
+
+        // ===========================
+        // FACEBOOK LOGIN
+        // ===========================
+        public IActionResult FacebookLogin(string returnUrl = "/")
+        {
+            var redirectUrl = Url.Action("FacebookResponse", "Account", new { ReturnUrl = returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Facebook", redirectUrl);
+            return Challenge(properties, "Facebook");
+        }
+
+        public async Task<IActionResult> FacebookResponse(string returnUrl = "/")
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null) return RedirectToAction("Login");
+
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(
+                info.LoginProvider, info.ProviderKey, false);
+
+            if (signInResult.Succeeded) return LocalRedirect(returnUrl);
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            if (email == null) return RedirectToAction("Login");
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true
+                };
+
+                await _userManager.CreateAsync(user);
+                await _userManager.AddToRoleAsync(user, "User");
+            }
+
+            await _userManager.AddLoginAsync(user, info);
+            await _signInManager.SignInAsync(user, false);
 
             return LocalRedirect(returnUrl);
         }
@@ -99,7 +142,7 @@ namespace CSS.Controllers
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, "User");
-                await _signInManager.SignInAsync(user, isPersistent: false);
+                await _signInManager.SignInAsync(user, false);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -111,7 +154,7 @@ namespace CSS.Controllers
         }
 
         // ===========================
-        // LOGIN (GET)
+        // LOGIN
         // ===========================
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
@@ -120,9 +163,6 @@ namespace CSS.Controllers
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
-        // ===========================
-        // LOGIN (POST)
-        // ===========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
