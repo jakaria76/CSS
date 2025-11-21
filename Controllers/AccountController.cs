@@ -1,7 +1,9 @@
-﻿using CSS.Models;
+﻿using System.Security.Claims;
+using CSS.Models;
 using CSS.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
 
 namespace CSS.Controllers
 {
@@ -18,6 +20,50 @@ namespace CSS.Controllers
             _signInManager = signInManager;
         }
 
+        // ===========================
+        // GOOGLE LOGIN
+        // ===========================
+        public IActionResult GoogleLogin(string returnUrl = "/")
+        {
+            var redirectUrl = Url.Action("GoogleResponse", "Account", new { ReturnUrl = returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+            return Challenge(properties, "Google");
+        }
+
+        public async Task<IActionResult> GoogleResponse(string returnUrl = "/")
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null) return RedirectToAction("Login");
+
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(
+                info.LoginProvider,
+                info.ProviderKey,
+                isPersistent: false);
+
+            if (signInResult.Succeeded) return LocalRedirect(returnUrl);
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            if (email == null) return RedirectToAction("Login");
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true
+                };
+
+                await _userManager.CreateAsync(user);
+                await _userManager.AddToRoleAsync(user, "User");
+            }
+
+            await _userManager.AddLoginAsync(user, info);
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
+            return LocalRedirect(returnUrl);
+        }
 
         // ===========================
         // REGISTER (GET)
@@ -25,10 +71,9 @@ namespace CSS.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            ViewData["AuthPage"] = true; // Hide banner
+            ViewData["AuthPage"] = true;
             return View();
         }
-
 
         // ===========================
         // REGISTER (POST)
@@ -46,17 +91,14 @@ namespace CSS.Controllers
             {
                 UserName = model.Email,
                 Email = model.Email,
-                EmailConfirmed = true // Important: prevents login issues
+                EmailConfirmed = true
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                // Default ROLE = USER
                 await _userManager.AddToRoleAsync(user, "User");
-
-                // Auto-login after registration
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
                 return RedirectToAction("Index", "Home");
@@ -68,20 +110,15 @@ namespace CSS.Controllers
             return View(model);
         }
 
-
         // ===========================
         // LOGIN (GET)
         // ===========================
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
-            ViewData["AuthPage"] = true; // Hide banner
-            return View(new LoginViewModel
-            {
-                ReturnUrl = returnUrl
-            });
+            ViewData["AuthPage"] = true;
+            return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
-
 
         // ===========================
         // LOGIN (POST)
@@ -103,17 +140,11 @@ namespace CSS.Controllers
                 return View(model);
             }
 
-            // Login using user object (BEST practice)
             var result = await _signInManager.PasswordSignInAsync(
-                user,
-                model.Password,
-                model.RememberMe,
-                lockoutOnFailure: false
-            );
+                user, model.Password, model.RememberMe, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
-                // If redirect URL exists
                 if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     return Redirect(model.ReturnUrl);
 
@@ -123,7 +154,6 @@ namespace CSS.Controllers
             ModelState.AddModelError("", "Invalid login attempt.");
             return View(model);
         }
-
 
         // ===========================
         // LOGOUT

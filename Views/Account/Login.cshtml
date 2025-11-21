@@ -31,12 +31,20 @@
             </div>
 
             <button type="submit" class="btn auth-btn w-100">Login</button>
-
-            <div class="text-center mt-3">
-                Don't have an account?
-                <a asp-controller="Account" asp-action="Register" class="auth-link">Register</a>
-            </div>
         </form>
+
+        <!-- Google Login Button -->
+        <div class="text-center mt-4">
+            <a href="/Account/GoogleLogin" class="btn google-btn w-100">
+                <img src="~/images/google.png" class="google-icon" alt="Google" />
+                Login with Google
+            </a>
+        </div>
+
+        <div class="text-center mt-3">
+            Don't have an account?
+            <a asp-controller="Account" asp-action="Register" class="auth-link">Register</a>
+        </div>
 
     </div>
 </div>
