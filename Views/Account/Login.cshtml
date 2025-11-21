@@ -1,0 +1,42 @@
+﻿@model CSS.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    ViewData["FullScreen"] = true;  // Enable full background
+}
+
+<link rel="stylesheet" href="~/css/login.css" />
+
+<div class="auth-full-bg login-bg">
+    <div class="auth-card">
+
+        <h2 class="auth-title">Welcome Back</h2>
+        <p class="auth-subtitle">Login to continue</p>
+
+        <form asp-controller="Account" asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control auth-input" placeholder="Enter email" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" class="form-control auth-input" placeholder="Enter password" />
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="RememberMe" class="form-check-input" />
+                <label asp-for="RememberMe">Remember me</label>
+            </div>
+
+            <button type="submit" class="btn auth-btn w-100">Login</button>
+
+            <div class="text-center mt-3">
+                Don't have an account?
+                <a asp-controller="Account" asp-action="Register" class="auth-link">Register</a>
+            </div>
+        </form>
+
+    </div>
+</div>

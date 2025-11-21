@@ -1,0 +1,129 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using CSS.Models
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CSS</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <nav class="navbar navbar-expand-lg custom-navbar-final">
+            <div class="container-fluid">
+
+                <a class="navbar-brand text-white fw-bold" asp-controller="Home" asp-action="Index">
+                    CSS
+                </a>
+
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Navbar Links -->
+                <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            </li>
+                        }
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item mt-lg-2 me-lg-2">
+                                <span class="nav-link text-white">Hello, @User.Identity.Name</span>
+                            </li>
+
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    <button type="submit" class="btn btn-light btn-sm">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link login-btn-soft text-white" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+
+
+
+                        }
+                    </ul>
+
+                </div>
+            </div>
+        </nav>
+
+        @if (!(ViewData["FullScreen"] as bool? ?? false))
+        {
+            <div class="header-banner text-center">
+                <div class="container banner-flex">
+
+                    <!-- Left logo -->
+                    <img src="~/images/csslogo.png" class="banner-logo" alt="Left Logo" />
+
+                    <!-- Center text -->
+                    <div class="banner-text">
+                        <h2 class="org-title">Conscious Student Society</h2>
+                        <h4 class="org-title-bn">সচেতন ছাত্র সমাজ</h4>
+                        <p class="org-subtitle">এটি একটি অরাজনৈতিক সংগঠন</p>
+                    </div>
+
+                    <!-- Right logo -->
+                    <img src="~/images/csslogo.png" class="banner-logo" alt="Right Logo" />
+
+                </div>
+            </div>
+        }
+
+    </header>
+
+
+    <!-- CONTENT AREA -->
+    @if (ViewData["FullScreen"] as bool? == true)
+    {
+        <main class="p-0 m-0">
+            @RenderBody()
+        </main>
+    }
+    else
+    {
+        <div class="container">
+            <main class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    }
+
+    <!-- FOOTER -->
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - CSS -
+            <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+﻿@model CSS.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    ViewData["FullScreen"] = true;
+}
+
+<link rel="stylesheet" href="~/css/register.css" />
+
+<div class="auth-full-bg register-bg">
+    <div class="auth-card">
+
+        <h2 class="auth-title">Create Account</h2>
+        <p class="auth-subtitle">Join the Conscious Student Society</p>
+
+        <form asp-controller="Account" asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control auth-input" placeholder="Enter email" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" class="form-control auth-input" placeholder="Create password" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control auth-input" placeholder="Confirm password" />
+            </div>
+
+            <button type="submit" class="btn auth-btn w-100">Register</button>
+
+            <div class="text-center mt-3">
+                Already have an account?
+                <a asp-controller="Account" asp-action="Login" class="auth-link">Login</a>
+            </div>
+
+        </form>
+    </div>
+</div>

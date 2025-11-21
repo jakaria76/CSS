@@ -1,0 +1,175 @@
+/* ================= GLOBAL BASE ================== */
+
+html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+/* ================= NAVBAR ================== */
+
+.custom-navbar-final {
+    background-color: #344D98;
+    position: relative;
+    overflow: hidden;
+    padding: 10px 0;
+}
+
+    /* Pattern Layer */
+    .custom-navbar-final::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'> <g fill='none' stroke='%23ffffff15' stroke-width='2'> <circle cx='30' cy='30' r='20'/> <circle cx='90' cy='90' r='20'/> <circle cx='60' cy='60' r='15'/> <circle cx='100' cy='30' r='15'/> <circle cx='30' cy='100' r='15'/> </g> </svg>");
+        background-size: 120px 120px;
+        opacity: 0.25;
+        z-index: 1;
+    }
+
+    .custom-navbar-final * {
+        position: relative;
+        z-index: 2;
+    }
+
+/* Navbar toggler */
+.navbar-toggler {
+    border-color: rgba(255,255,255,0.4);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 30 30'%3E%3Cpath stroke='%23fff' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* ======================= BANNER LAYOUT =========================== */
+
+.header-banner {
+    background: #ffffff;
+    border-bottom: 1px solid #ddd;
+    padding: 15px 0;
+}
+
+/* Desktop ? 3-column layout */
+.banner-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Logos */
+.banner-logo {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+}
+
+/* Text Section */
+.banner-text {
+    text-align: center;
+    line-height: 1.1;
+    white-space: nowrap; /* ?? Prevent line breaking */
+}
+
+/* Main titles */
+.org-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1c3d8c;
+    margin: 0;
+}
+
+.org-title-bn {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1c3d8c;
+    margin: 0;
+}
+
+.org-subtitle {
+    font-size: 14px;
+    color: red;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* ======================= MOBILE RESPONSIVE ======================= */
+
+@media (max-width: 768px) {
+
+    .banner-flex {
+        display: grid;
+        grid-template-columns: 70px auto 70px; /* ?? Logos stay left + right */
+        align-items: center;
+    }
+
+    .banner-logo {
+        width: 55px;
+        height: 55px;
+    }
+
+    /* Smaller text but ONE LINE ONLY */
+    .org-title {
+        font-size: 16px;
+    }
+
+    .org-title-bn {
+        font-size: 14px;
+    }
+
+    .org-subtitle {
+        font-size: 12px;
+    }
+
+    .banner-text {
+        white-space: nowrap; /* ?? Prevent wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis; /* (optional) avoid overflow */
+    }
+}
+
+/* ---- Login Button Style ---- */
+.login-btn-soft {
+    padding: 8px 24px;
+    background: linear-gradient(45deg, #ff3d3d, #ff1a1a); /* Red gradient */
+    color: white !important;
+    border-radius: 12px; /* Soft shape */
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(255, 26, 26, 0.4); /* Soft red glow */
+    transition: 0.3s ease;
+}
+
+    .login-btn-soft:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 26, 26, 0.6); /* Stronger glow on hover */
+    }
+
