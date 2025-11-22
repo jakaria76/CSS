@@ -1,9 +1,11 @@
 ﻿using System.Security.Claims;
 using CSS.Models;
 using CSS.ViewModels;
+using CSS.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 
 namespace CSS.Controllers
 {
@@ -11,13 +13,16 @@ namespace CSS.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IEmailSender _emailSender;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailSender = emailSender;
         }
 
         // ===========================
@@ -35,10 +40,8 @@ namespace CSS.Controllers
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null) return RedirectToAction("Login");
 
-            var signInResult = await _signInManager.ExternalLoginSignInAsync(
-                info.LoginProvider, info.ProviderKey, false);
-
-            if (signInResult.Succeeded) return LocalRedirect(returnUrl);
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
+            if (result.Succeeded) return LocalRedirect(returnUrl);
 
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
             if (email == null) return RedirectToAction("Login");
@@ -79,10 +82,8 @@ namespace CSS.Controllers
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null) return RedirectToAction("Login");
 
-            var signInResult = await _signInManager.ExternalLoginSignInAsync(
-                info.LoginProvider, info.ProviderKey, false);
-
-            if (signInResult.Succeeded) return LocalRedirect(returnUrl);
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
+            if (result.Succeeded) return LocalRedirect(returnUrl);
 
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
             if (email == null) return RedirectToAction("Login");
@@ -91,12 +92,7 @@ namespace CSS.Controllers
 
             if (user == null)
             {
-                user = new ApplicationUser
-                {
-                    UserName = email,
-                    Email = email,
-                    EmailConfirmed = true
-                };
+                user = new ApplicationUser { UserName = email, Email = email, EmailConfirmed = true };
 
                 await _userManager.CreateAsync(user);
                 await _userManager.AddToRoleAsync(user, "User");
@@ -109,7 +105,7 @@ namespace CSS.Controllers
         }
 
         // ===========================
-        // REGISTER (GET)
+        // REGISTER
         // ===========================
         [HttpGet]
         public IActionResult Register()
@@ -118,17 +114,11 @@ namespace CSS.Controllers
             return View();
         }
 
-        // ===========================
-        // REGISTER (POST)
-        // ===========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            ViewData["AuthPage"] = true;
-
-            if (!ModelState.IsValid)
-                return View(model);
+            if (!ModelState.IsValid) return View(model);
 
             var user = new ApplicationUser
             {
@@ -143,12 +133,10 @@ namespace CSS.Controllers
             {
                 await _userManager.AddToRoleAsync(user, "User");
                 await _signInManager.SignInAsync(user, false);
-
                 return RedirectToAction("Index", "Home");
             }
 
-            foreach (var error in result.Errors)
-                ModelState.AddModelError("", error.Description);
+            foreach (var e in result.Errors) ModelState.AddModelError("", e.Description);
 
             return View(model);
         }
@@ -159,7 +147,6 @@ namespace CSS.Controllers
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
-            ViewData["AuthPage"] = true;
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
@@ -167,21 +154,12 @@ namespace CSS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            ViewData["AuthPage"] = true;
-
-            if (!ModelState.IsValid)
-                return View(model);
+            if (!ModelState.IsValid) return View(model);
 
             var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null) { ModelState.AddModelError("", "Invalid login attempt."); return View(model); }
 
-            if (user == null)
-            {
-                ModelState.AddModelError("", "Invalid login attempt.");
-                return View(model);
-            }
-
-            var result = await _signInManager.PasswordSignInAsync(
-                user, model.Password, model.RememberMe, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
 
             if (result.Succeeded)
             {
@@ -196,10 +174,93 @@ namespace CSS.Controllers
         }
 
         // ===========================
+        // FORGOT PASSWORD (OTP Email)
+        // ===========================
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null) return RedirectToAction("ForgotPasswordConfirmation");
+
+            var otp = new Random().Next(100000, 999999).ToString();
+
+            HttpContext.Session.SetString("OTP", otp);
+            HttpContext.Session.SetString("OTP_Email", model.Email);
+            HttpContext.Session.SetString("OTP_GeneratedAt", DateTime.UtcNow.ToString("o"));
+
+            var subject = "Your CSS password reset OTP";
+            var html = $"<p>Your OTP code is: <strong>{otp}</strong></p><p>Valid for 10 minutes.</p>";
+
+            await _emailSender.SendEmailAsync(model.Email, subject, html);
+
+            return RedirectToAction("VerifyOtp");
+        }
+
+        // ===========================
+        // VERIFY OTP
+        // ===========================
+        [HttpGet]
+        public IActionResult VerifyOtp()
+        {
+            var model = new OtpVerifyViewModel
+            {
+                Email = HttpContext.Session.GetString("OTP_Email") ?? string.Empty
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult VerifyOtp(OtpVerifyViewModel model)
+        {
+            var otp = HttpContext.Session.GetString("OTP");
+            var email = HttpContext.Session.GetString("OTP_Email");
+
+            if (model.OtpCode != otp) { ModelState.AddModelError("", "Invalid Code"); return View(model); }
+
+            return RedirectToAction("ResetPassword", new { email });
+        }
+
+        // ===========================
+        // RESET PASSWORD
+        // ===========================
+        [HttpGet]
+        public IActionResult ResetPassword(string email)
+        {
+            return View(new ResetPasswordViewModel { Email = email });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
+
+            if (result.Succeeded) return RedirectToAction("ResetPasswordConfirmation");
+
+            foreach (var e in result.Errors) ModelState.AddModelError("", e.Description);
+
+            return View(model);
+        }
+
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
+
+        // ===========================
         // LOGOUT
         // ===========================
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
