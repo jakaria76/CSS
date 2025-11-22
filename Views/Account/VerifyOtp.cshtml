@@ -1,0 +1,113 @@
+﻿@model CSS.ViewModels.OtpVerifyViewModel
+@{
+    ViewData["Title"] = "Verify OTP";
+    ViewData["AuthPage"] = true;
+    ViewData["FullScreen"] = true;   // 🔥 THIS MAKES BACKGROUND FULL PAGE
+}
+
+<link rel="stylesheet" href="~/css/login.css" />
+
+<div class="auth-full-bg login-bg">
+
+    <div class="auth-card animate-fade-in">
+
+        <div class="text-center mb-3">
+            <div class="icon-circle mb-3">
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="#4b6cb7">
+                    <path d="M12 1a9 9 0 00-9 9v3a4 4 0 004 4h1v-7H6V10a6
+                             6 0 1112 0v2h-2v7h1a4 4 0 004-4v-3a9 9 0
+                             00-9-9zm-1 14h2v5h-2z" />
+                </svg>
+            </div>
+
+            <h2 class="auth-title">Verify OTP</h2>
+            <p class="auth-subtitle">Enter the 6-digit code sent to your email</p>
+        </div>
+
+        <form asp-action="VerifyOtp" method="post">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="Email" value="@Model.Email" />
+
+            <div class="mb-3">
+                <input asp-for="OtpCode"
+                       maxlength="6"
+                       class="form-control auth-input otp-input shadow-sm text-center"
+                       placeholder="______" />
+
+                <span asp-validation-for="OtpCode" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn auth-btn w-100 shadow-sm">
+                Verify OTP
+            </button>
+        </form>
+
+        <div class="text-center mt-4">
+            <a asp-action="ForgotPassword" class="auth-link">
+                Resend OTP
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /* Fade Animation */
+    .animate-fade-in {
+        animation: fadeInUp 0.6s ease;
+    }
+
+    @@keyframes fadeInUp {
+        0%
+
+    {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+
+    /* Icon Circle */
+    .icon-circle {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        background: #e9eeff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+    }
+
+    /* OTP Input */
+    .otp-input {
+        letter-spacing: 12px;
+        font-size: 28px;
+        font-weight: 700;
+        padding-left: 0 !important;
+        text-align: center;
+    }
+
+    .auth-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #182848;
+    }
+
+    .auth-subtitle {
+        font-size: 14px;
+        color: #555;
+        margin-top: -5px;
+    }
+
+</style>
