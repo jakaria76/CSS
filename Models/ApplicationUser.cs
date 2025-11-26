@@ -69,5 +69,10 @@ namespace CSS.Models
         // PROFILE IMAGE
         public string? ProfileImagePath { get; set; }
         public byte[]? ProfileImageData { get; set; }
+
+        // LOCATION
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public string? LocationDms { get; set; }
     }
 }

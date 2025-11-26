@@ -39,6 +39,7 @@ namespace CSS.Controllers
             var vm = new ProfileVM
             {
                 Id = user.Id,
+
                 // Basic
                 FullName = user.FullName,
                 FullNameBn = user.FullNameBn,
@@ -65,17 +66,15 @@ namespace CSS.Controllers
                 TotalDonationCount = user.TotalDonationCount,
                 PreferredDonationLocation = user.PreferredDonationLocation,
 
-                // Education School
+                // Education
                 SchoolName = user.SchoolName,
                 SchoolGroup = user.SchoolGroup,
                 SchoolPassingYear = user.SchoolPassingYear,
 
-                // College
                 CollegeName = user.CollegeName,
                 CollegeGroup = user.CollegeGroup,
                 CollegePassingYear = user.CollegePassingYear,
 
-                // University
                 UniversityName = user.UniversityName,
                 Department = user.Department,
                 StudentId = user.StudentId,
@@ -93,7 +92,12 @@ namespace CSS.Controllers
                 PortfolioWebsite = user.PortfolioWebsite,
 
                 // Image
-                ProfileImagePath = user.ProfileImagePath
+                ProfileImagePath = user.ProfileImagePath,
+
+                // Location
+                Latitude = user.Latitude,
+                Longitude = user.Longitude,
+                LocationDms = user.LocationDms
             };
 
             return View(vm);
@@ -160,25 +164,16 @@ namespace CSS.Controllers
             user.Facebook = model.Facebook;
             user.PortfolioWebsite = model.PortfolioWebsite;
 
-            //date count
-            // AUTO CALCULATE Donation Eligibility
-            if (model.LastDonationDate != null)
+            // ===============================
+            // LOCATION SAVE + DMS CONVERT
+            // ===============================
+            user.Latitude = model.Latitude;
+            user.Longitude = model.Longitude;
+
+            if (model.Latitude != null && model.Longitude != null)
             {
-                var last = model.LastDonationDate.Value;
-                var nextAllowed = last.AddMonths(3);
-
-                model.NextAvailableDonationDate = nextAllowed;
-
-                if (DateTime.Today >= nextAllowed)
-                    model.DonationEligibility = "Eligible";
-                else
-                    model.DonationEligibility = "Ineligible";
+                user.LocationDms = $"{ConvertToDms(model.Latitude.Value, true)} {ConvertToDms(model.Longitude.Value, false)}";
             }
-            else
-            {
-                model.DonationEligibility = "Unknown";
-            }
-
 
             // ==========================
             // IMAGE UPLOAD
@@ -207,6 +202,27 @@ namespace CSS.Controllers
             await _userManager.UpdateAsync(user);
 
             return RedirectToAction("Index");
+        }
+
+        // =============================
+        // HELPER: Decimal → DMS Convert
+        // =============================
+        private string ConvertToDms(double coordinate, bool isLatitude)
+        {
+            var absolute = Math.Abs(coordinate);
+            var degrees = Math.Floor(absolute);
+            var minutesRaw = (absolute - degrees) * 60;
+            var minutes = Math.Floor(minutesRaw);
+            var seconds = Math.Round((minutesRaw - minutes) * 60, 2);
+
+            string direction;
+
+            if (isLatitude)
+                direction = coordinate >= 0 ? "N" : "S";
+            else
+                direction = coordinate >= 0 ? "E" : "W";
+
+            return $"{degrees}°{minutes}'{seconds}\"{direction}";
         }
     }
 }

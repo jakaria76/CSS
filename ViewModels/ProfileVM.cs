@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 
 namespace CSS.ViewModels
 {
@@ -58,5 +59,10 @@ namespace CSS.ViewModels
         // IMAGE
         public IFormFile? ImageFile { get; set; }
         public string? ProfileImagePath { get; set; }
+
+        // LOCATION
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public string? LocationDms { get; set; }
     }
 }
