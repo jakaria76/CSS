@@ -3,6 +3,10 @@
     ViewData["Title"] = "Edit Profile";
 }
 
+<!-- Leaflet CSS & JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
 
 <div class="container my-4">
@@ -34,6 +38,21 @@
                 <input type="file" name="ImageFile" class="form-control w-50 mx-auto" />
             </div>
 
+            <!-- MAP SECTION -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">Select Location</div>
+                <div class="card-body">
+                    <div id="map" style="height:350px;"></div>
+
+                    <input type="hidden" id="Latitude" name="Latitude" value="@Model.Latitude" />
+                    <input type="hidden" id="Longitude" name="Longitude" value="@Model.Longitude" />
+
+                    <label class="mt-2 fw-bold">Location (DMS)</label>
+                    <input type="text" id="LocationDms" name="LocationDms" class="form-control"
+                           value="@Model.LocationDms" readonly />
+                </div>
+            </div>
+
             <!-- BASIC INFORMATION -->
             <div class="card mb-4 shadow-sm border-0 rounded-3">
                 <div class="card-header bg-primary text-white fw-bold">
@@ -56,36 +75,32 @@
                             <label class="fw-bold">Gender</label>
                             <select class="form-control" name="Gender">
                                 <option value="">-- Select Gender --</option>
-
                                 @if (Model.Gender == "Male")
                                 {
-                                    <option value="Male" selected>Male</option>
+                                    <option selected>Male</option>
                                 }
                                 else
                                 {
-                                    <option value="Male">Male</option>
+                                    <option>Male</option>
                                 }
-
                                 @if (Model.Gender == "Female")
                                 {
-                                    <option value="Female" selected>Female</option>
+                                    <option selected>Female</option>
                                 }
                                 else
                                 {
-                                    <option value="Female">Female</option>
+                                    <option>Female</option>
                                 }
-
                                 @if (Model.Gender == "Other")
                                 {
-                                    <option value="Other" selected>Other</option>
+                                    <option selected>Other</option>
                                 }
                                 else
                                 {
-                                    <option value="Other">Other</option>
+                                    <option>Other</option>
                                 }
                             </select>
                         </div>
-
 
                         <div class="col-md-4 mb-3">
                             <label class="fw-bold">Date of Birth</label>
@@ -98,30 +113,44 @@
                             <label class="fw-bold">Member Type</label>
                             <select class="form-control" name="MemberType">
                                 <option value="">Select Member Type</option>
-
-                                @if (Model.MemberType == "Committee")
-                                {
-                                    <option value="Committee" selected>Committee</option>
-                                }
-                                else
-                                {
-                                    <option value="Committee">Committee</option>
-                                }
-
-                                @if (Model.MemberType == "Volunteer")
-                                {
-                                    <option value="Volunteer" selected>Volunteer</option>
-                                }
-                                else
-                                {
-                                    <option value="Volunteer">Volunteer</option>
-                                }
+                                <option value="Committee" selected="@(Model.MemberType == "Committee")">Committee</option>
+                                <option value="Volunteer" selected="@(Model.MemberType == "Volunteer")">Volunteer</option>
                             </select>
                         </div>
 
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Committee Position</label>
+                            <select class="form-control" name="CommitteePosition">
+                                <option value="">-- Select Committee Position --</option>
 
-                        
-
+                                @foreach (var pos in new List<string> {
+                                                                "সভাপতি","সহ-সভাপতি","সাধারণ সম্পাদক","যুগ্ম-সাধারণ সম্পাদক","সাংগঠনিক সম্পাদক",
+                                                                "সহ-সাংগঠনিক সম্পাদক","দপ্তর সম্পাদক","সিনিয়র সহ-দপ্তর সম্পাদক","সহ-দপ্তর সম্পাদক",
+                                                                "অর্থ সম্পাদক","সিনিয়র অর্থ সম্পাদক","সহ-অর্থ সম্পাদক","শিক্ষা সম্পাদক","সহ-শিক্ষা সম্পাদক",
+                                                                "পরিকল্পনা সম্পাদক","সহ-পরিকল্পনা সম্পাদক","মানব সম্পদ সম্পাদক","সহ-মানব সম্পদ সম্পাদক",
+                                                                "পরিবেশ সম্পাদক","সহ-পরিবেশ সম্পাদক","ধর্ম সম্পাদক","সহ-ধর্ম সম্পাদক","প্রচার সম্পাদক",
+                                                                "সহ-প্রচার সম্পাদক","ব্র্যান্ড ও গণমাধ্যম সম্পাদক","সিনিয়র ব্র্যান্ড ও গণমাধ্যম সম্পাদক",
+                                                                "গ্রাফিক্স ডিজাইনার","সহ-গ্রাফিক্স ডিজাইনার","ক্রিয়া সম্পাদক","সহ-ক্রিয়া সম্পাদক",
+                                                                "পাঠাগার সম্পাদক","সহ-পাঠাগার সম্পাদক","সাংস্কৃতিক সম্পাদক","সহ-সাংস্কৃতিক সম্পাদক",
+                                                                "বিজ্ঞান ও প্রযুক্তি সম্পাদক","সহ-বিজ্ঞান ও প্রযুক্তি সম্পাদক","সমাজ কল্যাণ সম্পাদক",
+                                                                "সহ-সমাজ কল্যাণ সম্পাদক","স্বাস্থ্য সম্পাদক","সহ-স্বাস্থ্য সম্পাদক","নারী সম্পাদক",
+                                                                "সহ-নারী সম্পাদক","আন্তর্জাতিক সম্পাদক","সহ-আন্তর্জাতিক সম্পাদক","ছাত্র কল্যাণ সম্পাদক",
+                                                                "সহ-ছাত্র কল্যাণ সম্পাদক","সাহিত্য সম্পাদক","সহ-সাহিত্য সম্পাদক","তথ্য ও গবেষণা সম্পাদক",
+                                                                "সহ-তথ্য ও গবেষণা সম্পাদক","ত্রাণ ও দুর্যোগ সম্পাদক","সিনিয়র ত্রাণ ও দুর্যোগ সম্পাদক",
+                                                                "সহ-ত্রাণ ও দুর্যোগ সম্পাদক","কার্যকরী সদস্য"
+                                                                })
+                                {
+                                    if (Model.CommitteePosition == pos)
+                                    {
+                                        <option value="@pos" selected>@pos</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@pos">@pos</option>
+                                    }
+                                }
+                            </select>
+                        </div>
 
                         <div class="col-md-6 mb-3">
                             <label class="fw-bold">Member Since</label>
@@ -198,7 +227,6 @@
 
                             <select class="form-control" name="BloodGroup">
                                 <option value="">Select Blood Group</option>
-
                                 @foreach (var bg in bloodGroups)
                                 {
                                     if (Model.BloodGroup == bg)
@@ -234,12 +262,10 @@
                                    readonly />
                         </div>
 
-
                         <div class="col-md-4 mb-3">
                             <label class="fw-bold">Total Donations</label>
                             <input class="form-control" name="TotalDonationCount" value="@Model.TotalDonationCount" />
                         </div>
-
                     </div>
 
                 </div>
@@ -291,8 +317,6 @@
                             <label>Student ID</label>
                             <input class="form-control" name="StudentId" value="@Model.StudentId" />
                         </div>
-
-                        
                     </div>
 
                 </div>
@@ -320,8 +344,6 @@
             </div>
 
 
-
-
             <!-- SUBMIT BUTTON -->
             <button type="submit" class="btn btn-success btn-lg w-100">
                 <i class="fa-solid fa-check"></i> Save Changes
@@ -329,6 +351,8 @@
 
         </form>
 
+
+        <!-- Donation Eligibility Script -->
         <script>
             function updateEligibility() {
                 const lastDateInput = document.querySelector("input[name='LastDonationDate']");
@@ -342,7 +366,6 @@
                 const lastDate = new Date(lastDateInput.value);
                 const today = new Date();
 
-                // next available = last + 3 months
                 const nextAvailable = new Date(lastDate);
                 nextAvailable.setMonth(nextAvailable.getMonth() + 3);
 
@@ -360,3 +383,47 @@
 
     </div>
 </div>
+
+<!-- MAP SCRIPT -->
+<script>
+    var lat = parseFloat("@(Model.Latitude ?? 23.8103)");
+    var lng = parseFloat("@(Model.Longitude ?? 90.4125)");
+
+    var map = L.map('map').setView([lat, lng], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    var marker = L.marker([lat, lng]).addTo(map);
+
+    map.on('click', function (e) {
+        let clickLat = e.latlng.lat;
+        let clickLng = e.latlng.lng;
+
+        marker.setLatLng([clickLat, clickLng]);
+
+        document.getElementById("Latitude").value = clickLat;
+        document.getElementById("Longitude").value = clickLng;
+
+        document.getElementById("LocationDms").value =
+            toDMS(clickLat, true) + " " + toDMS(clickLng, false);
+    });
+
+    function toDMS(coordinate, isLat) {
+        var absolute = Math.abs(coordinate);
+        var degrees = Math.floor(absolute);
+        var minutesRaw = (absolute - degrees) * 60;
+        var minutes = Math.floor(minutesRaw);
+        var seconds = Math.round((minutesRaw - minutes) * 60, 1);
+
+        var direction;
+
+        if (isLat)
+            direction = coordinate >= 0 ? "N" : "S";
+        else
+            direction = coordinate >= 0 ? "E" : "W";
+
+        return degrees + "°" + minutes + "'" + seconds + "\"" + direction;
+    }
+</script>
