@@ -1,0 +1,434 @@
+﻿@model CSS.ViewModels.ProfileVM
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+
+<div class="container my-4">
+    <div class="card shadow p-4 border-0 rounded-4">
+
+        <h3 class="fw-bold mb-4 text-primary">
+            <i class="fa-solid fa-user-pen"></i> Edit Profile
+        </h3>
+
+        <form method="post" enctype="multipart/form-data" asp-action="Edit">
+
+            <input type="hidden" name="Id" value="@Model.Id" />
+
+            <!-- IMAGE -->
+            <div class="text-center mb-4">
+
+                @{
+                    string imgSrc = "/profiles/default.png";
+                    if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+                    {
+                        imgSrc = Model.ProfileImagePath;
+                    }
+                }
+
+                <img src="@imgSrc"
+                     class="rounded-circle shadow mb-3"
+                     style="width:130px;height:130px;object-fit:cover;border:4px solid #1b2a6b;" />
+
+                <input type="file" name="ImageFile" class="form-control w-50 mx-auto" />
+            </div>
+
+            <!-- BASIC INFORMATION -->
+            <div class="card mb-4 shadow-sm border-0 rounded-3">
+                <div class="card-header bg-primary text-white fw-bold">
+                    <i class="fa-solid fa-id-card"></i> BASIC INFORMATION
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Full Name (English)</label>
+                            <input class="form-control" name="FullName" value="@Model.FullName" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Full Name (Bangla)</label>
+                            <input class="form-control" name="FullNameBn" value="@Model.FullNameBn" />
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="fw-bold">Gender</label>
+                            <select class="form-control" name="Gender">
+                                <option value="">-- Select Gender --</option>
+
+                                @if (Model.Gender == "Male")
+                                {
+                                    <option value="Male" selected>Male</option>
+                                }
+                                else
+                                {
+                                    <option value="Male">Male</option>
+                                }
+
+                                @if (Model.Gender == "Female")
+                                {
+                                    <option value="Female" selected>Female</option>
+                                }
+                                else
+                                {
+                                    <option value="Female">Female</option>
+                                }
+
+                                @if (Model.Gender == "Other")
+                                {
+                                    <option value="Other" selected>Other</option>
+                                }
+                                else
+                                {
+                                    <option value="Other">Other</option>
+                                }
+                            </select>
+                        </div>
+
+
+                        <div class="col-md-4 mb-3">
+                            <label class="fw-bold">Date of Birth</label>
+                            <input type="date" class="form-control"
+                                   name="DateOfBirth"
+                                   value="@Model.DateOfBirth?.ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="fw-bold">Member Type</label>
+                            <select class="form-control" name="MemberType">
+                                <option value="">Select Member Type</option>
+
+                                @if (Model.MemberType == "Committee")
+                                {
+                                    <option value="Committee" selected>Committee</option>
+                                }
+                                else
+                                {
+                                    <option value="Committee">Committee</option>
+                                }
+
+                                @if (Model.MemberType == "Volunteer")
+                                {
+                                    <option value="Volunteer" selected>Volunteer</option>
+                                }
+                                else
+                                {
+                                    <option value="Volunteer">Volunteer</option>
+                                }
+                            </select>
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Committee Position</label>
+                            <select class="form-control" name="CommitteePosition">
+                                <option value="">-- Select Committee Position --</option>
+
+                                @foreach (var pos in new List<string> {
+                                                                "সভাপতি",
+                                                                "সহ-সভাপতি",
+                                                                "সাধারণ সম্পাদক",
+                                                                "যুগ্ম-সাধারণ সম্পাদক",
+                                                                "সাংগঠনিক সম্পাদক",
+                                                                "সহ-সাংগঠনিক সম্পাদক",
+                                                                "দপ্তর সম্পাদক",
+                                                                "সিনিয়র সহ-দপ্তর সম্পাদক",
+                                                                "সহ-দপ্তর সম্পাদক",
+                                                                "অর্থ সম্পাদক",
+                                                                "সিনিয়র অর্থ সম্পাদক",
+                                                                "সহ-অর্থ সম্পাদক",
+                                                                "শিক্ষা সম্পাদক",
+                                                                "সহ-শিক্ষা সম্পাদক",
+                                                                "পরিকল্পনা সম্পাদক",
+                                                                "সহ-পরিকল্পনা সম্পাদক",
+                                                                "মানব সম্পদ সম্পাদক",
+                                                                "সহ-মানব সম্পদ সম্পাদক",
+                                                                "পরিবেশ সম্পাদক",
+                                                                "সহ-পরিবেশ সম্পাদক",
+                                                                "ধর্ম সম্পাদক",
+                                                                "সহ-ধর্ম সম্পাদক",
+                                                                "প্রচার সম্পাদক",
+                                                                "সহ-প্রচার সম্পাদক",
+                                                                "ব্র্যান্ড ও গণমাধ্যম সম্পাদক",
+                                                                "সিনিয়র ব্র্যান্ড ও গণমাধ্যম সম্পাদক",
+                                                                "গ্রাফিক্স ডিজাইনার",
+                                                                "সহ-গ্রাফিক্স ডিজাইনার",
+                                                                "ক্রিয়া সম্পাদক",
+                                                                "সহ-ক্রিয়া সম্পাদক",
+                                                                "পাঠাগার সম্পাদক",
+                                                                "সহ-পাঠাগার সম্পাদক",
+                                                                "সাংস্কৃতিক সম্পাদক",
+                                                                "সহ-সাংস্কৃতিক সম্পাদক",
+                                                                "বিজ্ঞান ও প্রযুক্তি সম্পাদক",
+                                                                "সহ-বিজ্ঞান ও প্রযুক্তি সম্পাদক",
+                                                                "সমাজ কল্যাণ সম্পাদক",
+                                                                "সহ-সমাজ কল্যাণ সম্পাদক",
+                                                                "স্বাস্থ্য সম্পাদক",
+                                                                "সহ-স্বাস্থ্য সম্পাদক",
+                                                                "নারী সম্পাদক",
+                                                                "সহ-নারী সম্পাদক",
+                                                                "আন্তর্জাতিক সম্পাদক",
+                                                                "সহ-আন্তর্জাতিক সম্পাদক",
+                                                                "ছাত্র কল্যাণ সম্পাদক",
+                                                                "সহ-ছাত্র কল্যাণ সম্পাদক",
+                                                                "সাহিত্য সম্পাদক",
+                                                                "সহ-সাহিত্য সম্পাদক",
+                                                                "তথ্য ও গবেষণা সম্পাদক",
+                                                                "সহ-তথ্য ও গবেষণা সম্পাদক",
+                                                                "ত্রাণ ও দুর্যোগ সম্পাদক",
+                                                                "সিনিয়র ত্রাণ ও দুর্যোগ সম্পাদক",
+                                                                "সহ-ত্রাণ ও দুর্যোগ সম্পাদক",
+                                                                "কার্যকরী সদস্য"
+                                                                })
+                                {
+                                    if (Model.CommitteePosition == pos)
+                                    {
+                                        <option value="@pos" selected>@pos</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@pos">@pos</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Member Since</label>
+                            <input type="date" class="form-control"
+                                   name="MemberSince"
+                                   value="@Model.MemberSince?.ToString("yyyy-MM-dd")" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- CONTACT INFORMATION -->
+            <div class="card mb-4 shadow-sm border-0 rounded-3">
+                <div class="card-header bg-secondary text-white fw-bold">
+                    <i class="fa-solid fa-address-book"></i> CONTACT INFORMATION
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Alternative Mobile</label>
+                            <input class="form-control" name="AlternativeMobile" value="@Model.AlternativeMobile" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">WhatsApp Number</label>
+                            <input class="form-control" name="WhatsAppNumber" value="@Model.WhatsAppNumber" />
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="fw-bold">Present Address</label>
+                            <input class="form-control" name="PresentAddress" value="@Model.PresentAddress" />
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="fw-bold">Permanent Address</label>
+                            <input class="form-control" name="PermanentAddress" value="@Model.PermanentAddress" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">District</label>
+                            <input class="form-control" name="District" value="@Model.District" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Upazila / Thana</label>
+                            <input class="form-control" name="Upazila" value="@Model.Upazila" />
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="fw-bold">Facebook Link</label>
+                            <input class="form-control" name="FacebookLink" value="@Model.FacebookLink" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- BLOOD INFORMATION -->
+            <div class="card mb-4 shadow-sm border-0 rounded-3">
+                <div class="card-header bg-danger text-white fw-bold">
+                    <i class="fa-solid fa-droplet"></i> BLOOD DONATION INFORMATION
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            @{
+                                var bloodGroups = new[] { "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-" };
+                            }
+
+                            <select class="form-control" name="BloodGroup">
+                                <option value="">Select Blood Group</option>
+
+                                @foreach (var bg in bloodGroups)
+                                {
+                                    if (Model.BloodGroup == bg)
+                                    {
+                                        <option value="@bg" selected>@bg</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@bg">@bg</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Preferred Location</label>
+                            <input class="form-control" name="PreferredDonationLocation" value="@Model.PreferredDonationLocation" />
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="fw-bold">Last Donation Date</label>
+                            <input type="date" class="form-control"
+                                   name="LastDonationDate"
+                                   value="@Model.LastDonationDate?.ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="fw-bold">Donation Eligibility</label>
+                            <input class="form-control"
+                                   id="DonationEligibility"
+                                   name="DonationEligibility"
+                                   value="@Model.DonationEligibility"
+                                   readonly />
+                        </div>
+
+
+                        <div class="col-md-4 mb-3">
+                            <label class="fw-bold">Total Donations</label>
+                            <input class="form-control" name="TotalDonationCount" value="@Model.TotalDonationCount" />
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- EDUCATION -->
+            <div class="card mb-4 shadow-sm border-0 rounded-3">
+                <div class="card-header bg-success text-white fw-bold">
+                    <i class="fa-solid fa-school"></i> EDUCATION INFORMATION
+                </div>
+                <div class="card-body">
+
+                    <h6 class="fw-bold text-primary">School (SSC)</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label>School Name</label>
+                            <input class="form-control" name="SchoolName" value="@Model.SchoolName" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Group</label>
+                            <input class="form-control" name="SchoolGroup" value="@Model.SchoolGroup" />
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold text-primary">College (HSC)</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label>College Name</label>
+                            <input class="form-control" name="CollegeName" value="@Model.CollegeName" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Group</label>
+                            <input class="form-control" name="CollegeGroup" value="@Model.CollegeGroup" />
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold text-primary">University</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>University Name</label>
+                            <input class="form-control" name="UniversityName" value="@Model.UniversityName" />
+                        </div>
+                        <div class="col-md-4">
+                            <label>Department</label>
+                            <input class="form-control" name="Department" value="@Model.Department" />
+                        </div>
+                        <div class="col-md-4">
+                            <label>Student ID</label>
+                            <input class="form-control" name="StudentId" value="@Model.StudentId" />
+                        </div>
+
+                        
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- BIO -->
+            <div class="card mb-4 shadow-sm border-0 rounded-3">
+                <div class="card-header bg-dark text-white fw-bold">
+                    <i class="fa-solid fa-user"></i> PERSONAL BIO
+                </div>
+                <div class="card-body">
+                    <label class="fw-bold">Short Bio</label>
+                    <textarea class="form-control mb-3" name="ShortBio" rows="3">@Model.ShortBio</textarea>
+
+                    <label class="fw-bold">Why I Joined CSS?</label>
+                    <textarea class="form-control mb-3" name="WhyJoined" rows="3">@Model.WhyJoined</textarea>
+
+                    <label class="fw-bold">Future Goals</label>
+                    <textarea class="form-control mb-3" name="FutureGoals" rows="3">@Model.FutureGoals</textarea>
+
+                    <label class="fw-bold">Hobbies</label>
+                    <textarea class="form-control" name="Hobbies" rows="2">@Model.Hobbies</textarea>
+                </div>
+            </div>
+
+
+
+
+            <!-- SUBMIT BUTTON -->
+            <button type="submit" class="btn btn-success btn-lg w-100">
+                <i class="fa-solid fa-check"></i> Save Changes
+            </button>
+
+        </form>
+
+        <script>
+            function updateEligibility() {
+                const lastDateInput = document.querySelector("input[name='LastDonationDate']");
+                const eligibility = document.getElementById("DonationEligibility");
+
+                if (!lastDateInput.value) {
+                    eligibility.value = "";
+                    return;
+                }
+
+                const lastDate = new Date(lastDateInput.value);
+                const today = new Date();
+
+                // next available = last + 3 months
+                const nextAvailable = new Date(lastDate);
+                nextAvailable.setMonth(nextAvailable.getMonth() + 3);
+
+                if (today >= nextAvailable) {
+                    eligibility.value = "Eligible";
+                } else {
+                    eligibility.value = "Ineligible";
+                }
+            }
+
+            document.querySelector("input[name='LastDonationDate']")
+                .addEventListener("change", updateEligibility);
+        </script>
+
+
+    </div>
+</div>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CSS.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialClean : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,6 +30,43 @@ namespace CSS.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FullNameBn = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MemberPosition = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PresentAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PermanentAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    District = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Upazila = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FacebookLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmergencyContactName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmergencyContactNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BloodGroup = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastDonationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TotalDonationCount = table.Column<int>(type: "int", nullable: true),
+                    SchoolName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SchoolGroup = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SchoolPassingYear = table.Column<int>(type: "int", nullable: true),
+                    CollegeName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CollegeGroup = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CollegePassingYear = table.Column<int>(type: "int", nullable: true),
+                    UniversityName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Degree = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Session = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CurrentYear = table.Column<int>(type: "int", nullable: true),
+                    CurrentSemester = table.Column<int>(type: "int", nullable: true),
+                    CGPA = table.Column<double>(type: "float", nullable: true),
+                    Skills = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExtraCertificates = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProfileImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MemberPositionDetails = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EventParticipationCount = table.Column<int>(type: "int", nullable: true),
+                    VolunteerHours = table.Column<int>(type: "int", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),

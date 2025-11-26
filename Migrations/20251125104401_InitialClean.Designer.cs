@@ -4,6 +4,7 @@ using CSS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251125104401_InitialClean")]
+    partial class InitialClean
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,14 +33,11 @@ namespace CSS.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("AccountStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AlternativeMobile")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("BloodGroup")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("CGPA")
+                        .HasColumnType("float");
 
                     b.Property<string>("CollegeGroup")
                         .HasColumnType("nvarchar(max)");
@@ -47,9 +47,6 @@ namespace CSS.Migrations
 
                     b.Property<int?>("CollegePassingYear")
                         .HasColumnType("int");
-
-                    b.Property<string>("CommitteePosition")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -67,13 +64,13 @@ namespace CSS.Migrations
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Degree")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Department")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("District")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DonationEligibility")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -83,7 +80,16 @@ namespace CSS.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Facebook")
+                    b.Property<string>("EmergencyContactName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmergencyContactNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("EventParticipationCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ExtraCertificates")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FacebookLink")
@@ -95,19 +101,10 @@ namespace CSS.Migrations
                     b.Property<string>("FullNameBn")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FutureGoals")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Hobbies")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("LastDonationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastUpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("LockoutEnabled")
@@ -116,14 +113,11 @@ namespace CSS.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime?>("MemberSince")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MemberType")
+                    b.Property<string>("MemberPosition")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("NextAvailableDonationDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("MemberPositionDetails")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -145,20 +139,14 @@ namespace CSS.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PortfolioWebsite")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PreferredDonationLocation")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PresentAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfileImage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("ProfileImageData")
                         .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("ProfileImagePath")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SchoolGroup")
                         .HasColumnType("nvarchar(max)");
@@ -172,10 +160,10 @@ namespace CSS.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ShortBio")
+                    b.Property<string>("Session")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StudentId")
+                    b.Property<string>("Skills")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TotalDonationCount")
@@ -190,18 +178,15 @@ namespace CSS.Migrations
                     b.Property<string>("Upazila")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("WhatsAppNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WhyJoined")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("VolunteerHours")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

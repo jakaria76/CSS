@@ -1,6 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using CSS.Models
 
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,111 +13,220 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <body>
 
-    
-    <header>
-        
+    <!-- ===== NOTICE BAR ===== -->
+    <div class="notice-bar">
+        <div class="notice-label">LATEST NOTICE</div>
+        <div class="notice-content">
+            *** ২০২৪-২০২৫ শিক্ষাবর্ষে ভর্তি হওয়া শিক্ষার্থীদের কাগজপত্র জমা দেওয়ার বিজ্ঞপ্তি ***
+        </div>
+    </div>
 
-        @if (!(ViewData["FullScreen"] as bool? ?? false))
-        {
-            <div class="header-banner text-center">
-                <div class="container banner-flex">
-
-                    <!-- Left logo -->
-                    <img src="~/images/csslogo.png" class="banner-logo" alt="Left Logo" />
-
-                    <!-- Center text -->
-                    <div class="banner-text">
-                        <h2 class="org-title">Conscious Student Society</h2>
-                        <h4 class="org-title-bn">সচেতন ছাত্র সমাজ</h4>
-                        <p class="org-subtitle">এটি একটি অরাজনৈতিক সংগঠন</p>
-                    </div>
-
-                    <!-- Right logo -->
-                    <img src="~/images/csslogo.png" class="banner-logo" alt="Right Logo" />
-
-                </div>
+    <!-- ===== HEADER BANNER ===== -->
+    <header class="header-banner text-center">
+        <div class="container banner-flex">
+            <img src="~/images/csslogo.png" class="banner-logo" />
+            <div class="banner-text">
+                <h2 class="org-title">CONSCIOUS STUDENT SOCIETY</h2>
+                <h4 class="org-title-bn">সচেতন ছাত্র সমাজ</h4>
+                <p class="org-subtitle">এটি একটি অরাজনৈতিক সংগঠন</p>
             </div>
-        }
-        <nav class="navbar navbar-expand-lg custom-navbar-final">
-            <div class="container-fluid">
-
-                <a class="navbar-brand text-white fw-bold" asp-controller="Home" asp-action="Index">
-                    CSS
-                </a>
-
-                <!-- Mobile Toggle -->
-                <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- Navbar Links -->
-                <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
-
-                    <ul class="navbar-nav mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                            </li>
-                        }
-                    </ul>
-
-                    <ul class="navbar-nav">
-                        @if (User.Identity?.IsAuthenticated ?? false)
-                        {
-                            <li class="nav-item mt-lg-2 me-lg-2">
-                                <span class="nav-link text-white">Hello, @User.Identity.Name</span>
-                            </li>
-
-                            <li class="nav-item">
-                                <form asp-controller="Account" asp-action="Logout" method="post">
-                                    <button type="submit" class="btn btn-light btn-sm">Logout</button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link login-btn-soft text-white" asp-controller="Account" asp-action="Login">Login</a>
-                            </li>
-
-
-
-                        }
-                    </ul>
-
-                </div>
-            </div>
-        </nav>
-
+            <img src="~/images/csslogo.png" class="banner-logo" />
+        </div>
     </header>
 
-
-    <!-- CONTENT AREA -->
-    @if (ViewData["FullScreen"] as bool? == true)
-    {
-        <main class="p-0 m-0">
-            @RenderBody()
-        </main>
-    }
-    else
-    {
+    <!-- ================= NAVBAR ================= -->
+    <nav class="navbar navbar-expand-lg custom-navbar-final shadow-sm">
         <div class="container">
-            <main class="pb-3">
-                @RenderBody()
-            </main>
-        </div>
-    }
 
-    <!-- FOOTER -->
+            
+            <!-- MOBILE: REMOVE TOGGLER -->
+            @* <button class="navbar-toggler text-white d-none d-lg-block" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button> *@
+
+            <!-- MENU -->
+            <div class="collapse navbar-collapse show justify-content-center" id="navbarSupportedContent">
+                <ul class="navbar-nav mx-auto text-center nav-menu flex-row flex-nowrap">
+
+                    <!-- PUBLIC MENU -->
+                    @if (!User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Home" asp-action="Index">
+                                <i class="fa-solid fa-house"></i><span>Home</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Home" asp-action="About">
+                                <i class="fa-solid fa-circle-info"></i><span>About</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Committee" asp-action="Index">
+                                <i class="fa-solid fa-users"></i><span>Committee</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Blood" asp-action="Index">
+                                <i class="fa-solid fa-droplet"></i><span>Blood</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Events" asp-action="Index">
+                                <i class="fa-solid fa-calendar-days"></i><span>Events</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Gallery" asp-action="Index">
+                                <i class="fa-solid fa-image"></i><span>Gallery</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Home" asp-action="Contact">
+                                <i class="fa-solid fa-phone"></i><span>Contact</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom login-btn" asp-controller="Account" asp-action="Login">
+                                <i class="fa-solid fa-right-to-bracket"></i><span>Login</span>
+                            </a>
+                        </li>
+                    }
+
+                    <!-- MEMBER MENU -->
+                    @if (User.Identity?.IsAuthenticated ?? false && !User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Home" asp-action="Index">
+                                <i class="fa-solid fa-house"></i><span>Home</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Blood" asp-action="Index">
+                                <i class="fa-solid fa-droplet"></i><span>Blood</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Events" asp-action="Index">
+                                <i class="fa-solid fa-calendar-days"></i><span>Events</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Gallery" asp-action="Index">
+                                <i class="fa-solid fa-image"></i><span>Gallery</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Notice" asp-action="Index">
+                                <i class="fa-solid fa-bell"></i><span>Notice</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Help" asp-action="Request">
+                                <i class="fa-solid fa-hand-holding-medical"></i><span>Help</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Profile" asp-action="Index">
+                                <i class="fa-solid fa-user"></i><span>Profile</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <button type="button" class="logout-btn" onclick="confirmLogout()">
+                                <i class="fa-solid fa-right-from-bracket"></i> Logout
+                            </button>
+                        </li>
+
+
+
+
+                    }
+
+                    <!-- ADMIN MENU -->
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Dashboard">
+                                <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Members">
+                                <i class="fa-solid fa-users-gear"></i><span>Members</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="BloodControl">
+                                <i class="fa-solid fa-droplet"></i><span>Blood</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Events">
+                                <i class="fa-solid fa-calendar-check"></i><span>Events</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Notices">
+                                <i class="fa-solid fa-bell"></i><span>Notice</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Welfare">
+                                <i class="fa-solid fa-hand-holding-heart"></i><span>Welfare</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Gallery">
+                                <i class="fa-solid fa-photo-film"></i><span>Gallery</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Settings">
+                                <i class="fa-solid fa-gear"></i><span>Settings</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <main class="p-0 m-0 w-100">
+        @RenderBody()
+    </main>
+
+    <!-- ============ FOOTER ============ -->
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2025 - CSS -
@@ -122,9 +234,58 @@
         </div>
     </footer>
 
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+
+    <!-- Logout Confirmation Popup -->
+    
+    <script>
+        function confirmLogout() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You will be logged out from your account!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, Logout',
+                cancelButtonText: 'Cancel',
+                backdrop: `
+                    rgba(0,0,0,0.5)
+                    left top
+                    no-repeat
+                `,
+                customClass: {
+                    popup: 'animated fadeInDown faster'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    // Create form dynamically for logout
+                    const form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '/Account/Logout';
+
+                    // required for antiforgery token
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]');
+                    if (token) {
+                        const cloned = token.cloneNode();
+                        cloned.value = token.value;
+                        form.appendChild(cloned);
+                    }
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
+
+
+
 
 </body>
 </html>
