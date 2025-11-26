@@ -1,18 +1,17 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using Microsoft.AspNetCore.Http;
 
-namespace CSS.Models
+namespace CSS.ViewModels
 {
-    public class ApplicationUser : IdentityUser
+    public class ProfileVM
     {
+        public string? Id { get; set; }
+
         // BASIC
         public string? FullName { get; set; }
         public string? FullNameBn { get; set; }
-        public string? MemberType { get; set; }    // Committee / Volunteer / Admin
+        public string? MemberType { get; set; }
         public string? CommitteePosition { get; set; }
         public DateTime? MemberSince { get; set; }
-
-        // PERSONAL
         public string? Gender { get; set; }
         public DateTime? DateOfBirth { get; set; }
 
@@ -25,25 +24,21 @@ namespace CSS.Models
         public string? FacebookLink { get; set; }
         public string? WhatsAppNumber { get; set; }
 
-        // BLOOD / DONATION
+        // BLOOD
         public string? BloodGroup { get; set; }
         public DateTime? LastDonationDate { get; set; }
-        public DateTime? NextAvailableDonationDate { get; set; } // Auto: Last + 90 days
+        public DateTime? NextAvailableDonationDate { get; set; }
         public string? DonationEligibility { get; set; }
         public int? TotalDonationCount { get; set; }
         public string? PreferredDonationLocation { get; set; }
 
-        // EDUCATION - SCHOOL
+        // EDUCATION
         public string? SchoolName { get; set; }
         public string? SchoolGroup { get; set; }
         public int? SchoolPassingYear { get; set; }
-
-        // EDUCATION - COLLEGE
         public string? CollegeName { get; set; }
         public string? CollegeGroup { get; set; }
         public int? CollegePassingYear { get; set; }
-
-        // EDUCATION – UNIVERSITY
         public string? UniversityName { get; set; }
         public string? Department { get; set; }
         public string? StudentId { get; set; }
@@ -60,14 +55,8 @@ namespace CSS.Models
         public string? Facebook { get; set; }
         public string? PortfolioWebsite { get; set; }
 
-        // SYSTEM
-        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
-        public DateTime? LastUpdatedDate { get; set; }
-        public string? UpdatedBy { get; set; }
-        public string? AccountStatus { get; set; }
-
-        // PROFILE IMAGE
+        // IMAGE
+        public IFormFile? ImageFile { get; set; }
         public string? ProfileImagePath { get; set; }
-        public byte[]? ProfileImageData { get; set; }
     }
 }

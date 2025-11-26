@@ -6,53 +6,30 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ========================================
-// DATABASE CONNECTION
-// ========================================
+// DATABASE
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ========================================
-// IDENTITY CONFIGURATION
-// ========================================
+// IDENTITY (Relax Password Rules)
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 6;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// ========================================
-// SESSION (IMPORTANT FOR OTP SYSTEM)
-// ========================================
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(10); // OTP valid for 10 min
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
+// SESSION
+builder.Services.AddSession();
 
-// ========================================
-// COOKIE SETTINGS
-// ========================================
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Lax;
-});
-
-// ========================================
-// EMAIL SETUP (IEmailSender)
-// ========================================
+// EMAIL
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-// ========================================
-// EXTERNAL AUTHENTICATION (Google + Facebook)
-// ========================================
+// EXTERNAL LOGIN
 builder.Services.AddAuthentication()
     .AddGoogle(options =>
     {
@@ -65,35 +42,27 @@ builder.Services.AddAuthentication()
         options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
         options.Scope.Add("email");
         options.Fields.Add("email");
-        options.SaveTokens = true;
     });
 
-// ========================================
 // MVC
-// ========================================
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// ========================================
-// MIDDLEWARE PIPELINE
-// ========================================
-app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
-// MUST BEFORE Authentication/Authorization
-app.UseSession();            // <-- OTP will NOT work if missing
-
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ========================================
-// ROUTING
-// ========================================
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// SEED ROLES
+using (var scope = app.Services.CreateScope())
+{
+    await SeedData.InitializeAsync(scope.ServiceProvider);
+}
 
 app.Run();
