@@ -1,0 +1,182 @@
+﻿@model List<CSS.ViewModels.BloodGroupVM>
+@{
+    ViewData["Title"] = "Blood Groups";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+    /* HEADER */
+    .page-header {
+        background: linear-gradient(to right, #d50000, #ff1744);
+        padding: 22px;
+        border-radius: 14px;
+        color: white;
+        margin-bottom: 28px;
+        text-align: center;
+        box-shadow: 0 5px 16px rgba(0,0,0,0.15);
+    }
+
+        .page-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+    /* CARD */
+    .blood-card {
+        background: white;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+        transition: 0.25s;
+        border-left: 6px solid #ff1744;
+    }
+
+        .blood-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 26px rgba(0,0,0,0.16);
+        }
+
+    .blood-label {
+        font-size: 30px;
+        font-weight: 900;
+        color: #ff1744;
+        letter-spacing: 1px;
+    }
+
+    /* STATS */
+    .stat-box {
+        font-size: 14px;
+        font-weight: 600;
+        padding: 5px 14px;
+        border-radius: 8px;
+        display: inline-block;
+        margin: 4px 6px 0 0;
+    }
+
+    .stat-total {
+        background: #eceff1;
+        color: #37474f;
+    }
+
+    .stat-available {
+        background: #c8e6c9;
+        color: #1b5e20;
+    }
+
+    .stat-unavailable {
+        background: #ffcdd2;
+        color: #b71c1c;
+    }
+
+    /* BUTTON */
+    .find-btn {
+        background: #ff1744;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: 0.25s;
+        font-size: 15px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .find-btn:hover {
+            background: #c4001d;
+            transform: scale(1.05);
+            color: white;
+        }
+
+    /* ----------- MOBILE RESPONSIVE ----------- */
+    @@media (max-width: 576px) {
+        .blood-card
+
+    {
+        padding: 18px;
+        margin-bottom: 18px;
+    }
+
+    .blood-label {
+        font-size: 26px;
+    }
+
+    .stat-box {
+        font-size: 13px;
+        padding: 4px 10px;
+    }
+
+    .find-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+        margin-top: 15px;
+        font-size: 16px;
+    }
+
+    .blood-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    }
+</style>
+
+<div class="container my-4">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <h2><i class="fa-solid fa-droplet"></i> Blood Groups Summary</h2>
+        <p>Check available donors across all blood groups</p>
+    </div>
+
+    <!-- BLOOD GROUP LIST -->
+    <div class="row gy-3">
+
+        @foreach (var bg in Model)
+        {
+            <div class="col-md-6 col-12">
+                <div class="blood-card">
+
+                    <div class="d-flex justify-content-between align-items-start blood-row">
+
+                        <!-- LEFT SIDE -->
+                        <div>
+                            <div class="blood-label">@bg.BloodGroup</div>
+
+                            <div class="mt-2">
+                                <span class="stat-box stat-total">Total: @bg.Total</span>
+                                <span class="stat-box stat-available">Available: @bg.Available</span>
+                                <span class="stat-box stat-unavailable">Unavailable: @bg.NotAvailable</span>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT SIDE BUTTON -->
+                        <div class="text-end">
+                            <a asp-controller="Blood"
+                               asp-action="Find"
+                               asp-route-group="@bg.BloodGroup"
+                               class="find-btn">
+                                <i class="fa-solid fa-magnifying-glass-location"></i> Find
+                            </a>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        }
+
+    </div>
+
+</div>

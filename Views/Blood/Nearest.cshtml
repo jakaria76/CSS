@@ -1,0 +1,193 @@
+﻿@model List<CSS.ViewModels.DonorWithDistance>
+@{
+    ViewData["Title"] = "Nearest Donors";
+    var searchLat = (double?)(ViewBag.UserLatitude) ?? 0;
+    var searchLng = (double?)(ViewBag.UserLongitude) ?? 0;
+    var group = ViewBag.Group as string ?? "";
+}
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+    .page-header {
+        background: linear-gradient(to right, #d50000, #ff1744);
+        padding: 20px;
+        border-radius: 12px;
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+
+        .page-header h3 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+    .blood-badge {
+        background: #ffffff22;
+        padding: 6px 18px;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    /* Donor Table Style */
+    .donor-table {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+
+        .donor-table th {
+            background-color: #1b2a6b;
+            color: white;
+            font-weight: 600;
+        }
+
+        .donor-table tbody tr:hover {
+            background: #f5f5f5;
+            cursor: pointer;
+        }
+
+    .distance-badge {
+        background: #e3f2fd;
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: #0d47a1;
+        font-weight: 700;
+    }
+
+    /* Map */
+    #mapNearest {
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+</style>
+
+<div class="container my-4">
+
+    <!-- Header -->
+    <div class="page-header">
+        <h3>
+            <i class="fa-solid fa-location-dot"></i>
+            Nearest Donors for
+            <span class="blood-badge">@group</span>
+        </h3>
+        <p class="mt-1">Donors ranked from closest to farthest from your selected location.</p>
+    </div>
+
+    <div class="row">
+        <!-- LEFT SIDE — Donor List -->
+        <div class="col-lg-6 mb-4">
+            <div class="donor-table p-3">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Donor</th>
+                            <th>Distance</th>
+                            <th>Profile</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            var d = Model[i];
+                            <tr>
+                                <td>@(i + 1)</td>
+                                <td>
+                                    <i class="fa-solid fa-user text-primary me-1"></i>
+                                    @d.User.FullName
+                                </td>
+                                <td>
+                                    <span class="distance-badge">@Math.Round(d.DistanceKm, 2) km</span>
+                                </td>
+                                <td>
+                                    <a asp-controller="Profile" asp-action="View" asp-route-id="@d.User.Id"
+                                       class="btn btn-sm btn-primary">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE — MAP -->
+        <div class="col-lg-6">
+            <div id="mapNearest" style="height: 460px;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var searchLat = parseFloat("@searchLat".replace(",", ".")) || 23.8103;
+    var searchLng = parseFloat("@searchLng".replace(",", ".")) || 90.4125;
+
+    var map = L.map('mapNearest').setView([searchLat, searchLng], 11);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    // User marker
+    var userMarker = L.marker([searchLat, searchLng], { title: "Your Location" })
+        .addTo(map)
+        .bindPopup("<b>Your Location</b>")
+        .openPopup();
+
+    // Donors in JS
+    var donors = [
+        @foreach (var d in Model)
+        {
+                @: {
+                @: id: "@d.User.Id",
+                @: name: "@(d.User.FullName?.Replace("'", "\\'"))",
+                @: lat: @d.User.Latitude?.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                @: lng: @d.User.Longitude?.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                @: distance: @Math.Round(d.DistanceKm, 2),
+                @: dms: "@(d.User.LocationDms ?? "")"
+                @: },
+        }
+    ];
+
+    var bounds = [];
+    bounds.push([searchLat, searchLng]);
+
+    donors.forEach(function (donor) {
+
+        if (!donor.lat || !donor.lng) return;
+
+        var marker = L.marker([donor.lat, donor.lng]).addTo(map);
+
+        var popupHtml = `
+            <div style='min-width:180px'>
+                <strong>${donor.name}</strong><br>
+                Distance: ${donor.distance} km<br>
+                ${donor.dms ? `<small>${donor.dms}</small><br>` : ""}
+                <a href='/Profile/View/${donor.id}' class='btn btn-sm btn-primary mt-1'>View Profile</a>
+            </div>
+        `;
+
+        marker.bindPopup(popupHtml);
+        bounds.push([donor.lat, donor.lng]);
+
+        // Polyline from user to donor
+        L.polyline(
+            [[searchLat, searchLng], [donor.lat, donor.lng]],
+            { color: 'blue', weight: 1, opacity: 0.5 }
+        ).addTo(map);
+    });
+
+    // Auto-fit map to all markers
+    if (bounds.length > 0) {
+        map.fitBounds(bounds, { padding: [40, 40] });
+    }
+</script>

@@ -1,0 +1,167 @@
+﻿@{
+    ViewData["Title"] = "Find Donors";
+    var group = ViewBag.Group as string ?? "";
+}
+
+<!-- Leaflet Map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+    .find-header {
+        background: linear-gradient(to right, #1b2a6b, #3949ab);
+        padding: 18px;
+        border-radius: 12px;
+        color: white;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+        .find-header h3 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+    #map {
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+
+    .btn-custom-primary {
+        background: #1b2a6b;
+        border: none;
+        padding: 10px 28px;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: 0.25s;
+    }
+
+        .btn-custom-primary:hover {
+            background: #0d1744;
+            transform: scale(1.03);
+        }
+
+    .btn-custom-outline {
+        border: 2px solid #1b2a6b;
+        padding: 10px 22px;
+        color: #1b2a6b;
+        border-radius: 8px;
+        transition: 0.25s;
+        font-weight: 600;
+    }
+
+        .btn-custom-outline:hover {
+            background: #1b2a6b;
+            color: white;
+            transform: scale(1.03);
+        }
+
+    .tip-text {
+        font-size: 0.9rem;
+        color: #555;
+        margin-top: 8px;
+    }
+
+    .blood-tag {
+        padding: 6px 16px;
+        border-radius: 8px;
+        background: #ff1744;
+        color: white;
+        font-weight: 700;
+        margin-left: 8px;
+    }
+</style>
+
+<div class="container my-4">
+
+    <!-- HEADER -->
+    <div class="find-header text-center">
+        <h3>
+            <i class="fa-solid fa-location-dot"></i> Find Donors
+            <span class="blood-tag">@group</span>
+        </h3>
+        <p class="mt-1">Choose your current location to see the nearest donors.</p>
+    </div>
+
+    <!-- FORM -->
+    <form method="post" class="mb-4">
+
+        <input type="hidden" name="group" value="@group" />
+        <input type="hidden" id="lat" name="lat" />
+        <input type="hidden" id="lng" name="lng" />
+
+        <!-- MAP -->
+        <div id="map" style="height: 460px;"></div>
+
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" id="btnUseLocation" class="btn-custom-outline">
+                <i class="fa-solid fa-crosshairs"></i> Use my location
+            </button>
+
+            <button type="submit" class="btn-custom-primary">
+                <i class="fa-solid fa-magnifying-glass-location"></i> Search Nearest Donors
+            </button>
+        </div>
+
+        <p class="tip-text text-center">
+            Tip: Click anywhere on the map to select your location. You can drag the marker to adjust accurately.
+        </p>
+    </form>
+</div>
+
+<!-- MAP SCRIPT -->
+<script>
+    var defaultLat = 23.8103; // Dhaka Center
+    var defaultLng = 90.4125;
+
+    var map = L.map('map').setView([defaultLat, defaultLng], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    var marker;
+
+    function setMarker(lat, lng, doPan = true) {
+        if (marker) {
+            marker.setLatLng([lat, lng]);
+        } else {
+            marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+
+            marker.on('dragend', function (e) {
+                var pos = e.target.getLatLng();
+                document.getElementById("lat").value = pos.lat;
+                document.getElementById("lng").value = pos.lng;
+            });
+        }
+
+        document.getElementById("lat").value = lat;
+        document.getElementById("lng").value = lng;
+
+        if (doPan) {
+            map.setView([lat, lng], 14);
+        }
+    }
+
+    // click map to pick location
+    map.on('click', function (e) {
+        setMarker(e.latlng.lat, e.latlng.lng);
+    });
+
+    // use GPS
+    document.getElementById("btnUseLocation").addEventListener("click", function () {
+        if (!navigator.geolocation) {
+            alert("Your browser does not support location.");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(function (pos) {
+            var lat = pos.coords.latitude;
+            var lng = pos.coords.longitude;
+            setMarker(lat, lng);
+        }, function (err) {
+            alert("Unable to get location: " + err.message);
+        }, { enableHighAccuracy: true });
+    });
+</script>
