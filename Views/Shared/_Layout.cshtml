@@ -141,7 +141,11 @@
                             </a>
                         </li>
 
-                        
+                        <li class="nav-item nav-item-custom">
+                            <button type="button" class="logout-btn" onclick="confirmLogout()">
+                                <i class="fa-solid fa-right-from-bracket"></i> Logout
+                            </button>
+                        </li>
 
 
 
@@ -165,7 +169,13 @@
 
                         <li class="nav-item nav-item-custom">
                             <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Members">
-                                <i class="fa-solid fa-users-gear"></i><span>Members</span>
+                                <i class="fa-solid fa-users-gear"></i> <span>Members</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Blood" asp-action="Index">
+                                <i class="fa-solid fa-droplet"></i><span>Blood</span>
                             </a>
                         </li>
 
