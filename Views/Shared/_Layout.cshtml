@@ -102,6 +102,12 @@
                         </li>
 
                         <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Notice" asp-action="Index">
+                                <i class="fa-solid fa-bell"></i><span>Notice</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
                             <a class="nav-link nav-link-custom login-btn" asp-controller="Account" asp-action="Login">
                                 <i class="fa-solid fa-right-to-bracket"></i><span>Login</span>
                             </a>
@@ -118,26 +124,8 @@
                         </li>
 
                         <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Blood" asp-action="Index">
-                                <i class="fa-solid fa-droplet"></i><span>Blood</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Events" asp-action="Index">
-                                <i class="fa-solid fa-calendar-days"></i><span>Events</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
                             <a class="nav-link nav-link-custom" asp-controller="Gallery" asp-action="Index">
                                 <i class="fa-solid fa-image"></i><span>Gallery</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Notice" asp-action="Index">
-                                <i class="fa-solid fa-bell"></i><span>Notice</span>
                             </a>
                         </li>
 
@@ -153,11 +141,7 @@
                             </a>
                         </li>
 
-                        <li class="nav-item nav-item-custom">
-                            <button type="button" class="logout-btn" onclick="confirmLogout()">
-                                <i class="fa-solid fa-right-from-bracket"></i> Logout
-                            </button>
-                        </li>
+                        
 
 
 
@@ -174,26 +158,14 @@
                         </li>
 
                         <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Gallery" asp-action="Index">
+                                <i class="fa-solid fa-image"></i><span>Gallery</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
                             <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Members">
                                 <i class="fa-solid fa-users-gear"></i><span>Members</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="BloodControl">
-                                <i class="fa-solid fa-droplet"></i><span>Blood</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Events">
-                                <i class="fa-solid fa-calendar-check"></i><span>Events</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Notices">
-                                <i class="fa-solid fa-bell"></i><span>Notice</span>
                             </a>
                         </li>
 
@@ -204,15 +176,9 @@
                         </li>
 
                         <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Gallery">
-                                <i class="fa-solid fa-photo-film"></i><span>Gallery</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Settings">
-                                <i class="fa-solid fa-gear"></i><span>Settings</span>
-                            </a>
+                            <button type="button" class="logout-btn" onclick="confirmLogout()">
+                                <i class="fa-solid fa-right-from-bracket"></i> Logout
+                            </button>
                         </li>
                     }
                 </ul>

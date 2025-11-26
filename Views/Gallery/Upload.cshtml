@@ -1,0 +1,135 @@
+﻿@{
+    ViewData["Title"] = "Upload Image";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+
+    body {
+        background: linear-gradient(135deg, #f8f9fa, #eef2ff);
+    }
+
+    .upload-card {
+        max-width: 620px;
+        margin: auto;
+        border-radius: 20px;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+        padding: 35px;
+        background: #ffffffd8;
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255,255,255,0.6);
+        animation: fadeIn 0.4s ease;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    h3 {
+        background: linear-gradient(45deg, #0072ff, #00c6ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 900;
+    }
+
+    .preview-img {
+        width: 100%;
+        height: 260px;
+        object-fit: cover;
+        border-radius: 16px;
+        margin-bottom: 15px;
+        display: none;
+        border: 3px solid #e3e3e3;
+        box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+    }
+
+    .btn-upload {
+        background: linear-gradient(45deg,#00c6ff,#0072ff);
+        border: none;
+        padding: 12px;
+        font-size: 18px;
+        border-radius: 40px;
+        font-weight: bold;
+        color: white;
+        transition: 0.3s;
+    }
+
+        .btn-upload:hover {
+            opacity: 0.9;
+        }
+
+    .btn-back {
+        border-radius: 40px;
+        padding: 10px;
+    }
+
+</style>
+
+<div class="container mt-5 mb-5">
+
+    <div class="upload-card">
+
+        <h3 class="text-center mb-4"><i class="fa-solid fa-cloud-arrow-up"></i> Upload New Image</h3>
+
+        <form method="post" enctype="multipart/form-data">
+
+            <!-- Image Preview -->
+            <img id="preview" class="preview-img" />
+
+            <!-- Category -->
+            <label class="fw-bold mb-1">Category</label>
+            <select class="form-select mb-3" name="category" required>
+
+                <option value="">-- Select Category --</option>
+
+                @if (ViewBag.Categories != null)
+                {
+                    foreach (var c in ViewBag.Categories)
+                    {
+                        <option value="@c">@c</option>
+                    }
+                }
+            </select>
+
+            <!-- Upload Date -->
+            <label class="fw-bold mb-1">Upload Date</label>
+            <input type="date" name="uploadDate" class="form-control mb-3" required />
+
+            <!-- File Input -->
+            <label class="fw-bold mb-1">Select Image</label>
+            <input type="file" name="image" class="form-control" accept="image/*" required onchange="showPreview(event)" />
+
+            <!-- Submit -->
+            <button class="btn btn-upload w-100 mt-3">
+                <i class="fa-solid fa-upload"></i> Upload Image
+            </button>
+        </form>
+
+        <!-- Back -->
+        <a href="/Gallery/Index" class="btn btn-secondary w-100 mt-3 btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Back to Gallery
+        </a>
+
+    </div>
+</div>
+
+<script>
+    function showPreview(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const preview = document.getElementById("preview");
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+        }
+    }
+</script>

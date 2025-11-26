@@ -10,5 +10,8 @@ namespace CSS.Data
             : base(options)
         {
         }
+
+        // Gallery Image Table
+        public DbSet<GalleryImage> GalleryImages { get; set; }
     }
 }
