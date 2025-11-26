@@ -1,0 +1,143 @@
+﻿@model CSS.ViewModels.AdminCommitteeVM
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+
+<style>
+    .page-wrapper {
+        max-width: 550px;
+        margin: auto;
+        margin-top: 30px;
+    }
+
+    .header-bar {
+        background: linear-gradient(to right, #ff8f00, #ffb300);
+        padding: 14px;
+        border-radius: 12px;
+        color: white;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.3rem;
+        font-weight: bold;
+        box-shadow: 0 5px 16px rgba(0,0,0,0.15);
+    }
+
+    .edit-card {
+        background: white;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        border-left: 6px solid #ffb300;
+    }
+
+    label {
+        font-weight: 600;
+        color: #ff6f00;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        padding: 10px;
+        border: 2px solid #ffe0b2;
+    }
+
+        .form-control:focus {
+            border-color: #ff9800;
+            box-shadow: 0 0 0 0.1rem rgba(255,152,0,0.3);
+        }
+
+    .btn-update {
+        width: 100%;
+        background: #ff9800;
+        color: white;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        font-weight: bold;
+        letter-spacing: .5px;
+        transition: 0.2s;
+    }
+
+        .btn-update:hover {
+            background: #ef6c00;
+            color: white;
+        }
+
+    @@media (max-width: 576px) {
+        .edit-card
+
+    {
+        padding: 18px;
+    }
+
+    }
+</style>
+
+<div class="container page-wrapper">
+
+    <div class="header-bar">
+        <i class="fa-solid fa-user-tag"></i> Edit Committee Position
+    </div>
+
+    <div class="edit-card">
+
+        <form method="post">
+
+            <input type="hidden" asp-for="Id" />
+
+            <!-- MEMBER NAME -->
+            <div class="mb-3">
+                <label>Member Name</label>
+                <input value="@Model.FullName" class="form-control" readonly />
+            </div>
+
+            <!-- POSITION DROPDOWN -->
+            <div class="mb-3">
+                <label>Committee Position</label>
+                <select class="form-control" name="CommitteePosition">
+                    <option value="">-- Select Committee Position --</option>
+
+                    @foreach (var pos in new List<string> {
+                                        "সভাপতি", "সহ-সভাপতি", "সাধারণ সম্পাদক", "যুগ্ম-সাধারণ সম্পাদক",
+                                        "সাংগঠনিক সম্পাদক", "সহ-সাংগঠনিক সম্পাদক", "দপ্তর সম্পাদক",
+                                        "সিনিয়র সহ-দপ্তর সম্পাদক", "সহ-দপ্তর সম্পাদক", "অর্থ সম্পাদক",
+                                        "সিনিয়র অর্থ সম্পাদক", "সহ-অর্থ সম্পাদক", "শিক্ষা সম্পাদক",
+                                        "সহ-শিক্ষা সম্পাদক", "পরিকল্পনা সম্পাদক", "সহ-পরিকল্পনা সম্পাদক",
+                                        "মানব সম্পদ সম্পাদক", "সহ-মানব সম্পদ সম্পাদক", "পরিবেশ সম্পাদক",
+                                        "সহ-পরিবেশ সম্পাদক", "ধর্ম সম্পাদক", "সহ-ধর্ম সম্পাদক",
+                                        "প্রচার সম্পাদক", "সহ-প্রচার সম্পাদক", "ব্র্যান্ড ও গণমাধ্যম সম্পাদক",
+                                        "সিনিয়র ব্র্যান্ড ও গণমাধ্যম সম্পাদক", "গ্রাফিক্স ডিজাইনার",
+                                        "সহ-গ্রাফিক্স ডিজাইনার", "ক্রিয়া সম্পাদক", "সহ-ক্রিয়া সম্পাদক",
+                                        "পাঠাগার সম্পাদক", "সহ-পাঠাগার সম্পাদক", "সাংস্কৃতিক সম্পাদক",
+                                        "সহ-সাংস্কৃতিক সম্পাদক", "বিজ্ঞান ও প্রযুক্তি সম্পাদক",
+                                        "সহ-বিজ্ঞান ও প্রযুক্তি সম্পাদক", "সমাজ কল্যাণ সম্পাদক",
+                                        "সহ-সমাজ কল্যাণ সম্পাদক", "স্বাস্থ্য সম্পাদক", "সহ-স্বাস্থ্য সম্পাদক",
+                                        "নারী সম্পাদক", "সহ-নারী সম্পাদক", "আন্তর্জাতিক সম্পাদক",
+                                        "সহ-আন্তর্জাতিক সম্পাদক", "ছাত্র কল্যাণ সম্পাদক",
+                                        "সহ-ছাত্র কল্যাণ সম্পাদক", "সাহিত্য সম্পাদক", "সহ-সাহিত্য সম্পাদক",
+                                        "তথ্য ও গবেষণা সম্পাদক", "সহ-তথ্য ও গবেষণা সম্পাদক",
+                                        "ত্রাণ ও দুর্যোগ সম্পাদক", "সিনিয়র ত্রাণ ও দুর্যোগ সম্পাদক",
+                                        "সহ-ত্রাণ ও দুর্যোগ সম্পাদক", "কার্যকরী সদস্য"
+                                        })
+                    {
+                        if (Model.CommitteePosition == pos)
+                        {
+                            <option value="@pos" selected>@pos</option>
+                        }
+                        else
+                        {
+                            <option value="@pos">@pos</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- SUBMIT -->
+            <button class="btn-update mt-3">
+                <i class="fa-solid fa-check"></i> Update Position
+            </button>
+
+        </form>
+
+    </div>
+
+</div>

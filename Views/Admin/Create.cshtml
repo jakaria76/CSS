@@ -1,0 +1,168 @@
+﻿@model CSS.ViewModels.AdminCreateUserVM
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<style>
+    .page-header {
+        background: linear-gradient(to right, #1a237e, #3949ab);
+        color: white;
+        padding: 18px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .form-card {
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 14px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+
+    .section-title {
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+        color: #1a237e;
+    }
+
+    label {
+        font-weight: 600;
+        color: #283593;
+    }
+
+    .btn-save {
+        background: #1a237e;
+        color: white;
+        border-radius: 6px;
+        padding: 10px 16px;
+        font-weight: 600;
+    }
+
+        .btn-save:hover {
+            background: #0d1649;
+        }
+
+    .btn-cancel {
+        border-radius: 6px;
+        padding: 10px 16px;
+        font-weight: 600;
+    }
+
+    /* Mobile Responsive */
+    @@media(max - width: 576px)
+
+    {
+        .form-card
+
+    {
+        padding: 15px;
+    }
+
+    .page-header {
+        font-size: 1.3rem;
+    }
+
+    }
+</style>
+
+<div class="container mt-4 mb-4">
+
+    <div class="page-header">
+        <h3 class="m-0"><i class="fa-solid fa-user-plus"></i> Create New Member</h3>
+    </div>
+
+    <div class="form-card">
+
+        <form method="post">
+
+            <!-- BASIC INFORMATION -->
+            <div class="section-title"><i class="fa-solid fa-id-card"></i> Basic Information</div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label>Full Name</label>
+                    <input asp-for="FullName" class="form-control" placeholder="Enter full name" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label>Email</label>
+                    <input asp-for="Email" class="form-control" placeholder="example@gmail.com" />
+                </div>
+            </div>
+
+
+            <!-- CONTACT -->
+            <div class="section-title mt-4"><i class="fa-solid fa-phone"></i> Contact</div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label>Alternative Mobile</label>
+                    <input asp-for="AlternativeMobile" class="form-control" placeholder="01XXXXXXXXX" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label>Member Type</label>
+                    <select asp-for="MemberType" class="form-control">
+                        <option value="">-- Select Member Type --</option>
+                        <option>Committee</option>
+                        <option>Volunteer</option>
+                        <option>Admin</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <!-- COMMITTEE POSITION -->
+            <div class="section-title mt-4"><i class="fa-solid fa-users-gear"></i> Committee Position</div>
+
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <select class="form-control" name="CommitteePosition">
+                        <option value="">-- Select Committee Position --</option>
+
+                        @foreach (var pos in new List<string> {
+                                                "সভাপতি","সহ-সভাপতি","সাধারণ সম্পাদক","যুগ্ম-সাধারণ সম্পাদক",
+                                                "সাংগঠনিক সম্পাদক","সহ-সাংগঠনিক সম্পাদক",
+                                                "দপ্তর সম্পাদক","সিনিয়র সহ-দপ্তর সম্পাদক","সহ-দপ্তর সম্পাদক",
+                                                "অর্থ সম্পাদক","সিনিয়র অর্থ সম্পাদক","সহ-অর্থ সম্পাদক",
+                                                "শিক্ষা সম্পাদক","সহ-শিক্ষা সম্পাদক",
+                                                "পরিকল্পনা সম্পাদক","সহ-পরিকল্পনা সম্পাদক",
+                                                "মানব সম্পদ সম্পাদক","সহ-মানব সম্পদ সম্পাদক",
+                                                "পরিবেশ সম্পাদক","সহ-পরিবেশ সম্পাদক",
+                                                "ধর্ম সম্পাদক","সহ-ধর্ম সম্পাদক",
+                                                "প্রচার সম্পাদক","সহ-প্রচার সম্পাদক",
+                                                "ব্র্যান্ড ও গণমাধ্যম সম্পাদক","সিনিয়র ব্র্যান্ড ও গণমাধ্যম সম্পাদক",
+                                                "গ্রাফিক্স ডিজাইনার","সহ-গ্রাফিক্স ডিজাইনার",
+                                                "ক্রিয়া সম্পাদক","সহ-ক্রিয়া সম্পাদক",
+                                                "পাঠাগার সম্পাদক","সহ-পাঠাগার সম্পাদক",
+                                                "সাংস্কৃতিক সম্পাদক","সহ-সাংস্কৃতিক সম্পাদক",
+                                                "বিজ্ঞান ও প্রযুক্তি সম্পাদক","সহ-বিজ্ঞান ও প্রযুক্তি সম্পাদক",
+                                                "সমাজ কল্যাণ সম্পাদক","সহ-সমাজ কল্যাণ সম্পাদক",
+                                                "স্বাস্থ্য সম্পাদক","সহ-স্বাস্থ্য সম্পাদক",
+                                                "নারী সম্পাদক","সহ-নারী সম্পাদক",
+                                                "আন্তর্জাতিক সম্পাদক","সহ-আন্তর্জাতিক সম্পাদক",
+                                                "ছাত্র কল্যাণ সম্পাদক","সহ-ছাত্র কল্যাণ সম্পাদক",
+                                                "সাহিত্য সম্পাদক","সহ-সাহিত্য সম্পাদক",
+                                                "তথ্য ও গবেষণা সম্পাদক","সহ-তথ্য ও গবেষণা সম্পাদক",
+                                                "ত্রাণ ও দুর্যোগ সম্পাদক","সিনিয়র ত্রাণ ও দুর্যোগ সম্পাদক",
+                                                "সহ-ত্রাণ ও দুর্যোগ সম্পাদক",
+                                                "কার্যকরী সদস্য"
+                                                })
+                        {
+                            <option value="@pos">@pos</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="mt-4 d-flex gap-2">
+                <button class="btn btn-save"><i class="fa-solid fa-check"></i> Create</button>
+                <a asp-action="Members" class="btn btn-cancel btn-secondary"><i class="fa-solid fa-xmark"></i> Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>

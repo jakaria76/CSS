@@ -1,0 +1,174 @@
+﻿@model CSS.ViewModels.AdminEditUserVM
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+
+<style>
+    .edit-container {
+        max-width: 650px;
+        margin: auto;
+        margin-top: 25px;
+        margin-bottom: 40px;
+    }
+
+    .edit-card {
+        background: white;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        border-left: 6px solid #1a237e;
+    }
+
+    .title-bar {
+        background: linear-gradient(to right, #1a237e, #3949ab);
+        padding: 14px;
+        border-radius: 10px;
+        color: white;
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: bold;
+        font-size: 1.3rem;
+        letter-spacing: .5px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    }
+
+    label {
+        font-weight: 600;
+        color: #1a237e;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 10px;
+        border: 2px solid #c5cae9;
+    }
+
+        .form-control:focus {
+            border-color: #3949ab;
+            box-shadow: 0 0 0 0.1rem rgba(57,73,171,0.3);
+        }
+
+    .btn-save {
+        width: 100%;
+        background: #1a237e;
+        border: none;
+        padding: 10px;
+        color: white;
+        border-radius: 10px;
+        font-weight: bold;
+        transition: 0.2s;
+    }
+
+        .btn-save:hover {
+            background: #0c144c;
+            color: white;
+        }
+
+    /* Mobile responsive */
+    @@media (max-width: 576px) {
+        .edit-card
+
+    {
+        padding: 18px;
+    }
+
+    }
+</style>
+
+
+<div class="container edit-container">
+
+    <div class="title-bar">
+        <i class="fa-solid fa-user-pen"></i> Edit Member
+    </div>
+
+    <div class="edit-card">
+
+        <form method="post">
+
+            <input type="hidden" asp-for="Id" />
+
+            <!-- FULL NAME -->
+            <div class="mb-3">
+                <label>Full Name</label>
+                <input asp-for="FullName" class="form-control" />
+            </div>
+
+            <!-- EMAIL -->
+            <div class="mb-3">
+                <label>Email</label>
+                <input asp-for="Email" class="form-control" />
+            </div>
+
+            <!-- PHONE -->
+            <div class="mb-3">
+                <label>Phone</label>
+                <input asp-for="PhoneNumber" class="form-control" />
+            </div>
+
+            <!-- ALT MOBILE -->
+            <div class="mb-3">
+                <label>Alternative Mobile</label>
+                <input asp-for="AlternativeMobile" class="form-control" />
+            </div>
+
+            <!-- MEMBER TYPE -->
+            <div class="mb-3">
+                <label>Member Type</label>
+                <select asp-for="MemberType" class="form-control">
+                    <option>Committee</option>
+                    <option>Volunteer</option>
+                    <option>Admin</option>
+                </select>
+            </div>
+
+            <!-- COMMITTEE POSITION -->
+            <div class="mb-3">
+                <label>Committee Position</label>
+                <select class="form-control" name="CommitteePosition">
+                    <option value="">-- Select Committee Position --</option>
+
+                    @foreach (var pos in new List<string> {
+                                        "সভাপতি", "সহ-সভাপতি", "সাধারণ সম্পাদক", "যুগ্ম-সাধারণ সম্পাদক",
+                                        "সাংগঠনিক সম্পাদক", "সহ-সাংগঠনিক সম্পাদক", "দপ্তর সম্পাদক",
+                                        "সিনিয়র সহ-দপ্তর সম্পাদক", "সহ-দপ্তর সম্পাদক", "অর্থ সম্পাদক",
+                                        "সিনিয়র অর্থ সম্পাদক", "সহ-অর্থ সম্পাদক", "শিক্ষা সম্পাদক",
+                                        "সহ-শিক্ষা সম্পাদক", "পরিকল্পনা সম্পাদক", "সহ-পরিকল্পনা সম্পাদক",
+                                        "মানব সম্পদ সম্পাদক", "সহ-মানব সম্পদ সম্পাদক", "পরিবেশ সম্পাদক",
+                                        "সহ-পরিবেশ সম্পাদক", "ধর্ম সম্পাদক", "সহ-ধর্ম সম্পাদক",
+                                        "প্রচার সম্পাদক", "সহ-প্রচার সম্পাদক", "ব্র্যান্ড ও গণমাধ্যম সম্পাদক",
+                                        "সিনিয়র ব্র্যান্ড ও গণমাধ্যম সম্পাদক", "গ্রাফিক্স ডিজাইনার",
+                                        "সহ-গ্রাফিক্স ডিজাইনার", "ক্রিয়া সম্পাদক", "সহ-ক্রিয়া সম্পাদক",
+                                        "পাঠাগার সম্পাদক", "সহ-পাঠাগার সম্পাদক", "সাংস্কৃতিক সম্পাদক",
+                                        "সহ-সাংস্কৃতিক সম্পাদক", "বিজ্ঞান ও প্রযুক্তি সম্পাদক",
+                                        "সহ-বিজ্ঞান ও প্রযুক্তি সম্পাদক", "সমাজ কল্যাণ সম্পাদক",
+                                        "সহ-সমাজ কল্যাণ সম্পাদক", "স্বাস্থ্য সম্পাদক", "সহ-স্বাস্থ্য সম্পাদক",
+                                        "নারী সম্পাদক", "সহ-নারী সম্পাদক", "আন্তর্জাতিক সম্পাদক",
+                                        "সহ-আন্তর্জাতিক সম্পাদক", "ছাত্র কল্যাণ সম্পাদক",
+                                        "সহ-ছাত্র কল্যাণ সম্পাদক", "সাহিত্য সম্পাদক", "সহ-সাহিত্য সম্পাদক",
+                                        "তথ্য ও গবেষণা সম্পাদক", "সহ-তথ্য ও গবেষণা সম্পাদক",
+                                        "ত্রাণ ও দুর্যোগ সম্পাদক", "সিনিয়র ত্রাণ ও দুর্যোগ সম্পাদক",
+                                        "সহ-ত্রাণ ও দুর্যোগ সম্পাদক", "কার্যকরী সদস্য"
+                                        })
+                    {
+                        if (Model.CommitteePosition == pos)
+                        {
+                            <option value="@pos" selected>@pos</option>
+                        }
+                        else
+                        {
+                            <option value="@pos">@pos</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <button class="btn btn-save mt-3">
+                <i class="fa-solid fa-check"></i> Save Changes
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
