@@ -17,7 +17,7 @@ namespace CSS.Controllers
         }
 
         // ==========================
-        // SHOW PROFILE
+        // SHOW LOGGED-IN PROFILE
         // ==========================
         public async Task<IActionResult> Index()
         {
@@ -28,7 +28,24 @@ namespace CSS.Controllers
         }
 
         // ==========================
-        // EDIT – GET
+        // VIEW PUBLIC PROFILE /Profile/View/{id}
+        // ==========================
+        [HttpGet]
+        public async Task<IActionResult> View(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return RedirectToAction("Index", "Home");
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound();
+
+            return View("Index", user);
+            // If you want a separate page -> create View.cshtml
+        }
+
+        // ==========================
+        // EDIT PROFILE — GET
         // ==========================
         [HttpGet]
         public async Task<IActionResult> Edit()
@@ -104,7 +121,7 @@ namespace CSS.Controllers
         }
 
         // ==========================
-        // EDIT – POST
+        // EDIT PROFILE — POST
         // ==========================
         [HttpPost]
         public async Task<IActionResult> Edit(ProfileVM model)
@@ -164,15 +181,16 @@ namespace CSS.Controllers
             user.Facebook = model.Facebook;
             user.PortfolioWebsite = model.PortfolioWebsite;
 
-            // ===============================
+            // =====================================
             // LOCATION SAVE + DMS CONVERT
-            // ===============================
+            // =====================================
             user.Latitude = model.Latitude;
             user.Longitude = model.Longitude;
 
             if (model.Latitude != null && model.Longitude != null)
             {
-                user.LocationDms = $"{ConvertToDms(model.Latitude.Value, true)} {ConvertToDms(model.Longitude.Value, false)}";
+                user.LocationDms =
+                    $"{ConvertToDms(model.Latitude.Value, true)} {ConvertToDms(model.Longitude.Value, false)}";
             }
 
             // ==========================
@@ -204,14 +222,14 @@ namespace CSS.Controllers
             return RedirectToAction("Index");
         }
 
-        // =============================
+        // ================================
         // HELPER: Decimal → DMS Convert
-        // =============================
+        // ================================
         private string ConvertToDms(double coordinate, bool isLatitude)
         {
-            var absolute = Math.Abs(coordinate);
-            var degrees = Math.Floor(absolute);
-            var minutesRaw = (absolute - degrees) * 60;
+            var abs = Math.Abs(coordinate);
+            var degrees = Math.Floor(abs);
+            var minutesRaw = (abs - degrees) * 60;
             var minutes = Math.Floor(minutesRaw);
             var seconds = Math.Round((minutesRaw - minutes) * 60, 2);
 
