@@ -140,6 +140,12 @@
                         </li>
 
                         <li class="nav-item nav-item-custom">
+                            <a class="nav-link nav-link-custom" asp-controller="Events" asp-action="Index">
+                                <i class="fa-solid fa-calendar-days"></i><span>Events</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item nav-item-custom">
                             <a class="nav-link nav-link-custom" asp-controller="Profile" asp-action="Index">
                                 <i class="fa-solid fa-user"></i><span>Profile</span>
                             </a>
@@ -202,13 +208,170 @@
         @RenderBody()
     </main>
 
-    <!-- ============ FOOTER ============ -->
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2025 - CSS -
             <a asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+    
+
+    <!-- ===== TOP GOOGLE MAP (OPTIONAL) ===== -->
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    }
+
+    @if (currentController == "Home" && currentAction == "Index")
+    {
+        <!-- ===== TOP GOOGLE MAP (ONLY IN HOME PAGE) ===== -->
+        <div class="footer-map-wrapper">
+            <iframe class="footer-map"
+                    loading="lazy"
+                    allowfullscreen
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3644.2414600006894!2d89.800917!3d24.069222!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjTCsDA0JzA5LjIiTiA4OcKwNDgnMDMuMyJF!5e1!3m2!1sen!2sbd!4v1700000000005">
+            </iframe>
+        </div>
+    }
+
+
+
+
+
+    <!-- ============ FOOTER ============ -->
+    <!-- ============ CSS FOOTER ============ -->
+    <!-- 🌟 PREMIUM MODERN FOOTER 🌟 -->
+    <footer class="footer-section">
+
+        <!-- ===== MAIN FOOTER CONTENT ===== -->
+        <div class="container footer-content pt-3 pb-2">
+            <div class="row">
+
+                <!-- Column 1 -->
+                <div class="col-lg-4 col-md-6 col-12 mb-2">
+                    <h5 class="footer-title">CONSCIOUS STUDENT SOCIETY</h5>
+                    <ul class="footer-list">
+                        <li>
+                            <i class="fa-solid fa-envelope"></i> consciousstudentsociety@gmail.com
+                        </li>
+                        
+                        <li><i class="fa-solid fa-phone"></i> +880-1700-000000</li>
+                        <li><i class="fa-solid fa-location-dot"></i> Chouhali Rajshahi Bangladesh</li>
+                    </ul>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="col-lg-4 col-md-6 col-12 mb-2">
+                    <h5 class="footer-title">USEFUL LINKS</h5>
+                    <ul class="footer-list">
+                        
+                        <li><i class="fa-solid fa-angle-right"></i> সচেতন ছাত্র সমাজ (CSS)</li>
+                    </ul>
+                </div>
+
+                <!-- Column 3 -->
+                <div class="col-lg-4 col-md-12 col-12 mb-2">
+                    <h5 class="footer-title">FOLLOW US</h5>
+
+                    <div class="footer-social mb-2">
+                        <a href="https://www.facebook.com/organizationofcss"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="https://www.youtube.com/channel/UCuLiRjE32T6-Vrnktyu5yuA"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="https://www.facebook.com/groups/cssbd2015"><i class="fa-brands fa-facebook"></i></a>
+                    </div>
+
+                    <iframe src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/edenmohilacollege&tabs=timeline&width=330&height=180&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true"
+                            width="100%" height="180"
+                            style="border:none;overflow:hidden;border-radius:10px;"
+                            scrolling="no"
+                            frameborder="0"
+                            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                            allowfullscreen="true"></iframe>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ===== BOTTOM TEXT ===== -->
+        <div class="footer-bottom text-center py-2">
+            © 2025 — CSS. All Rights Reserved.
+        </div>
+
+    </footer>
+
+    <style>
+        /* MAIN FOOTER */
+        .footer-section {
+            background: linear-gradient(to bottom right, #102027, #263238);
+            color: #e0e0e0;
+            padding-top: 10px; /* Slim */
+        }
+
+        .footer-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px; /* Reduced */
+            color: #ffffff;
+        }
+
+        .footer-list li {
+            margin-bottom: 6px;
+            font-size: 14px; /* Smaller */
+            color: #d0d0d0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-list i {
+            color: #ff5252;
+        }
+
+        .footer-social a {
+            margin-right: 10px;
+            font-size: 20px; /* Slightly smaller */
+            color: #ff5252;
+            transition: 0.3s;
+        }
+
+            .footer-social a:hover {
+                color: #ff1744;
+                transform: scale(1.1);
+            }
+
+        .footer-bottom {
+            background: #0d1b22;
+            color: #b0bec5;
+            font-size: 13px;
+            border-top: 1px solid #37474f;
+        }
+
+        /* Mobile Optimization */
+        @@media (max-width: 768px) {
+            .footer-title
+
+        {
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        .footer-list li {
+            justify-content: center;
+        }
+
+        .footer-social {
+            justify-content: center;
+            text-align: center;
+        }
+
+        iframe {
+            margin-top: 8px;
+        }
+
+        }
+    </style>
+
+
 
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
