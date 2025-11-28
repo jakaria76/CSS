@@ -265,15 +265,16 @@ body {
 
 .css-slide-img {
     width: 100vw !important;
-    height: 600px !important;
+    height: 450px !important; /* reduced from 600 to 450 */
     object-fit: cover !important;
 }
 
 @media (max-width: 768px) {
     .css-slide-img {
-        height: 200px !important;
+        height: 180px !important; /* reduced from 200 to 180 */
     }
 }
+
 
 
 /*logout button*/
@@ -308,7 +309,7 @@ body {
     }
 
 
-    <style>
+
     .logout-popup {
         display: none;
         position: fixed;
@@ -357,7 +358,7 @@ body {
         background: linear-gradient(145deg, #3b57c7, #25348f);
         transform: translateY(-2px);
     }
-</style>
+
 
 
 /*confirm logout card*/
@@ -376,4 +377,45 @@ body {
         transform: translateY(-2px);
         box-shadow: 0px 4px 12px rgba(255, 65, 108, 0.6);
     }
+
+
+/* ?? FOOTER MAP WRAPPER */
+.footer-map-wrapper {
+    width: 100%;
+    border-top: 3px solid #c62828;
+}
+
+/* ?? MAP HEIGHT (Desktop default) */
+.footer-map {
+    width: 100%;
+    height: 420px;
+    border: 0;
+    display: block;
+    border-radius: 0;
+}
+
+/* ?? Tablet */
+@media (max-width: 992px) {
+    .footer-map {
+        height: 280px;
+    }
+}
+
+/* ?? Mobile */
+@media (max-width: 768px) {
+    .footer-map {
+        height: 220px;
+    }
+}
+
+/* ?? Small Mobile (360px width) */
+@media (max-width: 480px) {
+    .footer-map {
+        height: 180px;
+    }
+}
+
+
+
+
 
