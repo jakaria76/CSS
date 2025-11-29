@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CSS.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialClean : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,19 +32,24 @@ namespace CSS.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FullNameBn = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MemberPosition = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MemberType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CommitteePosition = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MemberSince = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    AlternativeMobile = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PresentAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PermanentAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     District = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Upazila = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FacebookLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmergencyContactName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmergencyContactNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WhatsAppNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BloodGroup = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastDonationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    NextAvailableDonationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DonationEligibility = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TotalDonationCount = table.Column<int>(type: "int", nullable: true),
+                    PreferredDonationLocation = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SchoolName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SchoolGroup = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SchoolPassingYear = table.Column<int>(type: "int", nullable: true),
@@ -53,20 +58,24 @@ namespace CSS.Migrations
                     CollegePassingYear = table.Column<int>(type: "int", nullable: true),
                     UniversityName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Degree = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Session = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StudentId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CurrentYear = table.Column<int>(type: "int", nullable: true),
                     CurrentSemester = table.Column<int>(type: "int", nullable: true),
-                    CGPA = table.Column<double>(type: "float", nullable: true),
-                    Skills = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ExtraCertificates = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProfileImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MemberPositionDetails = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EventParticipationCount = table.Column<int>(type: "int", nullable: true),
-                    VolunteerHours = table.Column<int>(type: "int", nullable: true),
+                    ShortBio = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WhyJoined = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FutureGoals = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Hobbies = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Facebook = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PortfolioWebsite = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastUpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProfileImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProfileImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    Latitude = table.Column<double>(type: "float", nullable: true),
+                    Longitude = table.Column<double>(type: "float", nullable: true),
+                    LocationDms = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -85,6 +94,54 @@ namespace CSS.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Tag = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShortDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FullDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Venue = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Latitude = table.Column<double>(type: "float", nullable: true),
+                    Longitude = table.Column<double>(type: "float", nullable: true),
+                    OrganizedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ContactPerson = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ContactPhone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExpectedParticipants = table.Column<int>(type: "int", nullable: false),
+                    VolunteersNeeded = table.Column<int>(type: "int", nullable: false),
+                    IsPublished = table.Column<bool>(type: "bit", nullable: false),
+                    IsFeatured = table.Column<bool>(type: "bit", nullable: false),
+                    BannerImage = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    BannerImageType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GalleryImages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    ContentType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UploadDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UploadedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GalleryImages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -193,6 +250,53 @@ namespace CSS.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "EventImages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    ImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    ImageType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Caption = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EventImages_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventRegistrations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Mobile = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WillVolunteer = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RegisteredAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventRegistrations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EventRegistrations_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -231,6 +335,16 @@ namespace CSS.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventImages_EventId",
+                table: "EventImages",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventRegistrations_EventId",
+                table: "EventRegistrations",
+                column: "EventId");
         }
 
         /// <inheritdoc />
@@ -252,10 +366,22 @@ namespace CSS.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "EventImages");
+
+            migrationBuilder.DropTable(
+                name: "EventRegistrations");
+
+            migrationBuilder.DropTable(
+                name: "GalleryImages");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Events");
         }
     }
 }
