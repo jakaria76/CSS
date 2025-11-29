@@ -8,9 +8,7 @@
 <div class="container my-4">
     <div class="row">
 
-        <!-- =========================
-             LEFT SIDE
-        ========================== -->
+        <!-- LEFT SIDE -->
         <div class="col-lg-8">
 
             <!-- EVENT BANNER -->
@@ -19,7 +17,7 @@
                  Model.Event.BannerImage != null
                  ? $"data:{Model.Event.BannerImageType};base64,{Convert.ToBase64String(Model.Event.BannerImage)}"
                  : "/images/default-event.jpg"
-                                                                    )')">
+                                  )')">
 
                 <div class="event-banner-content">
                     <h1 class="fw-bold">@Model.Event.Title</h1>
@@ -39,9 +37,9 @@
                     </div>
 
                     <!-- COUNTDOWN -->
-                    <div id="countdown" class="mt-2 text-warning fw-bold fs-6"></div>
+                    <div id="countdown" class="mt-2 text-warning fw-bold fs-5"></div>
 
-                    <!-- GOOGLE CALENDAR -->
+                    <!-- GOOGLE Calendar -->
                     @{
                         var startUtc = Model.Event.StartDateTime?.ToUniversalTime().ToString("yyyyMMdd'T'HHmmss'Z'") ?? "";
                         var endCal = Model.Event.EndDateTime ?? Model.Event.StartDateTime?.AddHours(2);
@@ -58,6 +56,7 @@
                     <a class="btn btn-light fw-bold mt-3" target="_blank" href="@gCal">
                         <i class="fa-solid fa-calendar-plus"></i> Add to Google Calendar
                     </a>
+
                 </div>
             </div>
 
@@ -91,7 +90,7 @@
                 </div>
             </div>
 
-            <!-- REGISTRATIONS TABLE ADMIN -->
+            <!-- ADMIN REGISTRATION TABLE -->
             @if (User.IsInRole("Admin"))
             {
                 <div class="card p-3 shadow-sm mt-4">
@@ -125,7 +124,7 @@
                                 <tbody>
                                     @{
                                         var orderedList = Model.Event.Registrations.OrderBy(r => r.RegisteredAt).ToList();
-                                        var idx = 1;
+                                        int idx = 1;
 
                                         foreach (var r in orderedList)
                                         {
@@ -168,31 +167,13 @@
 
         </div>
 
-        <!-- =========================
-             RIGHT SIDE
-        ========================== -->
+        <!-- RIGHT SIDE -->
         <div class="col-lg-4">
 
             <div class="card p-3 mb-3 shadow-sm">
                 <h5 class="fw-bold mb-3">Event Information</h5>
 
                 <p><strong>Venue:</strong> @Model.Event.Venue</p>
-
-                @if (!string.IsNullOrWhiteSpace(Model.Event.OrganizedBy))
-                {
-                    <p><strong>Organized By:</strong> @Model.Event.OrganizedBy</p>
-                }
-
-                @if (!string.IsNullOrWhiteSpace(Model.Event.ContactPerson))
-                {
-                    <p><strong>Contact:</strong> @Model.Event.ContactPerson (@Model.Event.ContactPhone)</p>
-                }
-
-                @if (Model.Event.VolunteersNeeded > 0)
-                {
-                    <p><strong>Volunteers Needed:</strong> @Model.Event.VolunteersNeeded</p>
-                }
-
                 <p><strong>Registered:</strong> @Model.RegisteredCount</p>
 
                 <div id="mapDetail" style="height:220px; border-radius:8px; overflow:hidden;"></div>
@@ -205,32 +186,52 @@
             </div>
 
         </div>
+
     </div>
 </div>
 
 @section Scripts {
     <script src="~/js/events.js"></script>
 
+    <!-- Countdown -->
     <script>
-        var lat = @(Model.Event.Latitude?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "null");
-        var lng = @(Model.Event.Longitude?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "null");
+        function initCountdown(start) {
+            const eventTime = new Date(start).getTime();
+            const timer = setInterval(() => {
+                const now = new Date().getTime();
+                const diff = eventTime - now;
 
-        function loadMap(lat, lng) {
-            document.getElementById("mapDetail").innerHTML =
-                `<iframe width="100%" height="220" style="border:0;border-radius:8px;"
-                    loading="lazy" allowfullscreen
-                    referrerpolicy="no-referrer-when-downgrade"
-                    src="https://www.google.com/maps?q=${lat},${lng}&hl=en&z=17&t=k&output=embed">
-                 </iframe>`;
-        }
+                if (diff <= 0) {
+                    document.getElementById("countdown").innerHTML = "<span class='text-success'>🎉 Event Started</span>";
+                    clearInterval(timer);
+                    return;
+                }
 
-        if (lat && lng && lat !== "null" && lng !== "null") {
-            loadMap(lat, lng);
-        } else {
-            document.getElementById('mapDetail').innerHTML =
-                '<small class="text-muted">Location not provided.</small>';
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById("countdown").innerHTML =
+                    `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
+            }, 1000);
         }
 
         initCountdown('@Model.Event.StartDateTime?.ToString("o")');
+
+        // Google Maps Frame
+        function loadMap(lat, lng) {
+            document.getElementById("mapDetail").innerHTML =
+                `<iframe width="100%" height="220" style="border:0;border-radius:8px;"
+                        loading="lazy" allowfullscreen
+                        src="https://www.google.com/maps?q=${lat},${lng}&hl=en&z=17&t=k&output=embed">
+                 </iframe>`;
+        }
+
+        var lat = "@Model.Event.Latitude";
+        var lng = "@Model.Event.Longitude";
+        if (lat && lng && lat !== "null" && lng !== "null") {
+            loadMap(lat, lng);
+        }
     </script>
 }
