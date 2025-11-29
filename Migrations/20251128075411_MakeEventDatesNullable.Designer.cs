@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251126061501_ProfileExpandedFields")]
-    partial class ProfileExpandedFields
+    [Migration("20251128075411_MakeEventDatesNullable")]
+    partial class MakeEventDatesNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,11 +33,14 @@ namespace CSS.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("BloodGroup")
+                    b.Property<string>("AccountStatus")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("CGPA")
-                        .HasColumnType("float");
+                    b.Property<string>("AlternativeMobile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BloodGroup")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CollegeGroup")
                         .HasColumnType("nvarchar(max)");
@@ -47,6 +50,9 @@ namespace CSS.Migrations
 
                     b.Property<int?>("CollegePassingYear")
                         .HasColumnType("int");
+
+                    b.Property<string>("CommitteePosition")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -64,13 +70,13 @@ namespace CSS.Migrations
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Degree")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Department")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("District")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DonationEligibility")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -80,16 +86,7 @@ namespace CSS.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("EmergencyContactName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmergencyContactNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("EventParticipationCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ExtraCertificates")
+                    b.Property<string>("Facebook")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FacebookLink")
@@ -101,11 +98,26 @@ namespace CSS.Migrations
                     b.Property<string>("FullNameBn")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FutureGoals")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Gender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Hobbies")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastDonationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("LocationDms")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -113,11 +125,17 @@ namespace CSS.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("MemberPosition")
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("MemberSince")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MemberType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MemberPositionDetails")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("NextAvailableDonationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -139,14 +157,20 @@ namespace CSS.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PresentAddress")
+                    b.Property<string>("PortfolioWebsite")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ProfileImage")
+                    b.Property<string>("PreferredDonationLocation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PresentAddress")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("ProfileImageData")
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ProfileImagePath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SchoolGroup")
                         .HasColumnType("nvarchar(max)");
@@ -160,10 +184,10 @@ namespace CSS.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Session")
+                    b.Property<string>("ShortBio")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Skills")
+                    b.Property<string>("StudentId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TotalDonationCount")
@@ -178,15 +202,18 @@ namespace CSS.Migrations
                     b.Property<string>("Upazila")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int?>("VolunteerHours")
-                        .HasColumnType("int");
+                    b.Property<string>("WhatsAppNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WhyJoined")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -199,6 +226,175 @@ namespace CSS.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("CSS.Models.Event", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<byte[]>("BannerImage")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("BannerImageType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactPerson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactPhone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ExpectedParticipants")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FullDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsFeatured")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("OrganizedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShortDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Tag")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Venue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VolunteersNeeded")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("CSS.Models.EventImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Caption")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("ImageData")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ImageType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("EventImages");
+                });
+
+            modelBuilder.Entity("CSS.Models.EventRegistration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Department")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Mobile")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RegisteredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("WillVolunteer")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("EventRegistrations");
+                });
+
+            modelBuilder.Entity("CSS.Models.GalleryImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("ImageData")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UploadedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GalleryImages");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -334,6 +530,28 @@ namespace CSS.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CSS.Models.EventImage", b =>
+                {
+                    b.HasOne("CSS.Models.Event", "Event")
+                        .WithMany("Images")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("CSS.Models.EventRegistration", b =>
+                {
+                    b.HasOne("CSS.Models.Event", "Event")
+                        .WithMany("Registrations")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -383,6 +601,13 @@ namespace CSS.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CSS.Models.Event", b =>
+                {
+                    b.Navigation("Images");
+
+                    b.Navigation("Registrations");
                 });
 #pragma warning restore 612, 618
         }

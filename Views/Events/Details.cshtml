@@ -1,0 +1,236 @@
+﻿@model CSS.ViewModels.EventDetailsVM
+@{
+    ViewData["Title"] = Model.Event.Title;
+}
+
+<link rel="stylesheet" href="~/css/events.css" />
+
+<div class="container my-4">
+    <div class="row">
+
+        <!-- =========================
+             LEFT SIDE
+        ========================== -->
+        <div class="col-lg-8">
+
+            <!-- EVENT BANNER -->
+            <div class="event-banner"
+                 style="background-image:url('@(
+                 Model.Event.BannerImage != null
+                 ? $"data:{Model.Event.BannerImageType};base64,{Convert.ToBase64String(Model.Event.BannerImage)}"
+                 : "/images/default-event.jpg"
+                                                                    )')">
+
+                <div class="event-banner-content">
+                    <h1 class="fw-bold">@Model.Event.Title</h1>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Event.ShortDescription))
+                    {
+                        <p class="lead">@Model.Event.ShortDescription</p>
+                    }
+
+                    <div class="text-light fw-semibold">
+                        @Model.Event.StartDateTime?.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")
+
+                        @if (Model.Event.EndDateTime.HasValue)
+                        {
+                            <span> – @Model.Event.EndDateTime.Value.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</span>
+                        }
+                    </div>
+
+                    <!-- COUNTDOWN -->
+                    <div id="countdown" class="mt-2 text-warning fw-bold fs-6"></div>
+
+                    <!-- GOOGLE CALENDAR -->
+                    @{
+                        var startUtc = Model.Event.StartDateTime?.ToUniversalTime().ToString("yyyyMMdd'T'HHmmss'Z'") ?? "";
+                        var endCal = Model.Event.EndDateTime ?? Model.Event.StartDateTime?.AddHours(2);
+                        var endUtc = endCal?.ToUniversalTime().ToString("yyyyMMdd'T'HHmmss'Z'") ?? "";
+
+                        var gCal = "https://www.google.com/calendar/render?action=TEMPLATE" +
+                        "&text=" + Uri.EscapeDataString(Model.Event.Title ?? "") +
+                        "&dates=" + startUtc + "/" + endUtc +
+                        "&details=" + Uri.EscapeDataString(Model.Event.ShortDescription ?? "") +
+                        "&location=" + Uri.EscapeDataString(Model.Event.Venue ?? "") +
+                        "&sf=true&output=xml";
+                    }
+
+                    <a class="btn btn-light fw-bold mt-3" target="_blank" href="@gCal">
+                        <i class="fa-solid fa-calendar-plus"></i> Add to Google Calendar
+                    </a>
+                </div>
+            </div>
+
+            <!-- ABOUT -->
+            <div class="mt-4">
+                <h4 class="fw-bold">About This Event</h4>
+                <div class="event-description">
+                    @Html.Raw(Model.Event.FullDescription)
+                </div>
+            </div>
+
+            <!-- GALLERY -->
+            <div class="mt-4">
+                <h5 class="fw-bold">Gallery</h5>
+
+                <div class="d-flex gap-2 flex-wrap">
+                    @if (Model.Images != null && Model.Images.Any())
+                    {
+                        foreach (var img in Model.Images)
+                        {
+                            var src = $"data:{img.ImageType};base64,{Convert.ToBase64String(img.ImageData)}";
+                            <img src="@src"
+                                 class="rounded shadow-sm"
+                                 style="height:120px;width:160px;object-fit:cover;" />
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No gallery images available.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- REGISTRATIONS TABLE ADMIN -->
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="card p-3 shadow-sm mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="fw-bold">Registered Participants (@Model.RegisteredCount)</h5>
+
+                        <a asp-action="ExportRegistrationsExcel" asp-route-id="@Model.Event.Id" class="btn btn-success btn-sm">
+                            <i class="fa-solid fa-file-excel"></i> Download Excel
+                        </a>
+                    </div>
+
+                    @if (Model.Event.Registrations != null && Model.Event.Registrations.Any())
+                    {
+                        <div style="max-height:400px; overflow-y:auto;">
+                            <table class="table table-striped table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>Mobile</th>
+                                        <th>Email</th>
+                                        <th>Gender</th>
+                                        <th>Institute</th>
+                                        <th>Class</th>
+                                        <th>Volunteer</th>
+                                        <th>Payment</th>
+                                        <th>Registered At</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        var orderedList = Model.Event.Registrations.OrderBy(r => r.RegisteredAt).ToList();
+                                        var idx = 1;
+
+                                        foreach (var r in orderedList)
+                                        {
+                                            <tr>
+                                                <td>@idx</td>
+                                                <td>
+                                                    @if (r.UserImage != null)
+                                                    {
+                                                        var imgSrc = $"data:{r.UserImageType};base64,{Convert.ToBase64String(r.UserImage)}";
+                                                        <img src="@imgSrc" style="height:50px;width:50px;object-fit:cover;border-radius:6px;" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="/images/default-user.png" style="height:50px;width:50px;object-fit:cover;border-radius:6px;" />
+                                                    }
+                                                </td>
+                                                <td>@r.FullName</td>
+                                                <td>@r.Mobile</td>
+                                                <td>@r.Email</td>
+                                                <td>@r.Gender</td>
+                                                <td>@r.InstituteName</td>
+                                                <td>@r.ClassName</td>
+                                                <td>@(r.WillVolunteer ? "Yes" : "No")</td>
+                                                <td>@r.PaymentMethod</td>
+                                                <td>@r.RegisteredAt.ToLocalTime().ToString("dd MMM yyyy - hh:mm tt")</td>
+                                            </tr>
+                                            idx++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No registrations yet.</p>
+                    }
+                </div>
+            }
+
+        </div>
+
+        <!-- =========================
+             RIGHT SIDE
+        ========================== -->
+        <div class="col-lg-4">
+
+            <div class="card p-3 mb-3 shadow-sm">
+                <h5 class="fw-bold mb-3">Event Information</h5>
+
+                <p><strong>Venue:</strong> @Model.Event.Venue</p>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Event.OrganizedBy))
+                {
+                    <p><strong>Organized By:</strong> @Model.Event.OrganizedBy</p>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.Event.ContactPerson))
+                {
+                    <p><strong>Contact:</strong> @Model.Event.ContactPerson (@Model.Event.ContactPhone)</p>
+                }
+
+                @if (Model.Event.VolunteersNeeded > 0)
+                {
+                    <p><strong>Volunteers Needed:</strong> @Model.Event.VolunteersNeeded</p>
+                }
+
+                <p><strong>Registered:</strong> @Model.RegisteredCount</p>
+
+                <div id="mapDetail" style="height:220px; border-radius:8px; overflow:hidden;"></div>
+            </div>
+
+            <!-- REGISTRATION FORM -->
+            <div class="card p-3 shadow-sm">
+                <h5 class="fw-bold mb-3">Register</h5>
+                @await Html.PartialAsync("_RegistrationForm", Model.Event)
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/events.js"></script>
+
+    <script>
+        var lat = @(Model.Event.Latitude?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "null");
+        var lng = @(Model.Event.Longitude?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "null");
+
+        function loadMap(lat, lng) {
+            document.getElementById("mapDetail").innerHTML =
+                `<iframe width="100%" height="220" style="border:0;border-radius:8px;"
+                    loading="lazy" allowfullscreen
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps?q=${lat},${lng}&hl=en&z=17&t=k&output=embed">
+                 </iframe>`;
+        }
+
+        if (lat && lng && lat !== "null" && lng !== "null") {
+            loadMap(lat, lng);
+        } else {
+            document.getElementById('mapDetail').innerHTML =
+                '<small class="text-muted">Location not provided.</small>';
+        }
+
+        initCountdown('@Model.Event.StartDateTime?.ToString("o")');
+    </script>
+}

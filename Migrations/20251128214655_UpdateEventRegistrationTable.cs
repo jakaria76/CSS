@@ -5,7 +5,7 @@
 namespace CSS.Migrations
 {
     /// <inheritdoc />
-    public partial class ProfileExpandedFields : Migration
+    public partial class UpdateEventRegistrationTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
