@@ -4,6 +4,7 @@ using CSS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251129095923_AddEventRegistrationAndPaymentTransaction")]
+    partial class AddEventRegistrationAndPaymentTransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -272,9 +275,6 @@ namespace CSS.Migrations
                     b.Property<string>("OrganizedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("ShortDescription")
                         .HasColumnType("nvarchar(max)");
 
@@ -372,9 +372,6 @@ namespace CSS.Migrations
                     b.Property<byte[]>("UserImage")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("UserImagePath")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("UserImageType")
                         .HasColumnType("nvarchar(max)");
 
@@ -419,72 +416,6 @@ namespace CSS.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("GalleryImages");
-                });
-
-            modelBuilder.Entity("CSS.Models.PaymentTransaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("EventId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("GatewayResponse")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PayerDataJson")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PayerEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PayerFullName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PayerMobile")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentGateway")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("RegistrationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RequestId")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TranId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RegistrationId");
-
-                    b.ToTable("PaymentTransactions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -642,16 +573,6 @@ namespace CSS.Migrations
                     b.Navigation("Event");
                 });
 
-            modelBuilder.Entity("CSS.Models.PaymentTransaction", b =>
-                {
-                    b.HasOne("CSS.Models.EventRegistration", "Registration")
-                        .WithMany("Payments")
-                        .HasForeignKey("RegistrationId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Registration");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -708,11 +629,6 @@ namespace CSS.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("Registrations");
-                });
-
-            modelBuilder.Entity("CSS.Models.EventRegistration", b =>
-                {
-                    b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618
         }

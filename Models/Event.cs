@@ -17,12 +17,13 @@ namespace CSS.Models
         public string? ShortDescription { get; set; }
         public string? FullDescription { get; set; }
 
-        // Nullable DateTime — required for Create form
+        // Event Date-Time
         public DateTime? StartDateTime { get; set; }
         public DateTime? EndDateTime { get; set; }
 
         public string? Venue { get; set; }
 
+        // Location Coordinates
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
 
@@ -40,10 +41,14 @@ namespace CSS.Models
         public byte[]? BannerImage { get; set; }
         public string? BannerImageType { get; set; }
 
+        // PRICE (added for payment)
+        [Range(0, 100000, ErrorMessage = "Price must be positive")]
+        public decimal Price { get; set; } = 0;  // default value set
+
         // Gallery images
         public virtual List<EventImage>? Images { get; set; }
 
-        // Registrations for this event
+        // Registrations
         public virtual List<EventRegistration>? Registrations { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

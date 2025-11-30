@@ -4,40 +4,54 @@
 }
 
 <link rel="stylesheet" href="~/css/events.css" />
+
+<!-- Leaflet Map -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <div class="container my-4">
-    <h3 class="fw-bold">Create Event</h3>
+
+    <h3 class="fw-bold mb-4">Create Event</h3>
 
     <form method="post" enctype="multipart/form-data" asp-action="Create">
         @Html.AntiForgeryToken()
 
+        <!-- Title -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Title</label>
             <input class="form-control" name="Title" required value="@Model.Title" />
         </div>
 
+        <!-- Price -->
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Price (BDT)</label>
+            <input type="number" class="form-control" name="Price"
+                   value="@(Model.Price?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "0")"
+                   placeholder="0 = Free Event" />
+        </div>
+
+        <!-- Date Section -->
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label fw-semibold">Start Date</label>
+                <label class="form-label fw-semibold">Start Date & Time</label>
                 <input type="datetime-local" class="form-control" name="StartDateTime"
                        value="@(Model.StartDateTime?.ToString("yyyy-MM-ddTHH:mm") ?? "")" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label fw-semibold">End Date</label>
+                <label class="form-label fw-semibold">End Date & Time</label>
                 <input type="datetime-local" class="form-control" name="EndDateTime"
                        value="@(Model.EndDateTime?.ToString("yyyy-MM-ddTHH:mm") ?? "")" />
             </div>
         </div>
 
+        <!-- Venue -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Venue</label>
-            <input class="form-control" name="Venue" value="@Model.Venue" />
+            <input class="form-control" name="Venue" required value="@Model.Venue" />
         </div>
 
-        <!-- LAT/LNG -->
+        <!-- Latitude & Longitude -->
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label fw-semibold">Latitude</label>
@@ -53,22 +67,25 @@
         </div>
 
         <!-- MAP -->
-        <div id="eventMap" style="height:350px;border-radius:10px;margin-bottom:12px;"></div>
+        <div id="eventMap" style="height:350px;border-radius:10px;" class="mb-3"></div>
 
         <button type="button" id="btnUseMyLocation" class="btn btn-outline-primary btn-sm mb-3">
             Use My Location
         </button>
 
+        <!-- Short Description -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Short Description</label>
             <input class="form-control" name="ShortDescription" value="@Model.ShortDescription" />
         </div>
 
+        <!-- Full Description -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Full Description (HTML allowed)</label>
             <textarea class="form-control" rows="6" name="FullDescription">@Model.FullDescription</textarea>
         </div>
 
+        <!-- Images -->
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label fw-semibold">Banner Image</label>
@@ -80,14 +97,15 @@
             </div>
         </div>
 
+        <!-- Publish / Featured -->
         <div class="form-check mb-2">
             <input type="checkbox" class="form-check-input" name="IsPublished" />
-            <label class="form-check-label">Publish</label>
+            <label class="form-check-label">Publish Event</label>
         </div>
 
         <div class="form-check mb-4">
             <input type="checkbox" class="form-check-input" name="IsFeatured" />
-            <label class="form-check-label">Featured</label>
+            <label class="form-check-label">Mark as Featured</label>
         </div>
 
         <button class="btn btn-success fw-bold px-4" type="submit">Save Event</button>
@@ -96,73 +114,43 @@
 
 @section Scripts {
     <script>
-
+        // Default location: Dhaka
         var lat = parseFloat("@(Model.Latitude?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "23.8103")");
         var lng = parseFloat("@(Model.Longitude?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "90.4125")");
 
-        var map = L.map('eventMap').setView([lat, lng], 16);
+        var map = L.map('eventMap').setView([lat, lng], 15);
 
-        // === STREET MAP (OpenStreetMap) ===
-        var street = L.tileLayer(
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            {
-                maxZoom: 19,
-                attribution: '&copy; OpenStreetMap'
-            }
-        ).addTo(map);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            { maxZoom: 19 }).addTo(map);
 
-        // === SATELLITE MAP ===
-        var satellite = L.tileLayer(
-            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-            { maxZoom: 19 }
-        );
-
-        // === SATELLITE + LABELS (Hybrid) ===
-        var labels = L.tileLayer(
-            "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-            { maxZoom: 19 }
-        );
-
-        // === COMBINED HYBRID LAYER ===
-        var hybrid = L.layerGroup([satellite, labels]);
-
-        // === MARKER DRAGGABLE ===
         var marker = L.marker([lat, lng], { draggable: true }).addTo(map);
 
+        // Drag Marker → Update lat/lng fields
         marker.on("dragend", function (e) {
-            var p = e.target.getLatLng();
-            document.getElementById("Latitude").value = p.lat;
-            document.getElementById("Longitude").value = p.lng;
+            var pos = e.target.getLatLng();
+            document.getElementById("Latitude").value = pos.lat;
+            document.getElementById("Longitude").value = pos.lng;
         });
 
-        // === CLICK TO PLACE MARKER ===
+        // Click on map → Move marker
         map.on("click", function (e) {
             marker.setLatLng(e.latlng);
             document.getElementById("Latitude").value = e.latlng.lat;
             document.getElementById("Longitude").value = e.latlng.lng;
         });
 
-        // === USE MY LOCATION BUTTON ===
+        // Use My Location
         document.getElementById("btnUseMyLocation").addEventListener("click", function () {
             navigator.geolocation.getCurrentPosition(function (pos) {
                 var la = pos.coords.latitude;
                 var lo = pos.coords.longitude;
+
                 marker.setLatLng([la, lo]);
                 map.setView([la, lo], 18);
+
                 document.getElementById("Latitude").value = la;
                 document.getElementById("Longitude").value = lo;
             });
         });
-
-        // === LAYER SWITCH CONTROL ===
-        var baseMaps = {
-            "Street Map": street,
-            "Satellite": satellite,
-            "Hybrid (Satellite + Labels)": hybrid
-        };
-
-        L.control.layers(baseMaps).addTo(map);
-
     </script>
 }
-

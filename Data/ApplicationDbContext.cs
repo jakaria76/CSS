@@ -7,35 +7,44 @@ namespace CSS.Data
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+            : base(options) { }
 
-        // ===== Gallery Table =====
-        public DbSet<GalleryImage> GalleryImages { get; set; }
-
-        // ===== Event Tables =====
         public DbSet<Event> Events { get; set; }
         public DbSet<EventImage> EventImages { get; set; }
         public DbSet<EventRegistration> EventRegistrations { get; set; }
+        public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
+        public DbSet<GalleryImage> GalleryImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            // Ensure Event–EventImage relationship
+            // EventImage relationship
             builder.Entity<EventImage>()
                 .HasOne(e => e.Event)
-                .WithMany(g => g.Images)
+                .WithMany(x => x.Images)
                 .HasForeignKey(e => e.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Ensure Event–EventRegistration relationship
+            // EventRegistration relationship
             builder.Entity<EventRegistration>()
                 .HasOne(r => r.Event)
                 .WithMany(e => e.Registrations)
                 .HasForeignKey(r => r.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // PaymentTransaction relationship
+            builder.Entity<PaymentTransaction>()
+                .HasOne(p => p.Registration)
+                .WithMany(r => r.Payments)
+                .HasForeignKey(p => p.RegistrationId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // ========== UNIQUE INDEX (Prevent Duplicate Registration Same Event Same Mobile) ==========
+            builder.Entity<EventRegistration>()
+                .HasIndex(r => new { r.EventId, r.Mobile })
+                .IsUnique()
+                .HasDatabaseName("IX_EventRegistration_EventId_Mobile_UQ");
         }
     }
 }

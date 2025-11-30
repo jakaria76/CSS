@@ -34,6 +34,10 @@ namespace CSS.ViewModels
         public bool IsPublished { get; set; }
         public bool IsFeatured { get; set; }
 
+        // NEW PRICE FIELD
+        [Range(0, 100000, ErrorMessage = "Price must be positive number")]
+        public decimal? Price { get; set; }   // <= Added this line
+
         // File Uploads
         public IFormFile? BannerImage { get; set; }
         public List<IFormFile>? GalleryImages { get; set; }
