@@ -7,7 +7,6 @@
 
 <div class="container my-4">
 
-    <!-- SUCCESS MESSAGE -->
     @if (TempData["Success"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -16,13 +15,12 @@
         </div>
     }
 
-    <!-- HEADER + CATEGORY FILTER -->
+    <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="fw-bold">Events</h2>
 
         <div class="d-flex align-items-center gap-2">
 
-            <!-- Category Filter -->
             <select id="categoryFilter" class="form-select d-inline-block w-auto">
                 <option value="">All</option>
 
@@ -34,7 +32,6 @@
                 }
             </select>
 
-            <!-- Add Event -->
             @if (User.IsInRole("Admin"))
             {
                 <a asp-controller="Events" asp-action="Create" class="btn btn-danger ms-2">
@@ -44,29 +41,25 @@
         </div>
     </div>
 
-
-    <!-- FEATURED CAROUSEL -->
+    <!-- FEATURED -->
     @if (Model.Featured.Any())
     {
         <div id="featuredCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
             <div class="carousel-inner">
-
                 @for (int i = 0; i < Model.Featured.Count; i++)
                 {
                     var e = Model.Featured[i];
-                    var banner = e.BannerImage != null
-                    ? $"data:{e.BannerImageType};base64,{Convert.ToBase64String(e.BannerImage)}"
-                    : "/images/default-event.jpg";
+
+                    string banner = (e.BannerImage != null && e.BannerImage.Length > 0)
+                    ? $"data:{(string.IsNullOrWhiteSpace(e.BannerImageType) ? "image/jpeg" : e.BannerImageType)};base64,{Convert.ToBase64String(e.BannerImage)}"
+                    : Url.Content("~/images/default-event.jpg");
 
                     <div class="carousel-item @(i == 0 ? "active" : "")">
                         <div class="featured-card" style="background-image:url('@banner')">
                             <div class="featured-content">
                                 <h3>@e.Title</h3>
                                 <p>@e.ShortDescription</p>
-
-                                <a class="btn btn-light" asp-action="Details" asp-route-id="@e.Id">
-                                    Details
-                                </a>
+                                <a class="btn btn-light" asp-action="Details" asp-route-id="@e.Id">Details</a>
                             </div>
                         </div>
                     </div>
@@ -83,90 +76,100 @@
         </div>
     }
 
-
-    <!-- UPCOMING EVENTS -->
+    <!-- UPCOMING -->
     <h4 class="fw-bold mb-3">Upcoming Events</h4>
 
     <div class="row">
-        @if (!Model.Upcoming.Any())
+        @foreach (var e in Model.Upcoming)
         {
-            <p class="text-muted">No upcoming events.</p>
-        }
-        else
-        {
-            @foreach (var e in Model.Upcoming)
-            {
-                <div class="col-md-4 mb-3">
-                    <div class="card shadow-sm event-card">
-
-                        @* Banner *@
-                        @{
-                            var banner = e.BannerImage != null
-                            ? $"data:{e.BannerImageType};base64,{Convert.ToBase64String(e.BannerImage)}"
-                            : "/images/default-event.jpg";
-                        }
-
-                        <img src="@banner" class="card-img-top" style="height:200px;object-fit:cover;" />
-
-                        <div class="card-body">
-                            <h5 class="fw-bold">@e.Title</h5>
-                            <p class="text-muted">@e.ShortDescription</p>
-
-                            <a asp-action="Details" asp-route-id="@e.Id" class="btn btn-primary btn-sm">Details</a>
-
-                            @* ADMIN ACTION BUTTONS *@
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <a asp-action="Edit" asp-route-id="@e.Id" class="btn btn-warning btn-sm ms-1">
-                                    <i class="fa-solid fa-pen"></i>
-                                </a>
-
-                                <form asp-action="Delete" asp-route-id="@e.Id" method="post" style="display:inline;">
-                                    <button onclick="return confirm('Are you sure to delete this event?')"
-                                            class="btn btn-danger btn-sm ms-1">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </form>
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
+            <div class="col-md-4 mb-3">
+                @await Html.PartialAsync("_EventCard", e)
+            </div>
         }
     </div>
 
+    <!-- PAST -->
+    <h4 class="fw-bold mt-4 mb-3">Past Events</h4>
 
     <!-- PAST EVENTS -->
     <h4 class="fw-bold mt-4 mb-3">Past Events</h4>
 
     <div class="row">
-        @if (!Model.Past.Any())
+        @if (Model.Past == null || !Model.Past.Any())
         {
             <p class="text-muted">No past events found.</p>
         }
         else
         {
-            @foreach (var p in Model.Past.Take(8))
+            foreach (var p in Model.Past.Take(8))
             {
-                <div class="col-md-3 col-6 mb-3">
+                <div class="col-md-4 col-md-3 col-6 mb-3">
+
                     @{
-                        var src = p.BannerImage != null
-                        ? $"data:{p.BannerImageType};base64,{Convert.ToBase64String(p.BannerImage)}"
-                        : "/images/default-event.jpg";
+                        string src = (p.BannerImage != null && p.BannerImage.Length > 0)
+                        ? $"data:{(string.IsNullOrWhiteSpace(p.BannerImageType) ? "image/jpeg" : p.BannerImageType)};base64,{Convert.ToBase64String(p.BannerImage)}"
+                        : Url.Content("~/images/default-event.jpg");
                     }
-                    <img src="@src"
-                         class="img-fluid rounded shadow-sm"
-                         style="height:140px;object-fit:cover;width:100%" />
+
+                    <div class="card shadow-sm event-card h-100">
+
+                        <!-- IMAGE -->
+                        <img src="@src"
+                             class="card-img-top"
+                             style="height:150px;object-fit:cover;" />
+
+                        <!-- BODY -->
+                        <div class="card-body">
+
+                            <h5 class="fw-bold">@p.Title</h5>
+
+                            <p class="text-muted small mb-1">
+                                <i class="fa-solid fa-location-dot"></i> @p.Venue <br />
+                                <i class="fa-solid fa-calendar-days"></i>
+                                @(p.StartDateTime?.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt"))
+                            </p>
+
+                            @* PRICE *@
+                            <p class="fw-semibold mb-1">
+                                @if (p.Price > 0)
+                                {
+                                    <span class="badge bg-warning text-dark px-3 py-2">৳ @p.Price</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success px-3 py-2">Free</span>
+                                }
+                            </p>
+
+                            @* SHORT DESCRIPTION *@
+                            @{
+                                string desc = p.ShortDescription ?? "";
+                                if (desc.Length > 80)
+                                    desc = desc[..80] + "...";
+                            }
+
+                            <p class="text-secondary small">@desc</p>
+
+                            <!-- CLOSED MESSAGE -->
+                            <div class="alert alert-secondary text-center py-1 mt-2 mb-0 fw-bold small">
+                                This event has been closed
+                            </div>
+
+                            <!-- ❌ NO DETAILS BUTTON -->
+                        </div>
+
+                    </div>
+
                 </div>
             }
         }
     </div>
 
+
 </div>
 
 @section Scripts {
     <script>
-        // category filter change
         document.getElementById('categoryFilter').addEventListener('change', function () {
             const v = this.value;
             const url = new URL(window.location.href);

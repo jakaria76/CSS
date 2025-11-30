@@ -8,17 +8,33 @@
 <div class="container my-4">
     <div class="row">
 
-        <!-- LEFT SIDE -->
+        <!-- LEFT COLUMN -->
         <div class="col-lg-8">
 
-            <!-- EVENT BANNER -->
-            <div class="event-banner"
-                 style="background-image:url('@(
-                 Model.Event.BannerImage != null
-                 ? $"data:{Model.Event.BannerImageType};base64,{Convert.ToBase64String(Model.Event.BannerImage)}"
-                 : "/images/default-event.jpg"
-                                  )')">
+            <!-- GLOBAL MESSAGES -->
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger fw-bold">@TempData["Error"]</div>
+            }
 
+            @if (TempData["Registered"] != null)
+            {
+                <div class="alert alert-success fw-bold">@TempData["Registered"]</div>
+            }
+
+            @if (Context.Request.Query["paid"] == "true")
+            {
+                <div class="alert alert-success fw-bold">✔ Payment Successful! Your registration has been completed.</div>
+            }
+
+            <!-- EVENT BANNER -->
+            @{
+                string bannerImg = Model.Event.BannerImage != null && Model.Event.BannerImage.Length > 0
+                ? $"data:{Model.Event.BannerImageType};base64,{Convert.ToBase64String(Model.Event.BannerImage)}"
+                : Url.Content("~/images/default-event.jpg");
+            }
+
+            <div class="event-banner" style="background-image:url('@bannerImg')">
                 <div class="event-banner-content">
                     <h1 class="fw-bold">@Model.Event.Title</h1>
 
@@ -29,34 +45,25 @@
 
                     <div class="text-light fw-semibold">
                         @Model.Event.StartDateTime?.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")
-
                         @if (Model.Event.EndDateTime.HasValue)
                         {
-                            <span> – @Model.Event.EndDateTime.Value.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</span>
+                            <span>– @Model.Event.EndDateTime.Value.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</span>
                         }
                     </div>
 
-                    <!-- COUNTDOWN -->
+                    <!-- PRICE -->
+                    <div class="mt-2 fw-bold fs-4 text-warning">
+                        @if (Model.Event.Price > 0)
+                        {
+                            <span>Event Fee: ৳ @Model.Event.Price</span>
+                        }
+                        else
+                        {
+                            <span class="text-success">Free Event</span>
+                        }
+                    </div>
+
                     <div id="countdown" class="mt-2 text-warning fw-bold fs-5"></div>
-
-                    <!-- GOOGLE Calendar -->
-                    @{
-                        var startUtc = Model.Event.StartDateTime?.ToUniversalTime().ToString("yyyyMMdd'T'HHmmss'Z'") ?? "";
-                        var endCal = Model.Event.EndDateTime ?? Model.Event.StartDateTime?.AddHours(2);
-                        var endUtc = endCal?.ToUniversalTime().ToString("yyyyMMdd'T'HHmmss'Z'") ?? "";
-
-                        var gCal = "https://www.google.com/calendar/render?action=TEMPLATE" +
-                        "&text=" + Uri.EscapeDataString(Model.Event.Title ?? "") +
-                        "&dates=" + startUtc + "/" + endUtc +
-                        "&details=" + Uri.EscapeDataString(Model.Event.ShortDescription ?? "") +
-                        "&location=" + Uri.EscapeDataString(Model.Event.Venue ?? "") +
-                        "&sf=true&output=xml";
-                    }
-
-                    <a class="btn btn-light fw-bold mt-3" target="_blank" href="@gCal">
-                        <i class="fa-solid fa-calendar-plus"></i> Add to Google Calendar
-                    </a>
-
                 </div>
             </div>
 
@@ -71,16 +78,13 @@
             <!-- GALLERY -->
             <div class="mt-4">
                 <h5 class="fw-bold">Gallery</h5>
-
-                <div class="d-flex gap-2 flex-wrap">
+                <div class="d-flex flex-wrap gap-2">
                     @if (Model.Images != null && Model.Images.Any())
                     {
                         foreach (var img in Model.Images)
                         {
                             var src = $"data:{img.ImageType};base64,{Convert.ToBase64String(img.ImageData)}";
-                            <img src="@src"
-                                 class="rounded shadow-sm"
-                                 style="height:120px;width:160px;object-fit:cover;" />
+                            <img src="@src" style="height:120px;width:160px;object-fit:cover;" class="rounded shadow-sm" />
                         }
                     }
                     else
@@ -90,22 +94,24 @@
                 </div>
             </div>
 
-            <!-- ADMIN REGISTRATION TABLE -->
+            <!-- ADMIN TABLE -->
             @if (User.IsInRole("Admin"))
             {
                 <div class="card p-3 shadow-sm mt-4">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="fw-bold">Registered Participants (@Model.RegisteredCount)</h5>
 
-                        <a asp-action="ExportRegistrationsExcel" asp-route-id="@Model.Event.Id" class="btn btn-success btn-sm">
+                        <a asp-action="ExportRegistrationsExcel"
+                           asp-route-id="@Model.Event.Id"
+                           class="btn btn-success btn-sm">
                             <i class="fa-solid fa-file-excel"></i> Download Excel
                         </a>
                     </div>
 
-                    @if (Model.Event.Registrations != null && Model.Event.Registrations.Any())
+                    @if (Model.Event.Registrations?.Any() == true)
                     {
-                        <div style="max-height:400px; overflow-y:auto;">
-                            <table class="table table-striped table-bordered">
+                        <div style="max-height:420px; overflow-y:auto;">
+                            <table class="table table-bordered table-striped">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>#</th>
@@ -113,45 +119,39 @@
                                         <th>Name</th>
                                         <th>Mobile</th>
                                         <th>Email</th>
-                                        <th>Gender</th>
                                         <th>Institute</th>
-                                        <th>Class</th>
                                         <th>Volunteer</th>
                                         <th>Payment</th>
-                                        <th>Registered At</th>
+                                        <th>Registered</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @{
-                                        var orderedList = Model.Event.Registrations.OrderBy(r => r.RegisteredAt).ToList();
-                                        int idx = 1;
-
-                                        foreach (var r in orderedList)
+                                        int i = 1;
+                                        foreach (var r in Model.Event.Registrations.OrderBy(r => r.RegisteredAt))
                                         {
                                             <tr>
-                                                <td>@idx</td>
+                                                <td>@i</td>
                                                 <td>
                                                     @if (r.UserImage != null)
                                                     {
                                                         var imgSrc = $"data:{r.UserImageType};base64,{Convert.ToBase64String(r.UserImage)}";
-                                                        <img src="@imgSrc" style="height:50px;width:50px;object-fit:cover;border-radius:6px;" />
+                                                        <img src="@imgSrc" style="height:45px;width:45px;border-radius:6px;object-fit:cover;" />
                                                     }
                                                     else
                                                     {
-                                                        <img src="/images/default-user.png" style="height:50px;width:50px;object-fit:cover;border-radius:6px;" />
+                                                        <img src="/images/default-user.png" style="height:45px;width:45px;border-radius:6px;" />
                                                     }
                                                 </td>
                                                 <td>@r.FullName</td>
                                                 <td>@r.Mobile</td>
                                                 <td>@r.Email</td>
-                                                <td>@r.Gender</td>
                                                 <td>@r.InstituteName</td>
-                                                <td>@r.ClassName</td>
                                                 <td>@(r.WillVolunteer ? "Yes" : "No")</td>
                                                 <td>@r.PaymentMethod</td>
                                                 <td>@r.RegisteredAt.ToLocalTime().ToString("dd MMM yyyy - hh:mm tt")</td>
                                             </tr>
-                                            idx++;
+                                            i++;
                                         }
                                     }
                                 </tbody>
@@ -164,24 +164,49 @@
                     }
                 </div>
             }
-
         </div>
 
-        <!-- RIGHT SIDE -->
+        <!-- RIGHT COLUMN -->
+        <!-- RIGHT COLUMN -->
         <div class="col-lg-4">
 
-            <div class="card p-3 mb-3 shadow-sm">
+            <div class="card p-3 shadow-sm mb-3">
                 <h5 class="fw-bold mb-3">Event Information</h5>
 
                 <p><strong>Venue:</strong> @Model.Event.Venue</p>
+
                 <p><strong>Registered:</strong> @Model.RegisteredCount</p>
 
-                <div id="mapDetail" style="height:220px; border-radius:8px; overflow:hidden;"></div>
+                <p>
+                    <strong>Start:</strong>
+                    @Model.Event.StartDateTime?.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")
+                </p>
+
+                @if (Model.Event.EndDateTime != null)
+                {
+                    <p>
+                        <strong>End:</strong>
+                        @Model.Event.EndDateTime?.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")
+                    </p>
+                }
+
+                <!-- COUNTDOWN -->
+                <div class="mt-3">
+                    <h6 class="fw-bold">Countdown</h6>
+                    <div id="countdownBox" class="p-2 border rounded bg-light">
+                        <span id="days" class="fw-bold fs-5 text-primary">0</span> Days
+                        <span id="hours" class="fw-bold fs-5 text-success">0</span> Hours
+                        <span id="minutes" class="fw-bold fs-5 text-warning">0</span> Min
+                        <span id="seconds" class="fw-bold fs-5 text-danger">0</span> Sec
+                    </div>
+                </div>
+
+                <!-- MAP -->
+                <div id="mapDetail" style="height:220px;border-radius:8px;" class="mt-3"></div>
             </div>
 
-            <!-- REGISTRATION FORM -->
             <div class="card p-3 shadow-sm">
-                <h5 class="fw-bold mb-3">Register</h5>
+                <h5 class="fw-bold mb-3">Register Now</h5>
                 @await Html.PartialAsync("_RegistrationForm", Model.Event)
             </div>
 
@@ -191,47 +216,66 @@
 </div>
 
 @section Scripts {
+
     <script src="~/js/events.js"></script>
+    <script src="~/js/registration.js"></script>
 
-    <!-- Countdown -->
+    <!-- COUNTDOWN SCRIPT -->
     <script>
-        function initCountdown(start) {
-            const eventTime = new Date(start).getTime();
-            const timer = setInterval(() => {
-                const now = new Date().getTime();
-                const diff = eventTime - now;
+        document.addEventListener("DOMContentLoaded", function () {
 
-                if (diff <= 0) {
-                    document.getElementById("countdown").innerHTML = "<span class='text-success'>🎉 Event Started</span>";
-                    clearInterval(timer);
+            // Convert C# DateTime → JS Date
+            var startTime = new Date("@Model.Event.StartDateTime?.ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss")").getTime();
+
+            function updateCountdown() {
+                var now = new Date().getTime();
+                var distance = startTime - now;
+
+                if (distance <= 0) {
+                    document.getElementById("countdownBox").innerHTML =
+                        "<span class='text-danger fw-bold'>Event has started!</span>";
                     return;
                 }
 
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                var d = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var s = Math.floor((distance % (1000 * 60)) / 1000);
 
-                document.getElementById("countdown").innerHTML =
-                    `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
-            }, 1000);
-        }
+                document.getElementById("days").innerText = d;
+                document.getElementById("hours").innerText = h;
+                document.getElementById("minutes").innerText = m;
+                document.getElementById("seconds").innerText = s;
+            }
 
-        initCountdown('@Model.Event.StartDateTime?.ToString("o")');
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        });
+    </script>
 
-        // Google Maps Frame
-        function loadMap(lat, lng) {
-            document.getElementById("mapDetail").innerHTML =
-                `<iframe width="100%" height="220" style="border:0;border-radius:8px;"
+    <!-- GOOGLE MAP -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var lat = "@Model.Event.Latitude";
+            var lng = "@Model.Event.Longitude";
+
+            if (!lat || !lng || lat === "null" || lng === "null") {
+                document.getElementById("mapDetail").innerHTML =
+                    "<div class='text-muted text-center p-3'>Location not set</div>";
+                return;
+            }
+
+            var mapFrame = `
+                <iframe width="100%" height="220" style="border:0;border-radius:8px;"
                         loading="lazy" allowfullscreen
-                        src="https://www.google.com/maps?q=${lat},${lng}&hl=en&z=17&t=k&output=embed">
-                 </iframe>`;
-        }
+                        referrerpolicy="no-referrer-when-downgrade"
+                        src="https://www.google.com/maps?q=${lat},${lng}&z=16&output=embed">
+                </iframe>`;
 
-        var lat = "@Model.Event.Latitude";
-        var lng = "@Model.Event.Longitude";
-        if (lat && lng && lat !== "null" && lng !== "null") {
-            loadMap(lat, lng);
-        }
+            document.getElementById("mapDetail").innerHTML = mapFrame;
+
+        });
     </script>
 }
+

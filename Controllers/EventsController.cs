@@ -1,13 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using ClosedXML.Excel;
 using CSS.Data;
 using CSS.Models;
 using CSS.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace CSS.Controllers
 {
@@ -22,9 +25,9 @@ namespace CSS.Controllers
             _logger = logger;
         }
 
-        // =================================================
-        // EXPORT REGISTRATIONS
-        // =================================================
+        // =====================================================================
+        // EXPORT EXCEL
+        // =====================================================================
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ExportRegistrationsExcel(int id)
         {
@@ -32,7 +35,8 @@ namespace CSS.Controllers
                 .Include(e => e.Registrations)
                 .FirstOrDefaultAsync(e => e.Id == id);
 
-            if (ev == null) return NotFound();
+            if (ev == null)
+                return NotFound();
 
             using var wb = new XLWorkbook();
             var ws = wb.Worksheets.Add("Registrations");
@@ -42,8 +46,8 @@ namespace CSS.Controllers
             ws.Cell(1, 3).Value = "Email";
             ws.Cell(1, 4).Value = "Gender";
             ws.Cell(1, 5).Value = "Institute";
-            ws.Cell(1, 6).Value = "Class";
-            ws.Cell(1, 7).Value = "Volunteer?";
+            ws.Cell(1, 6).Value = "Class/Year";
+            ws.Cell(1, 7).Value = "Volunteer";
             ws.Cell(1, 8).Value = "Why Join";
             ws.Cell(1, 9).Value = "Payment Method";
             ws.Cell(1, 10).Value = "Registered At";
@@ -60,7 +64,7 @@ namespace CSS.Controllers
                 ws.Cell(r, 7).Value = x.WillVolunteer ? "Yes" : "No";
                 ws.Cell(r, 8).Value = x.WhyJoin;
                 ws.Cell(r, 9).Value = x.PaymentMethod;
-                ws.Cell(r, 10).Value = x.RegisteredAt.ToString("yyyy-MM-dd HH:mm");
+                ws.Cell(r, 10).Value = x.RegisteredAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
                 r++;
             }
 
@@ -72,36 +76,59 @@ namespace CSS.Controllers
                 $"Event_{ev.Id}_Registrations.xlsx");
         }
 
-        // =================================================
-        // INDEX
-        // =================================================
+        // =====================================================================
+        // EVENT LIST  ✔ FIXED — IMAGE LOADING ENABLED
+        // =====================================================================
         public async Task<IActionResult> Index(string? category)
         {
             var now = DateTime.UtcNow;
 
+            // Load Banner Images
             var all = await _db.Events
-                .Include(e => e.Images)
                 .Where(e => e.IsPublished)
                 .OrderBy(e => e.StartDateTime)
+                .Select(e => new Event
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    ShortDescription = e.ShortDescription,
+                    FullDescription = e.FullDescription,
+                    Venue = e.Venue,
+                    StartDateTime = e.StartDateTime,
+                    EndDateTime = e.EndDateTime,
+                    Tag = e.Tag,
+                    Price = e.Price,
+                    IsFeatured = e.IsFeatured,
+
+                    // IMAGE FIX (required)
+                    BannerImage = e.BannerImage,
+                    BannerImageType = e.BannerImageType
+                })
+                .AsNoTracking()
                 .ToListAsync();
 
-            var featured = all.Where(e => e.IsFeatured && (e.StartDateTime ?? DateTime.MaxValue) >= now).ToList();
-            var upcoming = all.Where(e => (e.StartDateTime ?? DateTime.MaxValue) >= now).ToList();
-            var past = all.Where(e => (e.StartDateTime ?? DateTime.MinValue) < now)
-                          .OrderByDescending(e => e.StartDateTime)
-                          .ToList();
-
+            // Category list
             var categories = all
                 .SelectMany(e => (e.Tag ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries))
                 .Select(t => t.Trim())
                 .Distinct()
                 .ToList();
 
+            // Filter
             if (!string.IsNullOrEmpty(category))
             {
-                upcoming = upcoming.Where(e => (e.Tag ?? "").Contains(category, StringComparison.OrdinalIgnoreCase)).ToList();
-                past = past.Where(e => (e.Tag ?? "").Contains(category, StringComparison.OrdinalIgnoreCase)).ToList();
+                all = all
+                    .Where(e => (e.Tag ?? "")
+                    .Contains(category, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
             }
+
+            // Groups
+            var featured = all.Where(e => e.IsFeatured && e.StartDateTime >= now).ToList();
+            var upcoming = all.Where(e => e.StartDateTime >= now).ToList();
+            var past = all.Where(e => e.StartDateTime < now)
+                          .OrderByDescending(e => e.StartDateTime)
+                          .ToList();
 
             return View(new EventListVM
             {
@@ -113,9 +140,9 @@ namespace CSS.Controllers
             });
         }
 
-        // =================================================
-        // DETAILS
-        // =================================================
+        // =====================================================================
+        // EVENT DETAILS
+        // =====================================================================
         public async Task<IActionResult> Details(int id)
         {
             var ev = await _db.Events
@@ -133,18 +160,32 @@ namespace CSS.Controllers
             });
         }
 
-        // =================================================
-        // REGISTER
-        // =================================================
+        // =====================================================================
+        // FREE EVENT REGISTRATION
+        // =====================================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(int eventId, string FullName, string Mobile, string? Email,
-            string? Gender, string? InstituteName, string? ClassName, string? WhyJoin,
-            string? PaymentMethod, bool WillVolunteer, IFormFile? UserImage)
+        public async Task<IActionResult> Register(
+            int eventId, string FullName, string Mobile,
+            string? Email, string? Gender, string? InstituteName, string? ClassName,
+            string? WhyJoin, string? PaymentMethod, bool WillVolunteer, IFormFile? UserImage)
         {
             var ev = await _db.Events.FindAsync(eventId);
             if (ev == null) return NotFound();
 
+            // Duplicate check
+            var already = await _db.EventRegistrations
+                .AnyAsync(r => r.EventId == eventId &&
+                               (r.Mobile == Mobile ||
+                                (!string.IsNullOrWhiteSpace(Email) && r.Email == Email)));
+
+            if (already)
+            {
+                TempData["Error"] = "This mobile number or email is already registered for this event.";
+                return RedirectToAction("Details", new { id = eventId });
+            }
+
+            // Create registration
             var reg = new EventRegistration
             {
                 EventId = eventId,
@@ -157,6 +198,7 @@ namespace CSS.Controllers
                 WhyJoin = WhyJoin,
                 PaymentMethod = PaymentMethod,
                 WillVolunteer = WillVolunteer,
+                RegisteredAt = DateTime.UtcNow,
                 UserId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
             };
 
@@ -171,13 +213,13 @@ namespace CSS.Controllers
             _db.EventRegistrations.Add(reg);
             await _db.SaveChangesAsync();
 
-            TempData["Registered"] = "Registration successful!";
+            TempData["Registered"] = "Registration completed successfully!";
             return RedirectToAction("Details", new { id = eventId });
         }
 
-        // =================================================
-        // CREATE
-        // =================================================
+        // =====================================================================
+        // CREATE EVENT
+        // =====================================================================
         [Authorize(Roles = "Admin")]
         public IActionResult Create() => View(new EventCreateVM());
 
@@ -205,7 +247,8 @@ namespace CSS.Controllers
                 ExpectedParticipants = vm.ExpectedParticipants,
                 VolunteersNeeded = vm.VolunteersNeeded,
                 IsPublished = vm.IsPublished || true,
-                IsFeatured = vm.IsFeatured
+                IsFeatured = vm.IsFeatured,
+                Price = vm.Price ?? 0
             };
 
             if (vm.BannerImage != null)
@@ -219,12 +262,14 @@ namespace CSS.Controllers
             _db.Events.Add(ev);
             await _db.SaveChangesAsync();
 
+            // Gallery
             if (vm.GalleryImages != null)
             {
                 foreach (var file in vm.GalleryImages)
                 {
                     using var ms = new MemoryStream();
                     await file.CopyToAsync(ms);
+
                     _db.EventImages.Add(new EventImage
                     {
                         EventId = ev.Id,
@@ -239,9 +284,9 @@ namespace CSS.Controllers
             return RedirectToAction("Index");
         }
 
-        // =================================================
-        // EDIT
-        // =================================================
+        // =====================================================================
+        // EDIT EVENT
+        // =====================================================================
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -265,8 +310,9 @@ namespace CSS.Controllers
                 ContactPhone = ev.ContactPhone,
                 ExpectedParticipants = ev.ExpectedParticipants,
                 VolunteersNeeded = ev.VolunteersNeeded,
-                IsPublished = ev.IsPublished || true,
-                IsFeatured = ev.IsFeatured
+                IsPublished = ev.IsPublished,
+                IsFeatured = ev.IsFeatured,
+                Price = ev.Price
             });
         }
 
@@ -297,6 +343,7 @@ namespace CSS.Controllers
             ev.VolunteersNeeded = vm.VolunteersNeeded;
             ev.IsPublished = vm.IsPublished || true;
             ev.IsFeatured = vm.IsFeatured;
+            ev.Price = vm.Price ?? 0;
 
             if (vm.BannerImage != null)
             {
@@ -312,9 +359,9 @@ namespace CSS.Controllers
             return RedirectToAction("Index");
         }
 
-        // =================================================
-        // DELETE
-        // =================================================
+        // =====================================================================
+        // DELETE EVENT
+        // =====================================================================
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
@@ -327,8 +374,12 @@ namespace CSS.Controllers
 
             if (ev == null) return NotFound();
 
-            _db.EventImages.RemoveRange(ev.Images);
-            _db.EventRegistrations.RemoveRange(ev.Registrations);
+            if (ev.Images.Any())
+                _db.EventImages.RemoveRange(ev.Images);
+
+            if (ev.Registrations.Any())
+                _db.EventRegistrations.RemoveRange(ev.Registrations);
+
             _db.Events.Remove(ev);
             await _db.SaveChangesAsync();
 

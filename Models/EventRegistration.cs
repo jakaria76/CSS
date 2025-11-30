@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CSS.Models
 {
     public class EventRegistration
     {
+        [Key]
         public int Id { get; set; }
 
         [Required]
         public int EventId { get; set; }
         public Event Event { get; set; } = null!;
 
-        // BASIC INFO
         [Required]
         public string FullName { get; set; } = "";
 
@@ -25,14 +26,18 @@ namespace CSS.Models
 
         public bool WillVolunteer { get; set; }
         public string? WhyJoin { get; set; }
+
         public string? PaymentMethod { get; set; }
 
-        // IMAGE
         public byte[]? UserImage { get; set; }
         public string? UserImageType { get; set; }
+        public string? UserImagePath { get; set; }
 
         public string? UserId { get; set; }
 
         public DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
+
+        // Related payments
+        public ICollection<PaymentTransaction> Payments { get; set; } = new List<PaymentTransaction>();
     }
 }

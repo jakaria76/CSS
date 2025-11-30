@@ -12,16 +12,27 @@
         @Html.AntiForgeryToken()
         <input type="hidden" name="Id" value="@Model.Id" />
 
+        <!-- Title -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Title</label>
             <input class="form-control" name="Title" required value="@Model.Title" />
         </div>
 
+        <!-- TAG -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Tag (comma separated)</label>
             <input class="form-control" name="Tag" value="@Model.Tag" placeholder="Science, Workshop, Seminar" />
         </div>
 
+        <!-- PRICE -->
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Price (BDT)</label>
+            <input type="number" step="0.01" class="form-control" name="Price"
+                   placeholder="e.g 200"
+                   value="@(Model.Price?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "0")" />
+        </div>
+
+        <!-- DATE & TIME -->
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label fw-semibold">Start Date & Time</label>
@@ -36,11 +47,13 @@
             </div>
         </div>
 
+        <!-- VENUE -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Venue</label>
             <input class="form-control" name="Venue" value="@Model.Venue" />
         </div>
 
+        <!-- LAT & LNG -->
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label fw-semibold">Latitude</label>
@@ -55,7 +68,7 @@
             </div>
         </div>
 
-        <!-- GOOGLE MAP -->
+        <!-- GOOGLE MAP PREVIEW -->
         <iframe id="googleMap" class="w-100"
                 style="height:350px;border:0;border-radius:10px;margin-bottom:10px;"
                 loading="lazy" allowfullscreen></iframe>
@@ -64,27 +77,32 @@
             Use My Location
         </button>
 
+        <!-- SHORT DESC -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Short Description</label>
             <input class="form-control" name="ShortDescription" value="@Model.ShortDescription" />
         </div>
 
+        <!-- FULL DESC -->
         <div class="mb-3">
             <label class="form-label fw-semibold">Full Description (HTML allowed)</label>
             <textarea class="form-control" rows="6" name="FullDescription">@Model.FullDescription</textarea>
         </div>
 
+        <!-- IMAGES -->
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label fw-semibold">Banner Image</label>
+                <label class="form-label fw-semibold">Banner Image (optional)</label>
                 <input type="file" class="form-control" name="BannerImage" accept="image/*" />
             </div>
+
             <div class="col-md-6 mb-3">
-                <label class="form-label fw-semibold">Gallery Images</label>
+                <label class="form-label fw-semibold">Gallery Images (optional)</label>
                 <input type="file" class="form-control" name="GalleryImages" multiple accept="image/*" />
             </div>
         </div>
 
+        <!-- OPTIONS -->
         <div class="form-check mb-2">
             <input type="checkbox" class="form-check-input" name="IsPublished" @(Model.IsPublished ? "checked" : "") />
             <label class="form-check-label">Publish</label>
@@ -95,35 +113,25 @@
             <label class="form-check-label">Featured</label>
         </div>
 
-        <button class="btn btn-success px-4 fw-bold" type="submit">Save Event</button>
+        <button class="btn btn-success px-4 fw-bold" type="submit">Save Changes</button>
     </form>
 </div>
 
 @section Scripts {
     <script>
-        var defaultLat = @(Model.Latitude.HasValue
-                    ? Model.Latitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)
-                : "23.8103");
-    var defaultLng = @(Model.Longitude.HasValue
-                ? Model.Longitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)
-                : "90.4125");
+        var defaultLat = @(Model.Latitude?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "23.8103");
+        var defaultLng = @(Model.Longitude?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "90.4125");
 
-    function setMap(lat, lng) {
-        document.getElementById("googleMap").src =
-            `https://www.google.com/maps?q=${lat},${lng}&hl=en&z=18&t=k&output=embed`;
-        document.getElementById("Latitude").value = lat;
-        document.getElementById("Longitude").value = lng;
-    }
+        function setMap(lat, lng) {
+            document.getElementById("googleMap").src =
+                `https://www.google.com/maps?q=${lat},${lng}&hl=en&z=18&t=k&output=embed`;
+            document.getElementById("Latitude").value = lat;
+            document.getElementById("Longitude").value = lng;
+        }
 
-        window.onload = function () {
-            setMap(defaultLat, defaultLng);
-        };
+        window.onload = function () { setMap(defaultLat, defaultLng); };
 
         document.getElementById("btnUseMyLocation").addEventListener("click", function () {
-            if (!navigator.geolocation) {
-                alert("GPS not supported");
-                return;
-            }
             navigator.geolocation.getCurrentPosition(
                 function (pos) { setMap(pos.coords.latitude, pos.coords.longitude); },
                 function () { alert("Unable to detect location"); },

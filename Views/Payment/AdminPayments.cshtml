@@ -1,0 +1,83 @@
+﻿@model List<CSS.Models.PaymentTransaction>
+@{
+    ViewData["Title"] = "Payment Records";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<style>
+    .header-box {
+        background: linear-gradient(to right, #1a237e, #3949ab);
+        padding: 15px;
+        border-radius: 12px;
+        color: white;
+        margin-bottom: 20px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+
+    .badge-success {
+        background: #2e7d32 !important;
+    }
+
+    .badge-failed {
+        background: #c62828 !important;
+    }
+
+    .badge-cancel {
+        background: #ef6c00 !important;
+    }
+
+    .badge-pending {
+        background: #1565c0 !important;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <div class="header-box">
+        <h3 class="m-0"><i class="fa-solid fa-money-check"></i> Payment Records</h3>
+    </div>
+
+    <div class="table-responsive rounded shadow">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="bg-light fw-bold">
+                <tr>
+                    <th>#</th>
+                    <th>Transaction</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>User</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var t in Model)
+                {
+                    string badgeClass = t.Status switch
+                    {
+                        "Success" => "badge-success",
+                        "Successful" => "badge-success",
+                        "Failed" => "badge-failed",
+                        "Cancelled" => "badge-cancel",
+                        _ => "badge-pending"
+                    };
+
+                    <tr>
+                        <td>@t.Id</td>
+                        <td>@t.TranId</td>
+                        <td>৳ @t.Amount @t.Currency</td>
+                        <td><span class="badge @badgeClass">@t.Status</span></td>
+                        <td>
+                            @t.Registration?.FullName<br />
+                            <small class="text-muted">@t.Registration?.Mobile</small>
+                        </td>
+                        <td>@t.CreatedAt.ToLocalTime().ToString("dd MMM yyyy hh:mm tt")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>

@@ -25,9 +25,14 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 // SESSION
 builder.Services.AddSession();
 
-// EMAIL
+// EMAIL SERVICE
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+// AAMARPAY SETTINGS + SERVICE
+builder.Services.Configure<AamarPaySettings>(builder.Configuration.GetSection("AamarPay"));
+builder.Services.AddHttpClient();
+builder.Services.AddTransient<AamarPayService>();
 
 // EXTERNAL LOGIN
 builder.Services.AddAuthentication()
@@ -49,17 +54,19 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+// MIDDLEWARE PIPELINE
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// DEFAULT ROUTE
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// SEED ROLES
+// SEED ROLES & ADMIN USER
 using (var scope = app.Services.CreateScope())
 {
     await SeedData.InitializeAsync(scope.ServiceProvider);
