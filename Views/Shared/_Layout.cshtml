@@ -14,14 +14,14 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-
 </head>
+
 <body>
 
     <!-- ===== NOTICE BAR ===== -->
@@ -49,14 +49,6 @@
     <nav class="navbar navbar-expand-lg custom-navbar-final shadow-sm">
         <div class="container">
 
-
-            <!-- MOBILE: REMOVE TOGGLER -->
-            @* <button class="navbar-toggler text-white d-none d-lg-block" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent">
-                <span class="navbar-toggler-icon"></span>
-            </button> *@
-
-            <!-- MENU -->
             <div class="collapse navbar-collapse show justify-content-center" id="navbarSupportedContent">
                 <ul class="navbar-nav mx-auto text-center nav-menu flex-row flex-nowrap">
 
@@ -156,10 +148,6 @@
                                 <i class="fa-solid fa-right-from-bracket"></i> Logout
                             </button>
                         </li>
-
-
-
-
                     }
 
                     <!-- ADMIN MENU -->
@@ -218,9 +206,9 @@
             <a asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    
 
-    <!-- ===== TOP GOOGLE MAP (OPTIONAL) ===== -->
+
+    <!-- ============ TOP GOOGLE MAP (OPTIONAL) ============ -->
     @{
         var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
         var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
@@ -228,7 +216,6 @@
 
     @if (currentController == "Home" && currentAction == "Index")
     {
-        <!-- ===== TOP GOOGLE MAP (ONLY IN HOME PAGE) ===== -->
         <div class="footer-map-wrapper">
             <iframe class="footer-map"
                     loading="lazy"
@@ -240,41 +227,27 @@
     }
 
 
-
-
-
-    <!-- ============ FOOTER ============ -->
-    <!-- ============ CSS FOOTER ============ -->
-    <!-- 🌟 PREMIUM MODERN FOOTER 🌟 -->
+    <!-- ============ PREMIUM FOOTER ============ -->
     <footer class="footer-section">
-
-        <!-- ===== MAIN FOOTER CONTENT ===== -->
         <div class="container footer-content pt-3 pb-2">
             <div class="row">
 
-                <!-- Column 1 -->
                 <div class="col-lg-4 col-md-6 col-12 mb-2">
                     <h5 class="footer-title">CONSCIOUS STUDENT SOCIETY</h5>
                     <ul class="footer-list">
-                        <li>
-                            <i class="fa-solid fa-envelope"></i> consciousstudentsociety@gmail.com
-                        </li>
-                        
+                        <li><i class="fa-solid fa-envelope"></i> consciousstudentsociety@gmail.com</li>
                         <li><i class="fa-solid fa-phone"></i> +880-1700-000000</li>
                         <li><i class="fa-solid fa-location-dot"></i> Chouhali Rajshahi Bangladesh</li>
                     </ul>
                 </div>
 
-                <!-- Column 2 -->
                 <div class="col-lg-4 col-md-6 col-12 mb-2">
                     <h5 class="footer-title">USEFUL LINKS</h5>
                     <ul class="footer-list">
-                        
                         <li><i class="fa-solid fa-angle-right"></i> সচেতন ছাত্র সমাজ (CSS)</li>
                     </ul>
                 </div>
 
-                <!-- Column 3 -->
                 <div class="col-lg-4 col-md-12 col-12 mb-2">
                     <h5 class="footer-title">FOLLOW US</h5>
 
@@ -290,37 +263,35 @@
                             scrolling="no"
                             frameborder="0"
                             allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                            allowfullscreen="true"></iframe>
+                            allowfullscreen="true">
+                    </iframe>
                 </div>
 
             </div>
         </div>
 
-        <!-- ===== BOTTOM TEXT ===== -->
         <div class="footer-bottom text-center py-2">
             © 2025 — CSS. All Rights Reserved.
         </div>
-
     </footer>
 
     <style>
-        /* MAIN FOOTER */
         .footer-section {
             background: linear-gradient(to bottom right, #102027, #263238);
             color: #e0e0e0;
-            padding-top: 10px; /* Slim */
+            padding-top: 10px;
         }
 
         .footer-title {
             font-size: 18px;
             font-weight: 700;
-            margin-bottom: 10px; /* Reduced */
+            margin-bottom: 10px;
             color: #ffffff;
         }
 
         .footer-list li {
             margin-bottom: 6px;
-            font-size: 14px; /* Smaller */
+            font-size: 14px;
             color: #d0d0d0;
             display: flex;
             align-items: center;
@@ -333,7 +304,7 @@
 
         .footer-social a {
             margin-right: 10px;
-            font-size: 20px; /* Slightly smaller */
+            font-size: 20px;
             color: #ff5252;
             transition: 0.3s;
         }
@@ -349,33 +320,7 @@
             font-size: 13px;
             border-top: 1px solid #37474f;
         }
-
-        /* Mobile Optimization */
-        @@media (max-width: 768px) {
-            .footer-title
-
-        {
-            text-align: center;
-            margin-top: 5px;
-        }
-
-        .footer-list li {
-            justify-content: center;
-        }
-
-        .footer-social {
-            justify-content: center;
-            text-align: center;
-        }
-
-        iframe {
-            margin-top: 8px;
-        }
-
-        }
     </style>
-
-
 
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -384,7 +329,6 @@
 
 
     <!-- Logout Confirmation Popup -->
-
     <script>
         function confirmLogout() {
             Swal.fire({
@@ -396,23 +340,13 @@
                 cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Yes, Logout',
                 cancelButtonText: 'Cancel',
-                backdrop: `
-                    rgba(0,0,0,0.5)
-                    left top
-                    no-repeat
-                `,
-                customClass: {
-                    popup: 'animated fadeInDown faster'
-                }
+                backdrop: `rgba(0,0,0,0.5)`,
             }).then((result) => {
                 if (result.isConfirmed) {
-
-                    // Create form dynamically for logout
                     const form = document.createElement('form');
                     form.method = 'post';
                     form.action = '/Account/Logout';
 
-                    // required for antiforgery token
                     const token = document.querySelector('input[name="__RequestVerificationToken"]');
                     if (token) {
                         const cloned = token.cloneNode();
@@ -426,6 +360,66 @@
             });
         }
     </script>
+
+
+    <!-- ========================= -->
+    <!-- ⭐ BOTPRESS WIDGET + WAKE -->
+    <!-- ========================= -->
+    <!-- 1) Botpress Webchat Script -->
+    <script src="https://cdn.botpress.cloud/webchat/v3.4/inject.js"></script>
+
+    <!-- 2) Latest Botpress Config Script (Replace with your LATEST file) -->
+    <script src="https://files.bpcontent.cloud/2025/11/30/20/20251130202802-QFLDURDA.js" defer></script>
+
+    <!-- 3) Wake Bot (Free plan sleeping fix) -->
+    <script>
+        async function wakeBot() {
+            try {
+                await fetch("https://messaging.botpress.cloud/v1/messages?botId=5eb4089e-2fff-4537-8ca5-5d60ab0c8e49", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        type: "text",
+                        text: "_wake_up_",
+                        userId: "css-wake-user"
+                    })
+                });
+                console.log("Bot awakened!");
+            } catch (e) {
+                console.log("Wake error:", e);
+            }
+        }
+        wakeBot();
+    </script>
+
+    <!-- 4) Botpress INIT (Default Bubble Enabled) -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            window.botpress.init({
+                botId: "5eb4089e-2fff-4537-8ca5-5d60ab0c8e49",
+                clientId: "c0f5b2ad-e64e-49b0-9cb9-a375c7c5ce84",
+
+                theme: "light",
+                themeColor: "#3276EA",
+                disableAnimations: false,
+                disableSound: false,
+
+                // DEFAULT BOTPRESS BUBBLE (ON)
+                disableLauncher: false,
+                hideWidget: false
+            });
+
+        });
+    </script>
+
+
+
+
+
+
+
+
+
 </body>
 </html>
-
