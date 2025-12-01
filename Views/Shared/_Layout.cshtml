@@ -46,153 +46,55 @@
     </header>
 
     <!-- ================= NAVBAR ================= -->
-    <nav class="navbar navbar-expand-lg custom-navbar-final shadow-sm">
-        <div class="container">
+    <nav class="css-navbar">
+        <div class="css-navbar-wrapper">
 
-            <div class="collapse navbar-collapse show justify-content-center" id="navbarSupportedContent">
-                <ul class="navbar-nav mx-auto text-center nav-menu flex-row flex-nowrap">
+            <ul class="css-nav-list">
 
-                    <!-- PUBLIC MENU -->
-                    @if (!User.Identity?.IsAuthenticated ?? false)
-                    {
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Home" asp-action="Index">
-                                <i class="fa-solid fa-house"></i><span>Home</span>
-                            </a>
-                        </li>
+                <!-- PUBLIC MENU -->
+                @if (!User.Identity?.IsAuthenticated ?? false)
+                {
+                    <li class="css-item"><a class="css-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Home" asp-action="About">About</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Committee" asp-action="Index">Committee</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Blood" asp-action="Index">Blood</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Events" asp-action="Index">Events</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Gallery" asp-action="Index">Gallery</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Notice" asp-action="Index">Notice</a></li>
+                    <li class="css-item"><a class="css-link login-color" asp-controller="Account" asp-action="Login">Login</a></li>
+                }
 
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Home" asp-action="About">
-                                <i class="fa-solid fa-circle-info"></i><span>About</span>
-                            </a>
-                        </li>
+                <!-- MEMBER MENU -->
+                @if (User.Identity?.IsAuthenticated ?? false && !User.IsInRole("Admin"))
+                {
+                    <li class="css-item"><a class="css-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Gallery" asp-action="Index">Gallery</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Help" asp-action="Request">Help</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Events" asp-action="Index">Events</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Profile" asp-action="Index">Profile</a></li>
+                    <li class="css-item"><button onclick="confirmLogout()" class="css-link logout-btn">Logout</button></li>
+                }
 
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Committee" asp-action="Index">
-                                <i class="fa-solid fa-users"></i><span>Committee</span>
-                            </a>
-                        </li>
+                <!-- ADMIN MENU -->
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="css-item"><a class="css-link" asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Gallery" asp-action="Index">Gallery</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Blood" asp-action="Index">Blood</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Admin" asp-action="Members">Members</a></li>
+                    <li class="css-item"><a class="css-link" asp-controller="Admin" asp-action="Welfare">Welfare</a></li>
+                    <li class="css-item"><button onclick="confirmLogout()" class="css-link logout-btn">Logout</button></li>
+                }
 
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Blood" asp-action="Index">
-                                <i class="fa-solid fa-droplet"></i><span>Blood</span>
-                            </a>
-                        </li>
+            </ul>
 
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Events" asp-action="Index">
-                                <i class="fa-solid fa-calendar-days"></i><span>Events</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Gallery" asp-action="Index">
-                                <i class="fa-solid fa-image"></i><span>Gallery</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Home" asp-action="Contact">
-                                <i class="fa-solid fa-phone"></i><span>Contact</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Notice" asp-action="Index">
-                                <i class="fa-solid fa-bell"></i><span>Notice</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom login-btn" asp-controller="Account" asp-action="Login">
-                                <i class="fa-solid fa-right-to-bracket"></i><span>Login</span>
-                            </a>
-                        </li>
-                    }
-
-                    <!-- MEMBER MENU -->
-                    @if (User.Identity?.IsAuthenticated ?? false && !User.IsInRole("Admin"))
-                    {
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Home" asp-action="Index">
-                                <i class="fa-solid fa-house"></i><span>Home</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Gallery" asp-action="Index">
-                                <i class="fa-solid fa-image"></i><span>Gallery</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Help" asp-action="Request">
-                                <i class="fa-solid fa-hand-holding-medical"></i><span>Help</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Events" asp-action="Index">
-                                <i class="fa-solid fa-calendar-days"></i><span>Events</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Profile" asp-action="Index">
-                                <i class="fa-solid fa-user"></i><span>Profile</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <button type="button" class="logout-btn" onclick="confirmLogout()">
-                                <i class="fa-solid fa-right-from-bracket"></i> Logout
-                            </button>
-                        </li>
-                    }
-
-                    <!-- ADMIN MENU -->
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Dashboard">
-                                <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Gallery" asp-action="Index">
-                                <i class="fa-solid fa-image"></i><span>Gallery</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Blood" asp-action="Index">
-                                <i class="fa-solid fa-droplet"></i><span>Blood</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Members">
-                                <i class="fa-solid fa-users-gear"></i><span>Members</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <a class="nav-link nav-link-custom" asp-controller="Admin" asp-action="Welfare">
-                                <i class="fa-solid fa-hand-holding-heart"></i><span>Welfare</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item nav-item-custom">
-                            <button type="button" class="logout-btn" onclick="confirmLogout()">
-                                <i class="fa-solid fa-right-from-bracket"></i> Logout
-                            </button>
-                        </li>
-                    }
-                </ul>
-            </div>
         </div>
     </nav>
+
+
+
+
 
 
     <!-- ============ MAIN CONTENT ============ -->
