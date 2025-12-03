@@ -87,11 +87,17 @@
             <img id="preview" class="preview-img" />
 
             <!-- Category -->
+            <!-- Category -->
             <label class="fw-bold mb-1">Category</label>
             <select class="form-select mb-3" name="category" required>
 
                 <option value="">-- Select Category --</option>
 
+                <!-- Static categories -->
+                <option value="class photo">class photo</option>
+                <option value="meeting photo">meeting photo</option>
+
+                <!-- Dynamic categories from DB -->
                 @if (ViewBag.Categories != null)
                 {
                     foreach (var c in ViewBag.Categories)
@@ -100,6 +106,7 @@
                     }
                 }
             </select>
+
 
             <!-- Upload Date -->
             <label class="fw-bold mb-1">Upload Date</label>

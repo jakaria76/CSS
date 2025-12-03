@@ -7,177 +7,67 @@
 
 <div class="container my-4">
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
     <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold">Events</h2>
 
-        <div class="d-flex align-items-center gap-2">
-
-            <select id="categoryFilter" class="form-select d-inline-block w-auto">
+        <div class="d-flex gap-2">
+            <select id="categoryFilter" class="form-select w-auto">
                 <option value="">All</option>
-
                 @foreach (var c in Model.Categories)
                 {
-                    <option value="@c" selected="@(c == Model.SelectedCategory)">
-                        @c
-                    </option>
+                    <option value="@c" selected="@(c == Model.SelectedCategory)">@c</option>
                 }
             </select>
 
             @if (User.IsInRole("Admin"))
             {
-                <a asp-controller="Events" asp-action="Create" class="btn btn-danger ms-2">
-                    <i class="fa-solid fa-plus"></i> Add Event
+                <a asp-controller="Events" asp-action="Create" class="btn btn-danger">
+                    + Add Event
                 </a>
             }
         </div>
     </div>
 
-    <!-- FEATURED -->
-    @if (Model.Featured.Any())
-    {
-        <div id="featuredCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                @for (int i = 0; i < Model.Featured.Count; i++)
-                {
-                    var e = Model.Featured[i];
-
-                    string banner = (e.BannerImage != null && e.BannerImage.Length > 0)
-                    ? $"data:{(string.IsNullOrWhiteSpace(e.BannerImageType) ? "image/jpeg" : e.BannerImageType)};base64,{Convert.ToBase64String(e.BannerImage)}"
-                    : Url.Content("~/images/default-event.jpg");
-
-                    <div class="carousel-item @(i == 0 ? "active" : "")">
-                        <div class="featured-card" style="background-image:url('@banner')">
-                            <div class="featured-content">
-                                <h3>@e.Title</h3>
-                                <p>@e.ShortDescription</p>
-                                <a class="btn btn-light" asp-action="Details" asp-route-id="@e.Id">Details</a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-            </button>
-
-            <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-            </button>
-        </div>
-    }
-
     <!-- UPCOMING -->
     <h4 class="fw-bold mb-3">Upcoming Events</h4>
+    <div class="row g-4">
 
-    <div class="row">
         @foreach (var e in Model.Upcoming)
         {
-            <div class="col-md-4 mb-3">
+            <div class="col-md-4">
                 @await Html.PartialAsync("_EventCard", e)
             </div>
         }
-    </div>
 
-    <!-- PAST -->
-    <h4 class="fw-bold mt-4 mb-3">Past Events</h4>
+    </div>
 
     <!-- PAST EVENTS -->
-    <h4 class="fw-bold mt-4 mb-3">Past Events</h4>
+    <h4 class="fw-bold mt-5 mb-3">Past Events</h4>
+    <div class="row g-4">
 
-    <div class="row">
-        @if (Model.Past == null || !Model.Past.Any())
+        @foreach (var p in Model.Past.Take(8))
         {
-            <p class="text-muted">No past events found.</p>
+            <div class="col-md-4">
+
+                @await Html.PartialAsync("_EventCard", p)
+
+                
+
+            </div>
         }
-        else
-        {
-            foreach (var p in Model.Past.Take(8))
-            {
-                <div class="col-md-4 col-md-3 col-6 mb-3">
 
-                    @{
-                        string src = (p.BannerImage != null && p.BannerImage.Length > 0)
-                        ? $"data:{(string.IsNullOrWhiteSpace(p.BannerImageType) ? "image/jpeg" : p.BannerImageType)};base64,{Convert.ToBase64String(p.BannerImage)}"
-                        : Url.Content("~/images/default-event.jpg");
-                    }
-
-                    <div class="card shadow-sm event-card h-100">
-
-                        <!-- IMAGE -->
-                        <img src="@src"
-                             class="card-img-top"
-                             style="height:150px;object-fit:cover;" />
-
-                        <!-- BODY -->
-                        <div class="card-body">
-
-                            <h5 class="fw-bold">@p.Title</h5>
-
-                            <p class="text-muted small mb-1">
-                                <i class="fa-solid fa-location-dot"></i> @p.Venue <br />
-                                <i class="fa-solid fa-calendar-days"></i>
-                                @(p.StartDateTime?.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt"))
-                            </p>
-
-                            @* PRICE *@
-                            <p class="fw-semibold mb-1">
-                                @if (p.Price > 0)
-                                {
-                                    <span class="badge bg-warning text-dark px-3 py-2">৳ @p.Price</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-success px-3 py-2">Free</span>
-                                }
-                            </p>
-
-                            @* SHORT DESCRIPTION *@
-                            @{
-                                string desc = p.ShortDescription ?? "";
-                                if (desc.Length > 80)
-                                    desc = desc[..80] + "...";
-                            }
-
-                            <p class="text-secondary small">@desc</p>
-
-                            <!-- CLOSED MESSAGE -->
-                            <div class="alert alert-secondary text-center py-1 mt-2 mb-0 fw-bold small">
-                                This event has been closed
-                            </div>
-
-                            <!-- ❌ NO DETAILS BUTTON -->
-                        </div>
-
-                    </div>
-
-                </div>
-            }
-        }
     </div>
-
 
 </div>
 
 @section Scripts {
     <script>
         document.getElementById('categoryFilter').addEventListener('change', function () {
-            const v = this.value;
             const url = new URL(window.location.href);
-
-            if (v) url.searchParams.set('category', v);
+            if (this.value) url.searchParams.set('category', this.value);
             else url.searchParams.delete('category');
-
-            window.location.href = url.toString();
+            window.location.href = url;
         });
     </script>
 }

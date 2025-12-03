@@ -2,7 +2,8 @@
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using System;
+using CSS.Data;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace CSS.Services
@@ -20,11 +21,17 @@ namespace CSS.Services
     public class EmailSender : IEmailSender
     {
         private readonly EmailSettings _settings;
-        public EmailSender(IOptions<EmailSettings> options)
+        private readonly ApplicationDbContext _db;
+
+        public EmailSender(IOptions<EmailSettings> options, ApplicationDbContext db)
         {
             _settings = options.Value;
+            _db = db;
         }
 
+        // ==========================
+        // SEND SINGLE EMAIL (existing)
+        // ==========================
         public async Task SendEmailAsync(string toEmail, string subject, string htmlMessage)
         {
             var message = new MimeMessage();
@@ -45,6 +52,22 @@ namespace CSS.Services
             finally
             {
                 await client.DisconnectAsync(true);
+            }
+        }
+
+        // ==========================
+        // SEND EMAIL TO ALL USERS (new)
+        // ==========================
+        public async Task SendToAllUsers(string subject, string htmlMessage)
+        {
+            var emails = await _db.Users
+                .Where(u => !string.IsNullOrEmpty(u.Email))
+                .Select(u => u.Email)
+                .ToListAsync();
+
+            foreach (var email in emails)
+            {
+                await SendEmailAsync(email, subject, htmlMessage);
             }
         }
     }

@@ -1,10 +1,11 @@
-﻿using System.Security.Claims;
-using CSS.Models;
-using CSS.ViewModels;
+﻿using CSS.Models;
 using CSS.Services;
+using CSS.ViewModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace CSS.Controllers
 {
@@ -22,6 +23,15 @@ namespace CSS.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+        }
+
+
+        [Authorize]
+        public async Task<IActionResult> MakeMeAdmin()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            await _userManager.AddToRoleAsync(user, "Admin");
+            return Content("You are now Admin!");
         }
 
         // =============================
