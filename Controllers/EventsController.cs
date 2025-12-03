@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using ClosedXML.Excel;
 using CSS.Data;
 using CSS.Models;
 using CSS.ViewModels;
+using CSS.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +20,19 @@ namespace CSS.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly ILogger<EventsController> _logger;
+        private readonly IEmailSender _emailSender;
+        private readonly INotificationService _notificationService;
 
-        public EventsController(ApplicationDbContext db, ILogger<EventsController> logger)
+        public EventsController(
+            ApplicationDbContext db,
+            ILogger<EventsController> logger,
+            IEmailSender emailSender,
+            INotificationService notificationService)
         {
             _db = db;
             _logger = logger;
+            _emailSender = emailSender;
+            _notificationService = notificationService;
         }
 
         // =====================================================================
@@ -77,13 +87,12 @@ namespace CSS.Controllers
         }
 
         // =====================================================================
-        // EVENT LIST  ✔ FIXED — IMAGE LOADING ENABLED
+        // EVENT LIST
         // =====================================================================
         public async Task<IActionResult> Index(string? category)
         {
             var now = DateTime.UtcNow;
 
-            // Load Banner Images
             var all = await _db.Events
                 .Where(e => e.IsPublished)
                 .OrderBy(e => e.StartDateTime)
@@ -99,42 +108,34 @@ namespace CSS.Controllers
                     Tag = e.Tag,
                     Price = e.Price,
                     IsFeatured = e.IsFeatured,
-
-                    // IMAGE FIX (required)
                     BannerImage = e.BannerImage,
                     BannerImageType = e.BannerImageType
                 })
                 .AsNoTracking()
                 .ToListAsync();
 
-            // Category list
             var categories = all
-                .SelectMany(e => (e.Tag ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries))
+                .SelectMany(e => (e.Tag ?? "")
+                .Split(',', StringSplitOptions.RemoveEmptyEntries))
                 .Select(t => t.Trim())
                 .Distinct()
+                .OrderBy(t => t)
                 .ToList();
 
-            // Filter
             if (!string.IsNullOrEmpty(category))
             {
                 all = all
                     .Where(e => (e.Tag ?? "")
-                    .Contains(category, StringComparison.OrdinalIgnoreCase))
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Any(t => t.Trim().Equals(category, StringComparison.OrdinalIgnoreCase)))
                     .ToList();
             }
 
-            // Groups
-            var featured = all.Where(e => e.IsFeatured && e.StartDateTime >= now).ToList();
-            var upcoming = all.Where(e => e.StartDateTime >= now).ToList();
-            var past = all.Where(e => e.StartDateTime < now)
-                          .OrderByDescending(e => e.StartDateTime)
-                          .ToList();
-
             return View(new EventListVM
             {
-                Featured = featured,
-                Upcoming = upcoming,
-                Past = past,
+                Featured = all.Where(e => e.IsFeatured && e.StartDateTime >= now).ToList(),
+                Upcoming = all.Where(e => e.StartDateTime >= now).ToList(),
+                Past = all.Where(e => e.StartDateTime < now).OrderByDescending(e => e.StartDateTime).ToList(),
                 Categories = categories,
                 SelectedCategory = category
             });
@@ -173,11 +174,10 @@ namespace CSS.Controllers
             var ev = await _db.Events.FindAsync(eventId);
             if (ev == null) return NotFound();
 
-            // Duplicate check
             var already = await _db.EventRegistrations
                 .AnyAsync(r => r.EventId == eventId &&
                                (r.Mobile == Mobile ||
-                                (!string.IsNullOrWhiteSpace(Email) && r.Email == Email)));
+                               (!string.IsNullOrWhiteSpace(Email) && r.Email == Email)));
 
             if (already)
             {
@@ -185,7 +185,6 @@ namespace CSS.Controllers
                 return RedirectToAction("Details", new { id = eventId });
             }
 
-            // Create registration
             var reg = new EventRegistration
             {
                 EventId = eventId,
@@ -262,7 +261,6 @@ namespace CSS.Controllers
             _db.Events.Add(ev);
             await _db.SaveChangesAsync();
 
-            // Gallery
             if (vm.GalleryImages != null)
             {
                 foreach (var file in vm.GalleryImages)
@@ -279,6 +277,49 @@ namespace CSS.Controllers
                 }
                 await _db.SaveChangesAsync();
             }
+
+            // ===========================================================
+            // SEND EMAIL TO ALL USERS (BACKGROUND MODE → SUPER FAST)
+            // ===========================================================
+            _ = Task.Run(async () =>
+            {
+                var emails = await _db.Users
+                    .Where(u => u.Email != null)
+                    .Select(u => u.Email)
+                    .ToListAsync();
+
+                foreach (var email in emails)
+                {
+                    try
+                    {
+                        await _emailSender.SendEmailAsync(
+                            email,
+                            "New Event Published",
+                            $"A new event '<b>{ev.Title}</b>' has been created."
+                        );
+                    }
+                    catch { }
+                }
+            });
+
+            // ===========================================================
+            // SEND PUSH NOTIFICATION
+            // ===========================================================
+            var payload = JsonSerializer.Serialize(new
+            {
+                notification = new
+                {
+                    title = "New Event Published",
+                    body = ev.Title,
+                    icon = "/images/logo512.png",
+                    data = new
+                    {
+                        url = Url.Action("Details", "Events", new { id = ev.Id }, Request.Scheme)
+                    }
+                }
+            });
+
+            await _notificationService.SendToAllUsersAsync(payload);
 
             TempData["Success"] = "Event created successfully!";
             return RedirectToAction("Index");
@@ -322,7 +363,8 @@ namespace CSS.Controllers
         [ActionName("Edit")]
         public async Task<IActionResult> EditPost(EventCreateVM vm)
         {
-            var ev = await _db.Events.Include(e => e.Images)
+            var ev = await _db.Events
+                .Include(e => e.Images)
                 .FirstOrDefaultAsync(e => e.Id == vm.Id);
 
             if (ev == null) return NotFound();
@@ -355,6 +397,45 @@ namespace CSS.Controllers
 
             await _db.SaveChangesAsync();
 
+            // BACKGROUND EMAIL
+            _ = Task.Run(async () =>
+            {
+                var emails = await _db.Users
+                    .Where(u => u.Email != null)
+                    .Select(u => u.Email)
+                    .ToListAsync();
+
+                foreach (var email in emails)
+                {
+                    try
+                    {
+                        await _emailSender.SendEmailAsync(
+                            email,
+                            "Event Updated",
+                            $"The event '<b>{ev.Title}</b>' has been updated."
+                        );
+                    }
+                    catch { }
+                }
+            });
+
+            // PUSH
+            var payload = JsonSerializer.Serialize(new
+            {
+                notification = new
+                {
+                    title = "Event Updated",
+                    body = ev.Title,
+                    icon = "/images/logo512.png",
+                    data = new
+                    {
+                        url = Url.Action("Details", "Events", new { id = ev.Id }, Request.Scheme)
+                    }
+                }
+            });
+
+            await _notificationService.SendToAllUsersAsync(payload);
+
             TempData["Success"] = "Event updated successfully!";
             return RedirectToAction("Index");
         }
@@ -385,6 +466,31 @@ namespace CSS.Controllers
 
             TempData["Success"] = "Event deleted successfully!";
             return RedirectToAction("Index");
+        }
+
+        // =====================================================================
+        // TEST PUSH
+        // =====================================================================
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> TestPush()
+        {
+            var payload = JsonSerializer.Serialize(new
+            {
+                notification = new
+                {
+                    title = "🔔 Test Notification",
+                    body = "This is a test push notification!",
+                    icon = "/images/logo512.png",
+                    data = new
+                    {
+                        url = Url.Action("Index", "Events", null, Request.Scheme)
+                    }
+                }
+            });
+
+            await _notificationService.SendToAllUsersAsync(payload);
+
+            return Content("Test Push Notification Sent!");
         }
     }
 }

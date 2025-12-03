@@ -3,14 +3,19 @@ using CSS.Models;
 using CSS.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// =====================================================================
 // DATABASE
+// =====================================================================
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// IDENTITY (Relax Password Rules)
+// =====================================================================
+// IDENTITY (Relaxed Password Rules)
+// =====================================================================
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
@@ -22,19 +27,37 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+// =====================================================================
 // SESSION
+// =====================================================================
 builder.Services.AddSession();
 
+// =====================================================================
 // EMAIL SERVICE
+// =====================================================================
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-// AAMARPAY SETTINGS + SERVICE
+// =====================================================================
+// WEB PUSH NOTIFICATION (VAPID SETTINGS)
+// =====================================================================
+builder.Services.Configure<VapidSettings>(builder.Configuration.GetSection("Vapid"));
+builder.Services.AddSingleton(sp =>
+    sp.GetRequiredService<IOptions<VapidSettings>>().Value);
+
+builder.Services.AddScoped<INotificationService, WebPushNotificationService>();
+
+// =====================================================================
+// PAYMENT SERVICE (AamarPay)
+// =====================================================================
 builder.Services.Configure<AamarPaySettings>(builder.Configuration.GetSection("AamarPay"));
 builder.Services.AddHttpClient();
 builder.Services.AddTransient<AamarPayService>();
 
-// EXTERNAL LOGIN
+
+// =====================================================================
+// AUTHENTICATION - OAUTH LOGIN
+// =====================================================================
 builder.Services.AddAuthentication()
     .AddGoogle(options =>
     {
@@ -49,27 +72,56 @@ builder.Services.AddAuthentication()
         options.Fields.Add("email");
     });
 
-// MVC
+// =====================================================================
+// MVC SUPPORT
+// =====================================================================
 builder.Services.AddControllersWithViews();
+
+// =====================================================================
+// CORS SETTINGS
+// =====================================================================
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
+// =====================================================================
 // MIDDLEWARE PIPELINE
+// =====================================================================
 app.UseStaticFiles();
+
 app.UseRouting();
+
+app.UseCors("AllowAll");
+
 app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
+// =====================================================================
 // DEFAULT ROUTE
+// =====================================================================
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// SEED ROLES & ADMIN USER
+// =====================================================================
+// SEED ADMIN + ROLES
+// =====================================================================
 using (var scope = app.Services.CreateScope())
 {
     await SeedData.InitializeAsync(scope.ServiceProvider);
 }
 
+// =====================================================================
+// RUN APPLICATION
+// =====================================================================
 app.Run();

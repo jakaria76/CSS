@@ -1,24 +1,67 @@
-﻿using CSS.Models;
-using CSS.ViewModels;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CSS.Data;
+using Microsoft.AspNetCore.Identity;
+using CSS.Models;
+using CSS.ViewModels;
 
 namespace CSS.Controllers
 {
+    [Authorize]
     public class ProfileController : Controller
     {
+        private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWebHostEnvironment _env;
 
-        public ProfileController(UserManager<ApplicationUser> userManager, IWebHostEnvironment env)
+        public ProfileController(
+            ApplicationDbContext db,
+            UserManager<ApplicationUser> userManager,
+            IWebHostEnvironment env)
         {
+            _db = db;
             _userManager = userManager;
             _env = env;
         }
 
-        // ==========================
+        // ===========================================================
+        // SAVE PUSH SUBSCRIPTION (Web Push)
+        // ===========================================================
+        public class PushSubscriptionModel
+        {
+            public string endpoint { get; set; } = "";
+            public PushKeys keys { get; set; } = new PushKeys();
+        }
+
+        public class PushKeys
+        {
+            public string p256dh { get; set; } = "";
+            public string auth { get; set; } = "";
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> SaveSubscription([FromBody] PushSubscriptionModel model)
+        {
+            if (model == null || string.IsNullOrWhiteSpace(model.endpoint))
+                return BadRequest("Invalid subscription.");
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            user.PushEndpoint = model.endpoint;
+            user.PushP256dh = model.keys?.p256dh;
+            user.PushAuth = model.keys?.auth;
+
+            _db.Users.Update(user);
+            await _db.SaveChangesAsync();
+
+            return Ok(new { message = "Subscription saved." });
+        }
+
+        // ===========================================================
         // SHOW LOGGED-IN PROFILE
-        // ==========================
+        // ===========================================================
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -27,9 +70,9 @@ namespace CSS.Controllers
             return View(user);
         }
 
-        // ==========================
+        // ===========================================================
         // VIEW PUBLIC PROFILE /Profile/View/{id}
-        // ==========================
+        // ===========================================================
         [HttpGet]
         public async Task<IActionResult> View(string id)
         {
@@ -41,12 +84,11 @@ namespace CSS.Controllers
                 return NotFound();
 
             return View("Index", user);
-            // If you want a separate page -> create View.cshtml
         }
 
-        // ==========================
+        // ===========================================================
         // EDIT PROFILE — GET
-        // ==========================
+        // ===========================================================
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
@@ -120,14 +162,13 @@ namespace CSS.Controllers
             return View(vm);
         }
 
-        // ==========================
+        // ===========================================================
         // EDIT PROFILE — POST
-        // ==========================
+        // ===========================================================
         [HttpPost]
         public async Task<IActionResult> Edit(ProfileVM model)
         {
             var user = await _userManager.FindByIdAsync(model.Id);
-
             if (user == null) return RedirectToAction("Login", "Account");
 
             // BASIC
@@ -177,13 +218,11 @@ namespace CSS.Controllers
             user.FutureGoals = model.FutureGoals;
             user.Hobbies = model.Hobbies;
 
-            // SOCIAL
+            // SOCIAL LINKS
             user.Facebook = model.Facebook;
             user.PortfolioWebsite = model.PortfolioWebsite;
 
-            // =====================================
-            // LOCATION SAVE + DMS CONVERT
-            // =====================================
+            // LOCATION SAVE
             user.Latitude = model.Latitude;
             user.Longitude = model.Longitude;
 
@@ -193,14 +232,11 @@ namespace CSS.Controllers
                     $"{ConvertToDms(model.Latitude.Value, true)} {ConvertToDms(model.Longitude.Value, false)}";
             }
 
-            // ==========================
             // IMAGE UPLOAD
-            // ==========================
             if (model.ImageFile != null)
             {
                 using var ms = new MemoryStream();
                 await model.ImageFile.CopyToAsync(ms);
-
                 user.ProfileImageData = ms.ToArray();
 
                 string folder = Path.Combine(_env.WebRootPath, "profiles");
@@ -222,9 +258,9 @@ namespace CSS.Controllers
             return RedirectToAction("Index");
         }
 
-        // ================================
-        // HELPER: Decimal → DMS Convert
-        // ================================
+        // ===========================================================
+        // HELPER: Convert Decimal → DMS (for map coordinate display)
+        // ===========================================================
         private string ConvertToDms(double coordinate, bool isLatitude)
         {
             var abs = Math.Abs(coordinate);
@@ -233,12 +269,9 @@ namespace CSS.Controllers
             var minutes = Math.Floor(minutesRaw);
             var seconds = Math.Round((minutesRaw - minutes) * 60, 2);
 
-            string direction;
-
-            if (isLatitude)
-                direction = coordinate >= 0 ? "N" : "S";
-            else
-                direction = coordinate >= 0 ? "E" : "W";
+            string direction =
+                isLatitude ? (coordinate >= 0 ? "N" : "S") :
+                             (coordinate >= 0 ? "E" : "W");
 
             return $"{degrees}°{minutes}'{seconds}\"{direction}";
         }

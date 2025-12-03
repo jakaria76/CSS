@@ -28,7 +28,7 @@ namespace CSS.Models
         // BLOOD / DONATION
         public string? BloodGroup { get; set; }
         public DateTime? LastDonationDate { get; set; }
-        public DateTime? NextAvailableDonationDate { get; set; } // Auto: Last + 90 days
+        public DateTime? NextAvailableDonationDate { get; set; }
         public string? DonationEligibility { get; set; }
         public int? TotalDonationCount { get; set; }
         public string? PreferredDonationLocation { get; set; }
@@ -74,5 +74,14 @@ namespace CSS.Models
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public string? LocationDms { get; set; }
+
+        // ================================
+        // 🔥 PUSH NOTIFICATION — WEB PUSH
+        // ================================
+        public string? PushEndpoint { get; set; }
+        public string? PushP256dh { get; set; }
+        public string? PushAuth { get; set; }
+
+        
     }
 }

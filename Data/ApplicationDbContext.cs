@@ -15,6 +15,7 @@ namespace CSS.Data
         public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
         public DbSet<GalleryImage> GalleryImages { get; set; }
 
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -40,7 +41,7 @@ namespace CSS.Data
                 .HasForeignKey(p => p.RegistrationId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // ========== UNIQUE INDEX (Prevent Duplicate Registration Same Event Same Mobile) ==========
+            // UNIQUE INDEX (Prevent Duplicate Registration)
             builder.Entity<EventRegistration>()
                 .HasIndex(r => new { r.EventId, r.Mobile })
                 .IsUnique()
