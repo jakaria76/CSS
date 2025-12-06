@@ -1,0 +1,150 @@
+﻿@model CSS.Models.WhatWeDoItem
+@{
+    ViewData["Title"] = "Delete Activity";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+
+    body {
+        background: linear-gradient(135deg, #ffe6e6, #fff9f9);
+        min-height: 100vh;
+    }
+
+    .delete-card {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        border-radius: 18px;
+        padding: 25px;
+        border: 1px solid rgba(255,255,255,0.3);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        animation: fadeIn 0.35s ease-out;
+        max-width: 750px;
+        margin: auto;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .del-title {
+        font-size: 30px;
+        font-weight: 700;
+        color: #dc3545;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .warning-msg {
+        font-size: 18px;
+        font-weight: 500;
+        color: #b30000;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .activity-img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    }
+
+    .activity-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #003c8f;
+        margin-top: 10px;
+    }
+
+    .activity-desc {
+        font-size: 16px;
+        color: #444;
+        margin-top: 10px;
+    }
+
+    .btn-danger, .btn-secondary {
+        padding: 8px 18px;
+        font-size: 16px;
+    }
+
+    /* Mobile adjustments */
+    @@media(max - width: 576px)
+
+    {
+        .del-title
+
+    {
+        font-size: 24px;
+    }
+
+    .warning-msg {
+        font-size: 16px;
+    }
+
+    .activity-img {
+        height: 180px;
+    }
+
+    }
+</style>
+
+
+<div class="container py-5">
+
+    <div class="delete-card">
+
+        <div class="del-title">
+            <i class="bi bi-exclamation-triangle-fill"></i> Delete Activity
+        </div>
+
+        <div class="warning-msg">
+            Are you sure you want to delete this activity?
+        </div>
+
+        <div class="row g-3">
+
+            <!-- Activity Image -->
+            <div class="col-md-5">
+                <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ImageData)"
+                     class="activity-img" />
+            </div>
+
+            <!-- Activity Text -->
+            <div class="col-md-7">
+                <div class="activity-title">@Model.Title</div>
+                <div class="activity-desc">@Model.Description</div>
+            </div>
+
+        </div>
+
+        <!-- Form Section -->
+        <form asp-action="Delete" method="post" class="text-center mt-4">
+            <input type="hidden" asp-for="Id" />
+
+            <button class="btn btn-danger">
+                <i class="bi bi-trash-fill"></i> Confirm Delete
+            </button>
+
+            <a asp-action="Index" class="btn btn-secondary ms-2">
+                <i class="bi bi-x-circle"></i> Cancel
+            </a>
+        </form>
+
+    </div>
+
+</div>

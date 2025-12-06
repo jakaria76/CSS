@@ -1,0 +1,133 @@
+﻿@model CSS.Models.WhatWeDoItem
+
+@{
+    ViewData["Title"] = "What We Do - Details";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+
+    body {
+        background: linear-gradient(135deg, #e7efff, #f7fbff);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* HERO BANNER */
+    .banner {
+        background: url('/images/banner.jpg') center/cover no-repeat;
+        height: 260px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-shadow: 0 3px 8px rgba(0,0,0,0.5);
+    }
+
+        .banner::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(3px);
+        }
+
+    .banner-title {
+        position: relative;
+        z-index: 2;
+        font-size: 34px;
+        font-weight: 800;
+    }
+
+    /* Glass Card */
+    .glass-card {
+        background: rgba(255,255,255,0.35);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid rgba(255,255,255,0.3);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+        animation: fadeIn .45s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* IMAGE */
+    .work-img {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: 0 6px 22px rgba(0,0,0,0.25);
+        margin-bottom: 20px;
+    }
+
+    /* TEXT */
+    .work-title {
+        font-size: 30px;
+        font-weight: 800;
+        color: #003c8f;
+    }
+
+    .work-desc {
+        font-size: 17px;
+        line-height: 1.8;
+        text-align: justify;
+        color: #444;
+    }
+
+    @@media(max-width: 768px) {
+        .work-img {
+            height: 260px;
+        }
+
+        .work-title {
+            font-size: 24px;
+        }
+    }
+
+</style>
+
+
+<!-- HERO SECTION -->
+<div class="banner">
+    <h1 class="banner-title">What We Do</h1>
+</div>
+
+
+<div class="container py-5">
+
+    <div class="glass-card">
+
+        <!-- Image -->
+        <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ImageData)"
+             class="work-img" />
+
+        <!-- Title -->
+        <h2 class="work-title">@Model.Title</h2>
+
+        <!-- Description -->
+        <p class="work-desc mt-3">
+            @Model.Description
+        </p>
+
+        <!-- Back Button -->
+        <a asp-action="Index" class="btn btn-secondary mt-3 px-4">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+
+    </div>
+
+</div>

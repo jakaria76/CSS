@@ -1,0 +1,172 @@
+﻿@model CSS.Models.Advisor
+
+@{
+    ViewData["Title"] = "Add Advisor";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+
+    body {
+        background: linear-gradient(135deg, #e6f0ff, #faffff);
+        min-height: 100vh;
+    }
+
+    .create-card {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 30px;
+        border: 1px solid rgba(255,255,255,0.3);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+        max-width: 800px;
+        margin: auto;
+        animation: fadeIn .4s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .page-title {
+        font-size: 30px;
+        font-weight: 800;
+        color: #0d6efd;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #003c8f;
+    }
+
+    .preview-img {
+        height: 140px;
+        width: 140px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        display: none;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    .btn-primary, .btn-secondary {
+        padding: 8px 22px;
+        font-size: 16px;
+    }
+
+    @@media(max - width: 576px)
+
+    {
+        .create-card
+
+    {
+        padding: 20px;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+
+    .preview-img {
+        height: 120px;
+        width: 120px;
+    }
+
+    }
+</style>
+
+
+<div class="container py-5">
+
+    <div class="create-card">
+
+        <h2 class="page-title">
+            <i class="bi bi-person-plus-fill"></i> Add Advisor
+        </h2>
+
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+            <!-- Name -->
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" placeholder="Enter advisor name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <!-- Role -->
+            <div class="mb-3">
+                <label asp-for="Role" class="form-label"></label>
+                <input asp-for="Role" class="form-control" placeholder="Enter role" />
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+
+            <!-- Bio -->
+            <div class="mb-3">
+                <label asp-for="Bio" class="form-label"></label>
+                <textarea asp-for="Bio" class="form-control" rows="4"
+                          placeholder="Short advisor biography"></textarea>
+                <span asp-validation-for="Bio" class="text-danger"></span>
+            </div>
+
+            <!-- Photo -->
+            <div class="mb-3">
+                <label class="form-label">Photo</label>
+                <input type="file" name="ImageFile" accept="image/*"
+                       class="form-control" id="imageInput" />
+
+                <!-- Live Preview -->
+                <img id="previewImage" class="preview-img mt-3" />
+                <span asp-validation-for="ImageData" class="text-danger"></span>
+            </div>
+
+            <!-- Buttons -->
+            <div class="text-end mt-4">
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Save
+                </button>
+
+                <a asp-action="Index" class="btn btn-secondary ms-2">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        // Live Photo Preview
+        const fileInput = document.getElementById("imageInput");
+        const preview = document.getElementById("previewImage");
+
+        fileInput.addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = "block";
+            }
+        });
+    </script>
+}

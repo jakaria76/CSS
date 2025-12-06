@@ -1,0 +1,159 @@
+﻿@model CSS.Models.ContactInfo
+
+@{
+    ViewData["Title"] = "Manage Contact Info";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+
+    body {
+        background: linear-gradient(135deg, #e7f0ff, #faffff);
+        min-height: 100vh;
+    }
+
+    .contact-card {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 30px;
+        border: 1px solid rgba(255,255,255,0.35);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+        max-width: 900px;
+        margin: auto;
+        animation: fadeIn .45s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .section-title {
+        font-size: 30px;
+        font-weight: 800;
+        color: #0d6efd;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .info-label {
+        font-weight: 700;
+        color: #003c8f;
+        margin-bottom: 3px;
+    }
+
+    .info-text {
+        font-size: 17px;
+        color: #444;
+        margin-bottom: 12px;
+    }
+
+    .btn-primary, .btn-secondary, .btn-success {
+        padding: 8px 22px;
+        font-size: 16px;
+    }
+
+    @@media(max - width:576px) {
+        .section-title
+
+    {
+        font-size: 24px;
+    }
+
+    }
+</style>
+
+
+<div class="container py-5">
+
+    <h2 class="section-title">
+        <i class="bi bi-telephone-forward-fill"></i> Contact Information
+    </h2>
+
+    @if (Model == null)
+    {
+        <div class="text-center">
+            <div class="alert alert-info fs-5">
+                No contact information found. Please create one.
+            </div>
+
+            <a asp-action="Create" class="btn btn-success px-4">
+                <i class="bi bi-plus-circle"></i> Add Contact Info
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="contact-card">
+
+            <!-- Email -->
+            <div class="info-row mb-3">
+                <div class="info-label"><i class="bi bi-envelope-fill"></i> Email</div>
+                <div class="info-text">@Model.Email</div>
+            </div>
+
+            <!-- Phone -->
+            <div class="info-row mb-3">
+                <div class="info-label"><i class="bi bi-telephone-fill"></i> Phone</div>
+                <div class="info-text">@Model.Phone</div>
+            </div>
+
+            <!-- Address -->
+            <div class="info-row mb-3">
+                <div class="info-label"><i class="bi bi-geo-alt-fill"></i> Address</div>
+                <div class="info-text">@Model.Address</div>
+            </div>
+
+            <!-- Facebook -->
+            @if (!string.IsNullOrEmpty(Model.FacebookUrl))
+            {
+                <div class="info-row mb-3">
+                    <div class="info-label"><i class="bi bi-facebook"></i> Facebook</div>
+                    <div class="info-text">
+                        <a href="@Model.FacebookUrl" target="_blank">@Model.FacebookUrl</a>
+                    </div>
+                </div>
+            }
+
+            <!-- Website -->
+            @if (!string.IsNullOrEmpty(Model.WebsiteUrl))
+            {
+                <div class="info-row mb-3">
+                    <div class="info-label"><i class="bi bi-globe"></i> Website</div>
+                    <div class="info-text">
+                        <a href="@Model.WebsiteUrl" target="_blank">@Model.WebsiteUrl</a>
+                    </div>
+                </div>
+            }
+
+            <!-- Button -->
+            <div class="text-end mt-4">
+                <a asp-action="Edit" asp-route-id="@Model.Id"
+                   class="btn btn-primary px-4">
+                    <i class="bi bi-pencil-square"></i> Edit Contact Info
+                </a>
+            </div>
+
+        </div>
+    }
+
+    <div class="text-center mt-4">
+        <a asp-controller="About" asp-action="Index" class="btn btn-secondary px-4">
+            <i class="bi bi-eye"></i> View About Page
+        </a>
+    </div>
+
+</div>

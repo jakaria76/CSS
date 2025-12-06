@@ -1,0 +1,145 @@
+﻿@model CSS.Models.ContactInfo
+
+@{
+    ViewData["Title"] = "Create Contact Info";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+
+    body {
+        background: linear-gradient(135deg, #e7f1ff, #faffff);
+        min-height: 100vh;
+    }
+
+    .create-card {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 30px;
+        border: 1px solid rgba(255,255,255,0.35);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+        max-width: 850px;
+        margin: auto;
+        animation: fadeIn .45s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #0d6efd;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #003c8f;
+    }
+
+    .btn-success, .btn-secondary {
+        padding: 8px 22px;
+        font-size: 16px;
+    }
+
+    @@media(max - width: 576px)
+
+    {
+        .create-card
+
+    {
+        padding: 20px;
+    }
+
+    .page-title {
+        font-size: 22px;
+    }
+
+    }
+</style>
+
+
+<div class="container py-5">
+
+    <div class="create-card">
+
+        <h2 class="page-title">
+            <i class="bi bi-person-lines-fill"></i> Add Contact Information
+        </h2>
+
+        <form asp-action="Create" method="post">
+
+            <!-- Email + Phone -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" placeholder="Enter email address" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Phone" class="form-label"></label>
+                    <input asp-for="Phone" class="form-control" placeholder="Enter phone number" />
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Address -->
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label"></label>
+                <textarea asp-for="Address" class="form-control" rows="2"
+                          placeholder="Full address"></textarea>
+            </div>
+
+            <!-- Facebook -->
+            <div class="mb-3">
+                <label asp-for="FacebookUrl" class="form-label"></label>
+                <input asp-for="FacebookUrl" class="form-control"
+                       placeholder="https://facebook.com/yourpage" />
+            </div>
+
+            <!-- Website -->
+            <div class="mb-3">
+                <label asp-for="WebsiteUrl" class="form-label"></label>
+                <input asp-for="WebsiteUrl" class="form-control"
+                       placeholder="https://yourwebsite.com" />
+            </div>
+
+            <!-- Buttons -->
+            <div class="text-end mt-4">
+                <button class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Save
+                </button>
+
+                <a asp-action="Index" class="btn btn-secondary ms-2">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

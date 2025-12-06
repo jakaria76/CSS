@@ -1,0 +1,111 @@
+﻿@model CSS.Models.MissionPoint
+@{
+    ViewData["Title"] = "Edit Mission Point";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+    .edit-card {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        padding: 30px;
+        border: 1px solid rgba(255,255,255,0.3);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        animation: fadeIn 0.4s ease-out;
+        max-width: 600px;
+        margin: auto;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    body {
+        background: linear-gradient(135deg, #dde8ff, #f7fbff);
+        min-height: 100vh;
+    }
+
+    .page-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #0d6efd;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #003c8f;
+    }
+
+    .btn-primary, .btn-secondary {
+        padding: 8px 20px;
+    }
+
+    @@media (max-width: 576px) {
+        .edit-card
+
+    {
+        padding: 22px;
+    }
+
+    .page-title {
+        font-size: 22px;
+    }
+
+    }
+</style>
+
+<div class="container py-5">
+
+    <div class="edit-card">
+
+        <h2 class="page-title">
+            <i class="bi bi-pencil-square"></i> Edit Mission Point
+        </h2>
+
+        <form asp-action="Edit" method="post">
+
+            <input type="hidden" asp-for="Id" />
+
+            <!-- Mission Text -->
+            <div class="mb-3">
+                <label asp-for="Text" class="form-label"></label>
+                <input asp-for="Text" class="form-control" />
+                <span asp-validation-for="Text" class="text-danger"></span>
+            </div>
+
+            <!-- Buttons -->
+            <div class="text-end mt-4">
+                <button class="btn btn-primary">
+                    <i class="bi bi-check2-circle"></i> Update
+                </button>
+
+                <a asp-action="Index" class="btn btn-secondary ms-2">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

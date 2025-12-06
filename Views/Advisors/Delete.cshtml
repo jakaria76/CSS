@@ -1,0 +1,192 @@
+﻿@model CSS.Models.Advisor
+
+@{
+    ViewData["Title"] = "Delete Advisor";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+
+    body {
+        background: linear-gradient(135deg, #ffe2e2, #fff5f5);
+        min-height: 100vh;
+    }
+
+    .delete-card {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        border-radius: 18px;
+        padding: 28px;
+        border: 1px solid rgba(255,255,255,0.35);
+        box-shadow: 0 12px 34px rgba(0,0,0,0.18);
+        animation: fadeIn .4s ease-out;
+        max-width: 900px;
+        margin: auto;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .del-title {
+        font-size: 30px;
+        font-weight: 800;
+        color: #d60000;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .danger-msg {
+        font-size: 18px;
+        font-weight: 500;
+        color: #a10000;
+        background: rgba(255, 255, 255, 0.4);
+        padding: 12px 18px;
+        border-radius: 10px;
+        margin-bottom: 22px;
+        border-left: 4px solid #d60000;
+    }
+
+    .advisor-img {
+        height: 220px;
+        width: 100%;
+        border-radius: 12px;
+        object-fit: cover;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.24);
+    }
+
+    .advisor-name {
+        font-size: 24px;
+        font-weight: 700;
+        color: #003c8f;
+    }
+
+    .advisor-role {
+        font-size: 16px;
+        color: #666;
+    }
+
+    .advisor-bio {
+        font-size: 15px;
+        color: #444;
+        margin-top: 10px;
+    }
+
+    /* Mobile view optimised */
+    @@media(max - width: 576px)
+
+    {
+        .del-title
+
+    {
+        font-size: 24px;
+    }
+
+    .danger-msg {
+        font-size: 16px;
+    }
+
+    .advisor-img {
+        height: 180px;
+    }
+
+    }
+</style>
+
+
+<div class="container py-5">
+
+    <div class="delete-card">
+
+        <h2 class="del-title">
+            <i class="bi bi-exclamation-octagon-fill"></i> Delete Advisor
+        </h2>
+
+        <div class="danger-msg">
+            ⚠️ This advisor and all related information will be permanently deleted.
+            This action cannot be undone.
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Photo -->
+            <div class="col-md-4">
+                @if (Model.ImageData != null)
+                {
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ImageData)"
+                         class="advisor-img" />
+                }
+                else
+                {
+                    <div class="p-3 text-muted">No Photo</div>
+                }
+            </div>
+
+            <!-- Info -->
+            <div class="col-md-8">
+                <div class="advisor-name">@Model.Name</div>
+                <div class="advisor-role">@Model.Role</div>
+                <div class="advisor-bio">@Model.Bio</div>
+            </div>
+
+        </div>
+
+        <!-- Delete Form -->
+        <form id="deleteForm" asp-action="Delete" method="post" class="text-center mt-4">
+            <input type="hidden" asp-for="Id" />
+
+            <button type="submit" class="btn btn-danger px-4">
+                <i class="bi bi-trash-fill"></i> Confirm Delete
+            </button>
+
+            <a asp-action="Index" class="btn btn-secondary ms-2 px-4">
+                <i class="bi bi-x-circle"></i> Cancel
+            </a>
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        const btnDelete = document.querySelector("button.btn-danger");
+        const deleteForm = document.getElementById("deleteForm");
+
+        btnDelete.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This advisor will be permanently deleted!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteForm.submit();
+                }
+            });
+        });
+    </script>
+
+}
