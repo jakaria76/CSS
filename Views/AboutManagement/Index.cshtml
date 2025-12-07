@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "About Management Dashboard";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+    .dashboard-card {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 18px;
+        padding: 28px;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+        .dashboard-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+    .dashboard-icon {
+        font-size: 42px;
+        color: #0d6efd;
+        margin-bottom: 14px;
+    }
+
+    .dashboard-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .dashboard-subtext {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 18px;
+    }
+
+    body {
+        background: linear-gradient(135deg, #c3d6ff, #f4f9ff);
+    }
+</style>
+
+<div class="container py-5">
+
+    <h2 class="mb-4 fw-bold text-center">About Section Management</h2>
+
+    <div class="row g-4">
+
+        <!-- Organization Overview -->
+        <div class="col-md-4 col-lg-3">
+            <a asp-controller="OrganizationOverview" asp-action="Index" class="text-decoration-none text-dark">
+                <div class="dashboard-card">
+                    <i class="bi bi-building dashboard-icon"></i>
+                    <div class="dashboard-title">Organization Overview</div>
+                    <div class="dashboard-subtext">Manage overview of your organization</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Mission Points -->
+        <div class="col-md-4 col-lg-3">
+            <a asp-controller="MissionPoints" asp-action="Index" class="text-decoration-none text-dark">
+                <div class="dashboard-card">
+                    <i class="bi bi-bullseye dashboard-icon"></i>
+                    <div class="dashboard-title">Mission Points</div>
+                    <div class="dashboard-subtext">Set and edit mission points</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- What We Do -->
+        <div class="col-md-4 col-lg-3">
+            <a asp-controller="WhatWeDoItems" asp-action="Index" class="text-decoration-none text-dark">
+                <div class="dashboard-card">
+                    <i class="bi bi-lightning-charge dashboard-icon"></i>
+                    <div class="dashboard-title">What We Do</div>
+                    <div class="dashboard-subtext">Manage actions & activities</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Advisors -->
+        <div class="col-md-4 col-lg-3">
+            <a asp-controller="Advisors" asp-action="Index" class="text-decoration-none text-dark">
+                <div class="dashboard-card">
+                    <i class="bi bi-people dashboard-icon"></i>
+                    <div class="dashboard-title">Advisors</div>
+                    <div class="dashboard-subtext">Manage advisor information</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Previous Presidents -->
+        <div class="col-md-4 col-lg-3">
+            <a asp-controller="PreviousPresidents" asp-action="Index" class="text-decoration-none text-dark">
+                <div class="dashboard-card">
+                    <i class="bi bi-award dashboard-icon"></i>
+                    <div class="dashboard-title">Previous Presidents</div>
+                    <div class="dashboard-subtext">Manage previous leadership</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Leadership Members -->
+        <div class="col-md-4 col-lg-3">
+            <a asp-controller="LeadershipMembers" asp-action="Index" class="text-decoration-none text-dark">
+                <div class="dashboard-card">
+                    <i class="bi bi-person-badge dashboard-icon"></i>
+                    <div class="dashboard-title">Leadership Members</div>
+                    <div class="dashboard-subtext">Manage current leadership</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Our Story -->
+        <div class="col-md-4 col-lg-3">
+            <a asp-controller="OurStories" asp-action="Index" class="text-decoration-none text-dark">
+                <div class="dashboard-card">
+                    <i class="bi bi-book dashboard-icon"></i>
+                    <div class="dashboard-title">Our Story</div>
+                    <div class="dashboard-subtext">Manage history and milestones</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="col-md-4 col-lg-3">
+            <a asp-controller="ContactInfos" asp-action="Index" class="text-decoration-none text-dark">
+                <div class="dashboard-card">
+                    <i class="bi bi-telephone dashboard-icon"></i>
+                    <div class="dashboard-title">Contact Info</div>
+                    <div class="dashboard-subtext">Manage contact information</div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+</div>

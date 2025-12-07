@@ -15,6 +15,17 @@ namespace CSS.Data
         public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
         public DbSet<GalleryImage> GalleryImages { get; set; }
 
+
+        public DbSet<Advisor> Advisors { get; set; }
+        public DbSet<PreviousPresident> PreviousPresidents { get; set; }
+        public DbSet<LeadershipMember> LeadershipMembers { get; set; }
+        public DbSet<OrganizationOverview> OrganizationOverviews { get; set; }
+        public DbSet<MissionPoint> MissionPoints { get; set; }
+        public DbSet<WhatWeDoItem> WhatWeDoItems { get; set; }
+        public DbSet<OurStory> OurStories { get; set; }
+        public DbSet<ContactInfo> ContactInfos { get; set; }
+
+
         
         protected override void OnModelCreating(ModelBuilder builder)
         {

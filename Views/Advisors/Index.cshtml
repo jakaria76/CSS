@@ -1,0 +1,133 @@
+﻿@model IEnumerable<CSS.Models.Advisor>
+
+@{
+    ViewData["Title"] = "Manage Advisors";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+
+    body {
+        background: linear-gradient(135deg, #e7f0ff, #f7fbff);
+    }
+
+    .advisor-card {
+        background: rgba(255, 255, 255, 0.28);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 18px;
+        border: 1px solid rgba(255,255,255,0.3);
+        box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+        transition: all 0.25s ease-in-out;
+        min-height: 300px;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .advisor-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255,255,255,0.35);
+            box-shadow: 0 14px 35px rgba(0,0,0,0.20);
+        }
+
+    .advisor-img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        box-shadow: 0 5px 18px rgba(0,0,0,0.25);
+    }
+
+    .advisor-name {
+        font-size: 20px;
+        font-weight: 700;
+        color: #003c8f;
+    }
+
+    .advisor-role {
+        font-size: 15px;
+        color: #666;
+        margin-bottom: 16px;
+    }
+
+    .btn-sm {
+        padding: 5px 12px;
+    }
+
+    @@media(max - width: 576px)
+
+    {
+        .advisor-img
+
+    {
+        height: 150px;
+    }
+
+    .advisor-name {
+        font-size: 18px;
+    }
+
+    }
+</style>
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">Advisors</h2>
+
+        <div>
+            <a asp-action="Create" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Add Advisor
+            </a>
+
+            <a asp-controller="About" asp-action="Index"
+               class="btn btn-secondary ms-2">
+                <i class="bi bi-eye"></i> View Public About
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 col-lg-3 col-sm-6">
+
+                <div class="advisor-card">
+
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.ImageData)"
+                         class="advisor-img" />
+
+                    <div class="advisor-name">@item.Name</div>
+                    <div class="advisor-role">@item.Role</div>
+
+                    <div class="mt-auto">
+
+                        <a asp-action="Details" asp-route-id="@item.Id"
+                           class="btn btn-info btn-sm">
+                            <i class="bi bi-card-text"></i> Details
+                        </a>
+
+                        <a asp-action="Edit" asp-route-id="@item.Id"
+                           class="btn btn-primary btn-sm ms-1">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+
+                        <a asp-action="Delete" asp-route-id="@item.Id"
+                           class="btn btn-danger btn-sm ms-1">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>

@@ -1,0 +1,657 @@
+﻿@model CSS.ViewModels.AboutVM
+
+@{
+    ViewData["Title"] = "About Us - Conscious Student Society";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+    /* ===========================
+       GLOBAL / TYPOGRAPHY
+       =========================== */
+    :root {
+        --primary: #0d6efd;
+        --dark-blue: #003c8f;
+        --glass-bg: rgba(255,255,255,0.35);
+        --glass-border: rgba(255,255,255,0.4);
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', system-ui, -apple-system, "Helvetica Neue", Arial;
+        background: linear-gradient(135deg, #dfe9ff, #f7fbff);
+        color: #222;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===========================
+       HERO BANNER
+       =========================== */
+    .hero-banner {
+        position: relative;
+        background-image: url('/images/banner.jpg');
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 330px;
+        border-radius: 0 0 30px 30px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 20px;
+    }
+
+        .hero-banner::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(3px);
+            pointer-events: none;
+        }
+
+    .hero-title {
+        position: relative;
+        z-index: 2;
+        font-size: 40px;
+        font-weight: 900;
+        color: #fff;
+        text-align: center;
+        text-shadow: 0 3px 10px rgba(0,0,0,0.5);
+        margin: 0;
+        padding: 0 8px;
+    }
+
+    /* ===========================
+       SECTION TITLES
+       =========================== */
+    .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--dark-blue);
+        margin-bottom: 18px;
+    }
+
+        .section-title i {
+            color: var(--primary);
+            font-size: 26px;
+        }
+
+        /* Centered variant for certain pages */
+        .section-title.center {
+            justify-content: center;
+            text-align: center;
+        }
+
+    /* ===========================
+       GLASS CARD
+       =========================== */
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 25px;
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+        animation: fadeIn .55s ease both;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    /* ===========================
+       IMAGE CARDS / PROFILE IMG
+       =========================== */
+    .profile-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+        transition: transform .28s ease;
+    }
+
+        .profile-img:hover {
+            transform: scale(1.03);
+        }
+
+    /* small utility */
+    .mb-4 {
+        margin-bottom: 1.5rem;
+    }
+
+    .mt-3 {
+        margin-top: 1rem;
+    }
+
+    .fw-bold {
+        font-weight: 700;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    /* ===========================
+       CONTACT (Colourful Glass)
+       =========================== */
+    .contact-card {
+        position: relative;
+        background: rgba(255,255,255,0.46);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 26px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+        overflow: visible;
+    }
+
+        .contact-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(135deg,#ff6a95,#6a8bff,#2dd6c3);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+        .contact-item i {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            color: #fff;
+            background: linear-gradient(135deg,#6a8bff,#a16eff);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            font-size: 20px;
+            flex: 0 0 44px;
+            transition: transform .18s ease;
+        }
+
+        .contact-item:hover i {
+            transform: scale(1.08);
+        }
+
+        .contact-item p {
+            margin: 0;
+            font-size: 16px;
+            color: #2d2d2d;
+        }
+
+        .contact-item strong {
+            color: var(--dark-blue);
+        }
+
+    .social-link {
+        color: #6a31ff;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .social-link:hover {
+            color: #ff4fa8;
+            text-decoration: underline;
+        }
+
+    /* ===========================
+       TIMELINE
+       =========================== */
+    .timeline-wrapper {
+        position: relative;
+        padding-left: 40px;
+    }
+
+        .timeline-wrapper::before {
+            content: "";
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 10px;
+            background: linear-gradient(180deg,#6a8bff,#a16eff,#ff6a95);
+        }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 22px;
+        padding-left: 12px;
+    }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -25px;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,#6a8bff,#ff6a95);
+            border: 3px solid #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+    .timeline-title {
+        font-weight: 800;
+        font-size: 17px;
+        color: var(--dark-blue);
+    }
+
+    .timeline-desc {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #444;
+        margin-top: 6px;
+    }
+
+    /* ===========================
+       LAYOUT HELPERS
+       =========================== */
+    .btn-outline-primary {
+        border-color: rgba(13,110,253,0.15);
+        color: var(--primary);
+    }
+
+        .btn-outline-primary:hover {
+            background: rgba(13,110,253,0.06);
+        }
+
+    /* leadership title specific class if needed */
+    .leadership-title {
+        justify-content: center;
+        text-align: center;
+    }
+
+    /* ===========================
+       RESPONSIVE
+       =========================== */
+    @@media (max-width: 992px) {
+        .hero-title
+
+    {
+        font-size: 32px;
+    }
+
+    .profile-img {
+        height: 180px;
+    }
+
+    }
+
+    @@media (max-width: 768px) {
+        .hero-banner
+
+    {
+        height: 220px;
+        border-radius: 0 0 22px 22px;
+    }
+
+    .hero-title {
+        font-size: 26px;
+        padding: 0 12px;
+    }
+
+    .section-title {
+        font-size: 22px;
+    }
+
+    .profile-img {
+        height: 160px;
+    }
+
+    }
+
+    @@media (max-width: 576px) {
+        /* HERO mobile tuned */
+        .hero-banner
+
+    {
+        height: 160px !important;
+        background-position: center top !important;
+        border-radius: 0 0 14px 14px;
+    }
+
+    .hero-title {
+        font-size: 20px !important;
+        line-height: 1.2;
+        margin-top: 6px;
+    }
+
+    .profile-img {
+        height: 140px !important;
+    }
+
+    .section-title {
+        font-size: 18px;
+        gap: 8px;
+        justify-content: flex-start;
+    }
+        /* Make section title centered on small screens when it has .center */
+        .section-title.center {
+            justify-content: center;
+        }
+
+    }
+
+    /* small screens: reduce card padding */
+    @@media (max-width: 420px) {
+        .glass-card
+
+    {
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .contact-card {
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .hero-title {
+        font-size: 18px !important;
+    }
+
+    }
+</style>
+
+<!-- HERO -->
+<div class="hero-banner">
+    <h1 class="hero-title">About Conscious Student Society</h1>
+</div>
+
+<div class="container py-5">
+
+    <!-- ORGANIZATION OVERVIEW -->
+    @if (Model.Overview != null)
+    {
+        <section class="mb-5">
+            <h2 class="section-title" style="justify-content:center; text-align:center;">
+                <i class="bi bi-bank"></i> Organization Overview
+            </h2>
+
+            <div class="glass-card">
+                <p><strong>Description:</strong>@Model.Overview.Description</p>
+                <p><strong>Founded:</strong> @Model.Overview.FoundedYear</p>
+                <p><strong>Purpose:</strong> @Model.Overview.Purpose</p>
+            </div>
+        </section>
+    }
+
+    <!-- OUR MISSION -->
+    <section class="mb-5">
+        <h2 class="section-title" style="justify-content:center; text-align:center;">
+            <i class="bi bi-bullseye"></i> Our Mission
+        </h2>
+
+        <div class="glass-card">
+            @if (Model.MissionPoints?.Any() == true)
+            {
+                <ul id="missionList">
+                    @for (int i = 0; i < Model.MissionPoints.Count; i++)
+                    {
+                        <li class="mission-item @(i >= 3 ? "d-none" : "")">
+                            @Model.MissionPoints[i].Text
+                        </li>
+                    }
+                </ul>
+            }
+
+            @if (Model.MissionPoints.Count > 3)
+            {
+                <div class="text-center mt-2">
+                    <button id="toggleMissionBtn" class="btn btn-outline-primary btn-sm">
+                        Show More
+                    </button>
+                </div>
+            }
+        </div>
+    </section>
+
+
+    <!-- WHAT WE DO -->
+    <section class="mb-2">
+        <h2 class="section-title center"><i class="bi bi-lightning-charge-fill"></i> What We Do</h2>
+
+        <div class="row" id="whatWeDoList">
+            @for (int i = 0; i < Model.whatWeDoItems.Count; i++)
+            {
+                var item = Model.whatWeDoItems[i];
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4 whatwedo-item @(i >= 4 ? "d-none" : "")">
+                    <div class="glass-card h-100">
+                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.ImageData)" class="profile-img" />
+                        <h5 class="mt-3 fw-bold">@item.Title</h5>
+                        <a asp-action="WhatWeDoDetails" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">Details</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="text-center mt-sm-0">
+            <button class="btn btn-primary btn-sm" id="toggleWhatWeDo">Show More</button>
+        </div>
+    </section>
+
+
+    <!-- ADVISORS -->
+    <section class="mb-2">
+        <h2 class="section-title center"><i class="bi bi-people-fill"></i> Our Advisors</h2>
+
+        <div class="row" id="advisorList">
+            @for (int i = 0; i < Model.Advisors.Count; i++)
+            {
+                var a = Model.Advisors[i];
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4 advisor-item @(i >= 4 ? "d-none" : "")">
+                    <div class="glass-card h-100">
+                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(a.ImageData)" class="profile-img" />
+                        <h5 class="mt-3 fw-bold">@a.Name</h5>
+                        <p class="text-muted">@a.Role</p>
+                        <a asp-action="AdvisorDetails" asp-route-id="@a.Id" class="btn btn-outline-primary btn-sm">View Details</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="text-center mt-3">
+            <button class="btn btn-primary btn-sm" id="toggleAdvisors">Show More</button>
+        </div>
+    </section>
+
+
+    <!-- PREVIOUS PRESIDENTS -->
+    <section class="mb-2">
+        <h2 class="section-title center"><i class="bi bi-award-fill"></i> Previous Presidents</h2>
+
+        <div class="row" id="presidentsList">
+            @for (int i = 0; i < Model.PreviousPresidents.Count; i++)
+            {
+                var p = Model.PreviousPresidents[i];
+                var shortText = p.LegacyNote?.Length > 160 ? p.LegacyNote.Substring(0, 160) + "..." : p.LegacyNote;
+
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4 president-item @(i >= 4 ? "d-none" : "")">
+                    <div class="glass-card h-100 d-flex flex-column">
+                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(p.ImageData)" class="profile-img" />
+                        <h5 class="fw-bold mt-3">@p.Name</h5>
+                        <p class="text-muted mb-2"><i class="bi bi-calendar"></i> @p.TenureStart.ToString("yyyy") – @p.TenureEnd.ToString("yyyy")</p>                    
+                        <a asp-action="PreviousPresidentDetails" asp-route-id="@p.Id" class="btn btn-outline-primary btn-sm mt-auto">View Details</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="text-center mb-0">
+            <button class="btn btn-primary btn-sm" id="togglePresidents">Show More</button>
+        </div>
+    </section>
+
+
+    <section class="mb-2">
+        <h2 class="section-title center"><i class="bi bi-person-badge-fill"></i> Current Leadership</h2>
+
+        <div class="row" id="leadershipList">
+            @for (int i = 0; i < Model.Leadership.Count; i++)
+            {
+                var leader = Model.Leadership[i];
+
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4 leadership-item @(i >= 4 ? "d-none" : "")">
+                    <div class="glass-card h-100 text-center">
+                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(leader.ImageData)" class="profile-img" />
+                        <h5 class="fw-bold mt-3">@leader.Name</h5>
+                        <p class="text-muted">@leader.Position</p>
+                        <a asp-action="LeadershipDetails" asp-route-id="@leader.Id" class="btn btn-outline-primary btn-sm">View Details</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="text-center mb-0">
+            <button class="btn btn-primary btn-sm" id="toggleLeadership">Show More</button>
+        </div>
+    </section>
+
+
+    <!-- OUR STORY -->
+    <section class="mb-2">
+        <h2 class="section-title" style="justify-content:center; text-align:center;">
+            <i class="bi bi-clock-history"></i> Our Story
+        </h2>
+
+        <div class="glass-card">
+            <div id="timelineContainer" class="timeline-wrapper">
+
+                @for (int i = 0; i < Model.OurStoryList.Count; i++)
+                {
+                    var story = Model.OurStoryList[i];
+
+                    <div class="timeline-item story-item @(i >= 2 ? "d-none" : "")">
+                        <!-- YEAR from EventDate -->
+                        <div class="timeline-title">@story.EventDate.ToString("yyyy")</div>
+
+                        <!-- DESCRIPTION -->
+                        <div class="timeline-desc">@story.Description</div>
+                    </div>
+                }
+
+            </div>
+
+            @if (Model.OurStoryList.Count > 4)
+            {
+                <div class="text-center mt-3">
+                    <button id="toggleStoryBtn" class="btn btn-outline-primary btn-sm">
+                        Show More
+                    </button>
+                </div>
+            }
+        </div>
+    </section>
+
+
+
+
+    <!-- CONTACT INFO -->
+    @if (Model.ContactInfo != null)
+    {
+        <section class="mb-2">
+            <h2 class="section-title" style="justify-content:center; text-align:center;"><i class="bi bi-telephone-outbound-fill"></i> Contact Us</h2>
+            <div class="contact-card">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="contact-item">
+                            <i class="bi bi-envelope-fill" aria-hidden="true"></i>
+                            <p><strong>Email:</strong> @Model.ContactInfo.Email</p>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-phone-fill" aria-hidden="true"></i>
+                            <p><strong>Phone:</strong> @Model.ContactInfo.Phone</p>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                            <p><strong>Address:</strong> @Model.ContactInfo.Address</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        @if (!string.IsNullOrEmpty(Model.ContactInfo.FacebookUrl))
+                        {
+                            <div class="contact-item">
+                                <i class="bi bi-facebook" aria-hidden="true"></i>
+                                <p><strong>Facebook:</strong> <a class="social-link" href="@Model.ContactInfo.FacebookUrl" target="_blank">@Model.ContactInfo.FacebookUrl</a></p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.ContactInfo.WebsiteUrl))
+                        {
+                            <div class="contact-item">
+                                <i class="bi bi-globe" aria-hidden="true"></i>
+                                <p><strong>Website:</strong> <a class="social-link" href="@Model.ContactInfo.WebsiteUrl" target="_blank">@Model.ContactInfo.WebsiteUrl</a></p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+
+</div>
+<script>
+    function setupToggle(sectionClass, buttonId) {
+        const items = document.querySelectorAll("." + sectionClass);
+        const btn = document.getElementById(buttonId);
+
+        btn.addEventListener("click", function () {
+            const hiddenItems = [...items].filter(x => x.classList.contains("d-none"));
+
+            if (hiddenItems.length > 0) {
+                hiddenItems.forEach(x => x.classList.remove("d-none"));
+                btn.innerText = "Show Less";
+            } else {
+                items.forEach((x, i) => {
+                    if (i >= 4) x.classList.add("d-none");
+                });
+                btn.innerText = "Show More";
+            }
+        });
+    }
+
+    setupToggle("whatwedo-item", "toggleWhatWeDo");
+    setupToggle("advisor-item", "toggleAdvisors");
+    setupToggle("president-item", "togglePresidents");
+    setupToggle("leadership-item", "toggleLeadership");
+    setupToggle("story-item", "toggleStoryBtn");
+    setupToggle("mission-item", "toggleMissionBtn", 3);
+</script>

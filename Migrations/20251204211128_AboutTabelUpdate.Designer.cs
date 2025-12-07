@@ -4,6 +4,7 @@ using CSS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251204211128_AboutTabelUpdate")]
+    partial class AboutTabelUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -558,10 +561,10 @@ namespace CSS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FoundedYear")
+                    b.Property<int>("FounderYear")
                         .HasColumnType("int");
 
-                    b.Property<string>("Purpose")
+                    b.Property<string>("purpose")
                         .HasMaxLength(1500)
                         .HasColumnType("nvarchar(1500)");
 
@@ -583,8 +586,8 @@ namespace CSS.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<DateTime>("EventDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -669,20 +672,15 @@ namespace CSS.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("LegacyNote")
+                    b.Property<string>("LegancyNote")
                         .HasMaxLength(800)
                         .HasColumnType("nvarchar(800)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                    b.Property<int>("TenureEnd")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("TenureEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("TenureStart")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("TenureStart")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

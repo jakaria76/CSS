@@ -1,0 +1,107 @@
+﻿@model IEnumerable<CSS.Models.MissionPoint>
+
+@{
+    ViewData["Title"] = "Manage Mission Points";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+    .mission-card {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        border-radius: 14px;
+        padding: 18px 20px;
+        border: 1px solid rgba(255,255,255,0.3);
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.10);
+        transition: all 0.25s ease;
+        min-height: 130px;
+    }
+
+        .mission-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            background: rgba(255,255,255,0.35);
+        }
+
+    .mission-icon {
+        font-size: 32px;
+        color: #0d6efd;
+        margin-right: 8px;
+    }
+
+    .mission-text {
+        font-size: 17px;
+        font-weight: 500;
+    }
+
+    .action-btns a {
+        padding: 4px 12px;
+    }
+
+    body {
+        background: linear-gradient(135deg, #dce9ff, #f6fbff);
+    }
+
+    @@media(max - width: 576px)
+
+    {
+        .mission-card
+
+    {
+        padding: 15px;
+    }
+
+    .mission-text {
+        font-size: 15px;
+    }
+
+    }
+</style>
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">Mission Points</h2>
+
+        <div>
+            <a asp-action="Create" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Add Mission Point
+            </a>
+            <a asp-controller="About" asp-action="Index" class="btn btn-secondary ms-2">
+                <i class="bi bi-eye"></i> View About Page
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+
+                <div class="mission-card d-flex justify-content-between align-items-start">
+
+                    <div class="d-flex">
+                        <i class="bi bi-check2-circle mission-icon"></i>
+                        <div class="mission-text">@item.Text</div>
+                    </div>
+
+                    <div class="action-btns">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger ms-1">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>

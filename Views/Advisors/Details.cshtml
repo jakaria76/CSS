@@ -1,0 +1,139 @@
+﻿@model CSS.Models.Advisor
+
+@{
+    ViewData["Title"] = "Advisor Details";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+
+    body {
+        background: linear-gradient(135deg, #e7f0ff, #faffff);
+        min-height: 100vh;
+    }
+
+    /* Top Banner */
+    .banner {
+        background: url('/images/advisor-bg.jpg') center/cover no-repeat;
+        height: 260px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        margin-bottom: -80px;
+    }
+
+    .advisor-card {
+        background: rgba(255, 255, 255, 0.22);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 30px;
+        border: 1px solid rgba(255,255,255,0.3);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+        animation: fadeIn .4s ease-out;
+        max-width: 900px;
+        margin: auto;
+        margin-top: 30px;
+    }
+
+    /* Fade Animation */
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .advisor-photo {
+        height: 260px;
+        width: 260px;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    .advisor-name {
+        font-size: 32px;
+        font-weight: 800;
+        color: #003c8f;
+    }
+
+    .advisor-role {
+        font-size: 20px;
+        font-weight: 600;
+        color: #0d6efd;
+    }
+
+    .advisor-bio {
+        font-size: 17px;
+        line-height: 1.8;
+        text-align: justify;
+        color: #444;
+    }
+
+    @@media(max - width: 576px)
+
+    {
+        .advisor-photo
+
+    {
+        height: 180px;
+        width: 180px;
+    }
+
+    .advisor-name {
+        font-size: 24px;
+    }
+
+    .advisor-role {
+        font-size: 18px;
+    }
+
+    }
+</style>
+
+<!-- 🔥 Banner Area -->
+<div class="banner">
+    <div class="text-center">
+        <h2 class="advisor-name">@Model.Name</h2>
+        <p class="advisor-role">@Model.Role</p>
+    </div>
+</div>
+
+
+<!-- 🔥 Main Card -->
+<div class="container py-5">
+
+    <div class="advisor-card">
+
+        <div class="row g-4 align-items-center">
+
+            <div class="col-md-4 text-center">
+                <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ImageData)"
+                     class="advisor-photo" />
+            </div>
+
+            <div class="col-md-8">
+                <p class="advisor-bio">@Model.Bio</p>
+
+                <a asp-action="Index" class="btn btn-secondary mt-3 px-4">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

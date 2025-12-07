@@ -1,0 +1,117 @@
+﻿@model CSS.Models.OurStory
+
+@{
+    ViewData["Title"] = "Add Timeline Event";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+
+    body {
+        background: linear-gradient(135deg, #eef4ff, #f9fcff);
+        min-height: 100vh;
+    }
+
+    .create-card {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(12px);
+        border-radius: 18px;
+        padding: 30px;
+        border: 1px solid rgba(255,255,255,0.35);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+        max-width: 750px;
+        margin: auto;
+        animation: fadeIn .45s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #0d6efd;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #003c8f;
+    }
+
+    .btn-success, .btn-secondary {
+        padding: 8px 22px;
+        font-size: 16px;
+    }
+
+    @@media(max-width: 576px) {
+        .create-card {
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 22px;
+        }
+    }
+
+</style>
+
+
+<div class="container py-5">
+
+    <div class="create-card">
+
+        <h2 class="page-title">
+            <i class="bi bi-calendar-plus"></i> Add Timeline Event
+        </h2>
+
+        <form asp-action="Create" method="post">
+
+            <!-- EVENT DATE (Calendar Picker) -->
+            <div class="mb-3">
+                <label asp-for="EventDate" class="form-label"></label>
+                <input asp-for="EventDate" type="date" class="form-control" />
+                <span asp-validation-for="EventDate" class="text-danger"></span>
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"
+                          placeholder="Enter event description"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="text-end mt-4">
+                <button class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Save
+                </button>
+
+                <a asp-action="Index" class="btn btn-secondary ms-2">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
