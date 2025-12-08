@@ -1,0 +1,35 @@
+﻿@model IEnumerable<CSS.Models.Notice>
+
+<h2>বিজ্ঞপ্তিসমূহ</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>SL</th>
+            <th>শিরোনাম</th>
+            <th>তারিখ</th>
+            <th>ডাউনলোড</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int i = 1;
+        }
+
+        @foreach (var n in Model)
+        {
+            <tr>
+                <td>@i</td>
+                <td>@n.Title</td>
+                @n.PublishDate.ToString("dd/MM/yyyy")
+                <td>
+                    <a asp-action="Download" asp-route-id="@n.Id"
+                       class="btn btn-sm btn-danger" target="_blank">
+                        PDF
+                    </a>
+                </td>
+            </tr>
+            i++;
+        }
+    </tbody>
+</table>

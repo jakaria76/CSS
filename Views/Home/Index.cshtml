@@ -1,35 +1,93 @@
-﻿@{
+﻿
+
+
+
+@model List<CSS.Models.Notice>
+
+@{
     ViewData["Title"] = "Home";
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
 }
 
-<!-- ===== FULL WIDTH SLIDER ===== -->
+<!-- ================= CSS ================= -->
+<style>
+
+    .notice-card {
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #dfe3f7;
+    }
+
+    .table-header {
+        background: #e8edff;
+        font-weight: 700;
+        color: #002b72;
+    }
+
+    .notice-table th, .notice-table td {
+        padding: 14px 12px;
+    }
+
+    .notice-table tbody tr:hover {
+        background-color: #f5f7ff;
+        transition: 0.2s;
+    }
+
+    .pdf-icon {
+        width: 30px;
+    }
+
+    .pdf-btn:hover {
+        transform: scale(1.1);
+        transition: 0.2s;
+    }
+
+    .date-badge {
+        background: #eef2ff;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        color: #2536b5;
+    }
+
+    /* Pagination Styling */
+    .pagination .page-link {
+        color: #002b72;
+        font-weight: 600;
+    }
+
+    .pagination .active .page-link {
+        background: #002b72 !important;
+        color: white !important;
+        border-color: #002b72 !important;
+    }
+
+</style>
+
+
+
+<!-- ==================== FULL WIDTH SLIDER ==================== -->
 <div id="cssSlider" class="carousel slide" data-bs-ride="carousel">
 
-    <!-- Indicators -->
     <div class="carousel-indicators">
         <button type="button" data-bs-target="#cssSlider" data-bs-slide-to="0" class="active"></button>
         <button type="button" data-bs-target="#cssSlider" data-bs-slide-to="1"></button>
         <button type="button" data-bs-target="#cssSlider" data-bs-slide-to="2"></button>
     </div>
 
-    <!-- Slides -->
     <div class="carousel-inner">
-
         <div class="carousel-item active">
             <img src="/images/slider/slide1.jpg" class="css-slide-img" />
         </div>
-
         <div class="carousel-item">
             <img src="/images/slider/slide2.jpg" class="css-slide-img" />
         </div>
-
         <div class="carousel-item">
             <img src="/images/slider/slide3.jpg" class="css-slide-img" />
         </div>
-
     </div>
 
-    <!-- Controls -->
     <button class="carousel-control-prev" type="button" data-bs-target="#cssSlider" data-bs-slide="prev">
         <span class="carousel-control-prev-icon"></span>
     </button>
@@ -39,5 +97,101 @@
     </button>
 
 </div>
+
+
+<!-- ==================== NOTICE SECTION ==================== -->
+<section class="container mt-5">
+
+    <h4 class="fw-bold mb-3" style="color:#002b72;">
+        <i class="bi bi-megaphone-fill text-danger"></i> বিজ্ঞপ্তিসমূহ
+    </h4>
+
+    <div class="card p-4 shadow-sm border-0 rounded-4 notice-card">
+
+        <table class="table table-hover notice-table align-middle">
+            <thead class="table-header">
+                <tr>
+                    <th style="width:70px;">SL No.</th>
+                    <th>শিরোনাম</th>
+                    <th style="width:150px;">তারিখ</th>
+                    <th style="width:120px;" class="text-center">ডাউনলোড</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @{
+
+                    int sl = (currentPage - 1) * 10 + 1;
+
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@sl</td>
+
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                                    @item.Title
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="date-badge">
+                                    @item.PublishDate.ToString("dd/MM/yyyy")
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <a asp-controller="Notice"
+                                   asp-action="ViewPdf"
+                                   asp-route-id="@item.Id"
+                                   class="pdf-btn"
+                                   target="_blank">
+                                    <img src="/images/icons/pdf-icon.png" class="pdf-icon" />
+                                </a>
+                            </td>
+                        </tr>
+
+                        sl++;
+                    }
+
+                }
+            </tbody>
+        </table>
+
+
+        <!-- ==================== PAGINATION ==================== -->
+        <nav>
+            <ul class="pagination justify-content-center mt-3">
+
+                <!-- Previous Button -->
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" href="/Home/Index?page=@(currentPage - 1)">
+                        Previous
+                    </a>
+                </li>
+
+                <!-- Page Numbers -->
+                @for (int p = 1; p <= totalPages; p++)
+                {
+                    <li class="page-item @(p == currentPage ? "active" : "")">
+                        <a class="page-link" href="/Home/Index?page=@p">@p</a>
+                    </li>
+                }
+
+                <!-- Next Button -->
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" href="/Home/Index?page=@(currentPage + 1)">
+                        Next
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+
+
+    </div>
+
+</section>
 
 
