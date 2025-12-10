@@ -545,6 +545,7 @@
     </section>
 
 
+  
     <!-- OUR STORY -->
     <section class="mb-2">
         <h2 class="section-title" style="justify-content:center; text-align:center;">
@@ -559,8 +560,11 @@
                     var story = Model.OurStoryList[i];
 
                     <div class="timeline-item story-item @(i >= 2 ? "d-none" : "")">
-                        <!-- YEAR from EventDate -->
-                        <div class="timeline-title">@story.EventDate.ToString("yyyy")</div>
+
+                        <!-- FULL DATE -->
+                        <div class="timeline-title">
+                            @story.EventDate.ToString("dd MMMM, yyyy")
+                        </div>
 
                         <!-- DESCRIPTION -->
                         <div class="timeline-desc">@story.Description</div>
@@ -579,6 +583,7 @@
             }
         </div>
     </section>
+
 
 
 

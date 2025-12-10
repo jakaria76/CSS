@@ -25,8 +25,10 @@ namespace CSS.Data
         public DbSet<OurStory> OurStories { get; set; }
         public DbSet<ContactInfo> ContactInfos { get; set; }
 
+        public DbSet<Notice> Notices { get; set; }
 
-        
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

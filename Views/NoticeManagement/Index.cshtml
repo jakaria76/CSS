@@ -1,0 +1,216 @@
+﻿@model IEnumerable<CSS.Models.Notice>
+
+<style>
+    /* Title */
+    .manage-title {
+        color: #1b2b6b;
+        font-size: 28px;
+    }
+
+    /* Add Button */
+    .add-btn {
+        border-radius: 30px;
+        padding: 8px 25px;
+        font-size: 16px;
+    }
+
+    /* Wrapper Card */
+    .notice-wrapper {
+        background: #ffffff;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #e3e7f7;
+    }
+
+    /* Table Header */
+    .notice-table thead {
+        background: linear-gradient(90deg, #3756e0, #4f6bff);
+        color: #ffffff;
+    }
+
+    .notice-table th {
+        padding: 14px 12px;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    /* Table Body */
+    .notice-table td {
+        padding: 16px 14px;
+        background: #fbfcff;
+        border-bottom: 1px solid #e9ecf7;
+        vertical-align: middle;
+    }
+
+    .notice-table tr:hover td {
+        background: #f2f4ff;
+        transition: 0.3s;
+    }
+
+    /* SL */
+    .sl {
+        font-weight: 600;
+        color: #333;
+    }
+
+    /* Title Text */
+    .title-text {
+        font-size: 15px;
+        line-height: 22px;
+        color: #444;
+    }
+
+    /* Date Badge */
+    .date-badge {
+        background: #eef2ff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        color: #2a3bb8;
+        font-size: 14px;
+    }
+
+    /* ===== ACTION BUTTONS ===== */
+    .action-group {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .action-btn {
+        padding: 7px 18px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 14px;
+        border: none;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 38px;
+        cursor: pointer;
+    }
+
+    /* Edit Button */
+    .edit-btn {
+        background: #2962ff;
+        color: #fff;
+    }
+
+        .edit-btn:hover {
+            background: #0039cb;
+        }
+
+    /* Delete Button */
+    .delete-btn {
+        background: #d50000;
+        color: #fff;
+        border: none;
+    }
+
+        .delete-btn:hover {
+            background: #9b0000;
+        }
+
+    /* PDF Button */
+    .pdf-btn {
+        background: #ffffff;
+        border: 2px solid #ff5252;
+        color: #ff5252;
+    }
+
+        .pdf-btn:hover {
+            background: #ffe3e3;
+        }
+
+    /* Make delete form inline */
+    .delete-form {
+        display: inline-flex;
+    }
+</style>
+
+
+
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold manage-title">
+            <i class="bi bi-file-earmark-text"></i> Manage Notices
+        </h3>
+        <a asp-action="Create" class="btn btn-success add-btn px-4 fw-bold">+ Add Notice</a>
+    </div>
+
+
+
+    <div class="notice-wrapper shadow-lg rounded-4 p-0">
+
+        <table class="table notice-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width:60px;">SL</th>
+                    <th>Title</th>
+                    <th class="text-center" style="width:150px;">Date</th>
+                    <th class="text-center" style="width:220px;">Actions</th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+                @{
+                    int i = 1;
+                    foreach (var n in Model)
+                    {
+                        <tr>
+                            <td class="text-center sl">@i</td>
+
+                            <td class="title-text">@n.Title</td>
+
+                            <td class="text-center">
+                                <span class="date-badge">
+                                    @n.PublishDate.ToString("dd/MM/yyyy")
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <div class="action-group">
+
+                                    <!-- Edit -->
+                                    <a asp-action="Edit"
+                                       asp-route-id="@n.Id"
+                                       class="action-btn edit-btn">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+
+                                    <!-- Delete -->
+                                    <form asp-action="Delete" method="post" class="delete-form">
+                                        <input type="hidden" name="id" value="@n.Id" />
+                                        <button class="action-btn delete-btn"
+                                                onclick="return confirm('Are you sure?');">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </form>
+
+                                    <!-- PDF -->
+                                    <a asp-controller="Notice"
+                                       asp-action="ViewPdf"
+                                       asp-route-id="@n.Id"
+                                       target="_blank"
+                                       class="action-btn pdf-btn">
+                                        <i class="bi bi-filetype-pdf"></i> PDF
+                                    </a>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                        i++;
+                    }
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
