@@ -19,46 +19,6 @@ body {
 }
 
 
-/* ========================================================= */
-/* ================= NOTICE BAR ============================= */
-/* ========================================================= */
-
-.notice-bar {
-    width: 100%;
-    background: #435da6;
-    color: white;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    height: 42px;
-    position: relative;
-    z-index: 2000;
-}
-
-.notice-label {
-    background: #d5332f;
-    color: white;
-    padding: 0 25px;
-    font-weight: 700;
-    white-space: nowrap;
-}
-
-.notice-content {
-    white-space: nowrap;
-    position: absolute;
-    left: 100%;
-    animation: scroll-left 12s linear infinite;
-}
-
-@keyframes scroll-left {
-    0% {
-        transform: translateX(0);
-    }
-
-    100% {
-        transform: translateX(-160%);
-    }
-}
 
 
 /* ========================================================= */
@@ -344,3 +304,6 @@ body {
 .notice-box {
     border-radius: 12px;
 }
+
+
+

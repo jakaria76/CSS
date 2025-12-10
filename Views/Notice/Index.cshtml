@@ -1,35 +1,200 @@
 ﻿@model IEnumerable<CSS.Models.Notice>
 
-<h2>বিজ্ঞপ্তিসমূহ</h2>
+<style>
+    /* ================= PAGE HEADER ================= */
+    .notice-header h2 {
+        font-weight: 700;
+        color: #1b2a6b;
+        margin-bottom: 5px;
+    }
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>SL</th>
-            <th>শিরোনাম</th>
-            <th>তারিখ</th>
-            <th>ডাউনলোড</th>
-        </tr>
-    </thead>
-    <tbody>
-        @{
-            int i = 1;
+    .notice-header i {
+        color: #ff5252;
+    }
+
+    .notice-header p {
+        margin: 0;
+    }
+
+    /* ================= CARD BOX ================= */
+    .notice-card {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #e3e6f0;
+        padding: 20px;
+    }
+
+    /* ================= TABLE ================= */
+    .notice-table thead tr {
+        background: #f1f4ff;
+        color: #002b80;
+    }
+
+    .notice-table th {
+        font-weight: 700;
+        border-color: #dfe2f5 !important;
+        padding: 10px;
+    }
+
+    .notice-table td {
+        border-color: #eef0fa !important;
+        vertical-align: middle !important;
+        font-size: 15px;
+        padding: 10px;
+    }
+
+    /* Hover Effect */
+    .notice-table tbody tr:hover {
+        background: #f9fbff;
+        transform: scale(1.002);
+        transition: 0.15s ease-in-out;
+    }
+
+    /* Title column icon + text */
+    .title-col {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        word-break: break-word;
+    }
+
+    /* PDF Button */
+    .pdf-btn {
+        font-size: 13px;
+        border-radius: 6px;
+        padding: 5px 10px;
+        transition: 0.2s;
+    }
+
+        .pdf-btn:hover {
+            background: #ff5252;
+            color: white !important;
+            border-color: #ff5252;
         }
 
-        @foreach (var n in Model)
-        {
-            <tr>
-                <td>@i</td>
-                <td>@n.Title</td>
-                @n.PublishDate.ToString("dd/MM/yyyy")
-                <td>
-                    <a asp-action="Download" asp-route-id="@n.Id"
-                       class="btn btn-sm btn-danger" target="_blank">
-                        PDF
-                    </a>
-                </td>
-            </tr>
-            i++;
+    /* ================= MOBILE OPTIMIZATION (FINAL) ================= */
+    @@media (max-width: 576px) {
+        /* Reduce font & padding */
+        .notice-table th, .notice-table td
+
+    {
+        padding: 6px 5px !important;
+        font-size: 13px !important;
+        white-space: normal !important;
+    }
+
+    /* SL column */
+    .notice-table th:nth-child(1),
+    .notice-table td:nth-child(1) {
+        width: 28px !important;
+        text-align: center !important;
+        vertical-align: top !important;
+    }
+
+    /* Date column */
+    .notice-table th:nth-child(3),
+    .notice-table td:nth-child(3) {
+        width: 85px !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+        font-size: 12px !important;
+        vertical-align: top !important;
+    }
+
+    /* Title formatting */
+    .title-col {
+        display: block !important;
+        font-size: 13px !important;
+        line-height: 1.35 !important;
+        margin-bottom: 6px;
+        word-break: break-word;
+    }
+
+        .title-col i {
+            font-size: 14px;
+            margin-right: 4px;
         }
-    </tbody>
-</table>
+
+    /* PDF button below title neatly */
+    .pdf-btn {
+        margin-top: 4px;
+        padding: 4px 7px !important;
+        font-size: 11px !important;
+    }
+
+    /* Keep table layout proper */
+    .notice-table tbody tr {
+        display: table-row !important;
+        border-bottom: 1px solid #eef0fa !important;
+    }
+
+        .notice-table tbody tr td {
+            display: table-cell !important;
+        }
+
+    /* Reduce card padding for mobile */
+    .notice-card {
+        padding: 14px !important;
+    }
+
+    }
+</style>
+
+
+<div class="container py-4">
+
+    <!-- PAGE HEADER -->
+    <div class="notice-header mb-4">
+        <h2><i class="fa-solid fa-bullhorn"></i> বিজ্ঞপ্তিসমূহ</h2>
+        <p class="text-muted">সর্বশেষ প্রকাশিত সকল বিজ্ঞপ্তির তালিকা</p>
+    </div>
+
+    <!-- TABLE CARD -->
+    <div class="notice-card shadow-sm p-3">
+
+        <table class="table notice-table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th style="width:60px;">SL</th>
+                    <th>শিরোনাম</th>
+                    <th style="width:150px;">তারিখ</th>
+                    <th style="width:120px;">ডাউনলোড</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 1;
+                }
+
+                @foreach (var n in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">@i</td>
+
+                        <td class="title-col">
+                            <i class="fa-solid fa-file-lines text-primary me-2"></i>
+                            @n.Title
+                        </td>
+
+                        <td class="text-muted">
+                            @n.PublishDate.ToString("dd MMM yyyy")
+                        </td>
+
+                        <td>
+                            <a asp-controller="Notice"
+                               asp-action="ViewPdf"
+                               asp-route-id="@n.Id"
+                               class="btn btn-sm btn-outline-danger pdf-btn"
+                               target="_blank">
+                                <i class="fa-solid fa-file-pdf"></i> PDF
+                            </a>
+
+                        </td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>

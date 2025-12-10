@@ -22,28 +22,231 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 
+<style>
+    /* Notice bar visuals */
+    .notice-bar {
+        display: flex;
+        align-items: center;
+        background: #002b5b;
+        color: white;
+        font-weight: 600;
+        padding: 5px 10px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .notice-label {
+        background: #ff5252;
+        padding: 5px 10px;
+        margin-right: 10px;
+        border-radius: 4px;
+        white-space: nowrap;
+    }
+
+    /* wrapper with fade overlays */
+    .notice-scroll-wrapper {
+        position: relative;
+        flex-grow: 1;
+        overflow: hidden;
+    }
+
+        .notice-scroll-wrapper::before,
+        .notice-scroll-wrapper::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 60px;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .notice-scroll-wrapper::before {
+            left: 0;
+            background: linear-gradient(to right, #002b5b, transparent);
+        }
+
+        .notice-scroll-wrapper::after {
+            right: 0;
+            background: linear-gradient(to left, #002b5b, transparent);
+        }
+
+    /* content: starts off-screen right (padding-left), then translates left by 100% */
+    .notice-content {
+        display: inline-block;
+        white-space: nowrap;
+        padding-left: 100%; /* ensures it starts outside right edge */
+        animation-name: scroll-left;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        font-size: 15px;
+        will-change: transform;
+    }
+
+        .notice-content a {
+            color: #ffeb3b;
+            text-decoration: none;
+            padding: 0 25px;
+        }
+
+            .notice-content a:hover {
+                text-decoration: underline;
+            }
+
+    /* pause on hover */
+    .notice-scroll-wrapper:hover .notice-content {
+        animation-play-state: paused;
+    }
+
+    /* Razor-safe keyframes */
+    @@keyframes scroll-left {
+        0% {
+            transform: translateX(0%);
+        }
+
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+
+
+    /* ========================================================= */
+    /* ================= FOOTER SECTION ========================= */
+    /* ========================================================= */
+
+    .footer-section {
+        background: #0d1b22;
+        color: #e0e0e0;
+    }
+
+    .footer-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    .footer-text {
+        font-size: 14px;
+        color: #cfd8dc;
+        margin-bottom: 14px;
+    }
+
+    .footer-list li {
+        margin-bottom: 8px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .footer-list i {
+        color: #ff5252;
+    }
+
+    .footer-links a {
+        color: #d0d0d0;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+        .footer-links a:hover {
+            color: white;
+            margin-left: 4px;
+        }
+
+    .footer-hotline {
+        background: #ff5252;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 14px;
+        color: white;
+    }
+
+    .footer-social a {
+        font-size: 22px;
+        margin-right: 12px;
+        color: #ff5252;
+        transition: 0.3s;
+    }
+
+        .footer-social a:hover {
+            color: #ff1744;
+            transform: scale(1.15);
+        }
+
+    .footer-fb-box {
+        margin-top: 10px;
+    }
+
+    .footer-bottom {
+        background: #091319;
+        font-size: 13px;
+        border-top: 1px solid #1a2a33;
+    }
+
+    /* MOBILE FIXED — Razor-safe media query */
+    @@media (max-width: 768px) {
+        .footer-section {
+            text-align: center;
+        }
+
+        .footer-list li {
+            justify-content: center;
+        }
+
+        .footer-social a {
+            margin-right: 10px;
+        }
+
+        iframe {
+            height: 200px;
+        }
+    }
+</style>
+
+
 <body>
 
     <!-- ===== NOTICE BAR ===== -->
+    <!-- ===== NOTICE BAR ===== -->
     <div class="notice-bar">
         <div class="notice-label">LATEST NOTICE</div>
-        <div class="notice-content">
-            *** ২০২৪-২০২৫ শিক্ষাবর্ষে ভর্তি হওয়া শিক্ষার্থীদের কাগজপত্র জমা দেওয়ার বিজ্ঞপ্তি ***
+
+        <div class="notice-scroll-wrapper" aria-live="polite">
+            <div class="notice-content" id="noticeContent" role="marquee"></div>
         </div>
     </div>
+
+
+
+
+
 
     <!-- ===== HEADER BANNER ===== -->
     <header class="header-banner text-center">
         <div class="container banner-flex">
-            <img src="~/images/csslogo.png" class="banner-logo" />
+
+            <!-- LEFT LOGO (Clickable) -->
+            <a asp-controller="Home" asp-action="Index">
+                <img src="~/images/csslogo.png" class="banner-logo" />
+            </a>
+
+            <!-- TEXT AREA -->
             <div class="banner-text">
                 <h2 class="org-title">CONSCIOUS STUDENT SOCIETY</h2>
                 <h4 class="org-title-bn">সচেতন ছাত্র সমাজ</h4>
                 <p class="org-subtitle">এটি একটি অরাজনৈতিক সংগঠন</p>
             </div>
-            <img src="~/images/csslogo.png" class="banner-logo" />
+
+            <!-- RIGHT LOGO (Clickable) -->
+            <a asp-controller="Home" asp-action="Index">
+                <img src="~/images/csslogo.png" class="banner-logo" />
+            </a>
+
         </div>
     </header>
+
 
     <!-- ================= NAVBAR ================= -->
     <nav class="css-navbar">
@@ -169,14 +372,15 @@
                     <h5 class="footer-title">USEFUL LINKS</h5>
 
                     <ul class="footer-list footer-links">
-                        <li><a href="/Home">হোম</a></li>
-                        <li><a href="/About">আমাদের সম্পর্কে</a></li>
-                        <li><a href="/Contact">যোগাযোগ</a></li>
-                        <li><a href="/Committee">কমিটি</a></li>
-                        <li><a href="/Events">ইভেন্টস</a></li>
-                        <li><a href="/Blood">রক্ত সেবা</a></li>
+                        <li><a asp-controller="Home" asp-action="Index">হোম</a></li>
+                        <li><a asp-controller="About" asp-action="Index">আমাদের সম্পর্কে</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact">যোগাযোগ</a></li>
+                        <li><a asp-controller="Committee" asp-action="Index">কমিটি</a></li>
+                        <li><a asp-controller="Events" asp-action="Index">ইভেন্টস</a></li>
+                        <li><a asp-controller="Blood" asp-action="Index">রক্ত সেবা</a></li>
                     </ul>
                 </div>
+
 
                 <!-- COLUMN 3 : Social + Facebook Page Preview -->
                 <div class="col-lg-4 col-md-12 col-12">
@@ -209,111 +413,6 @@
         </div>
     </footer>
 
-
-
-
-
-    <style>
-
-        .footer-section {
-            background: #0d1b22;
-            color: #e0e0e0;
-        }
-
-        .footer-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 12px;
-        }
-
-        .footer-text {
-            font-size: 14px;
-            color: #cfd8dc;
-            margin-bottom: 14px;
-        }
-
-        /* List Items */
-        .footer-list li {
-            margin-bottom: 8px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .footer-list i {
-            color: #ff5252;
-        }
-
-        /* Links */
-        .footer-links a {
-            color: #d0d0d0;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-            .footer-links a:hover {
-                color: white;
-                margin-left: 4px;
-            }
-
-        /* Hotline */
-        .footer-hotline {
-            background: #ff5252;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            margin-top: 14px;
-            color: white;
-        }
-
-        /* Social Icons */
-        .footer-social a {
-            font-size: 22px;
-            margin-right: 12px;
-            color: #ff5252;
-            transition: 0.3s;
-        }
-
-            .footer-social a:hover {
-                color: #ff1744;
-                transform: scale(1.15);
-            }
-
-        /* Facebook box space */
-        .footer-fb-box {
-            margin-top: 10px;
-        }
-
-        /* Footer bottom */
-        .footer-bottom {
-            background: #091319;
-            font-size: 13px;
-            border-top: 1px solid #1a2a33;
-        }
-
-        /* MOBILE RESPONSIVE */
-        @@media (max-width: 768px) {
-            .footer-section
-
-        {
-            text-align: center;
-        }
-
-        .footer-list li {
-            justify-content: center;
-        }
-
-        .footer-social a {
-            margin-right: 10px;
-        }
-
-        iframe {
-            height: 200px;
-        }
-
-        }
-    </style>
 
 
 
@@ -466,7 +565,100 @@
                     </text>
             }
         });
+
     </script>
+
+
+    <script>
+        (async function() {
+            const DURATION_MS = 22000; // full loop duration in milliseconds (adjustable)
+
+            async function fetchNotices() {
+                try {
+                    const res = await fetch('/Notice/LatestNotices');
+                    if (!res.ok) throw new Error('Network response not ok');
+                    return await res.json();
+                } catch (e) {
+                    console.error('Notice fetch failed', e);
+                    return [];
+                }
+            }
+
+            function renderNotices(data) {
+                const container = document.getElementById('noticeContent');
+                if (!container) return;
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<span>No notices available.</span>';
+                    return;
+                }
+
+                // Build content: join with separators
+                container.innerHTML = data.map(n =>
+                    `<a href="/Notice/ViewPdf/${n.id}" target="_blank" rel="noopener noreferrer">*** ${escapeHtml(n.title)} ***</a>`
+                ).join(' \u00A0|\u00A0 '); // non-breaking space around pipe
+            }
+
+            // small helper to avoid XSS if titles contain HTML
+            function escapeHtml(text) {
+                return String(text)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            function applyTimeSyncedAnimation() {
+                const el = document.getElementById('noticeContent');
+                if (!el) return;
+
+                // ensure animation properties applied (duration)
+                el.style.animationDuration = DURATION_MS + 'ms';
+                el.style.animationTimingFunction = 'linear';
+                el.style.animationIterationCount = 'infinite';
+                el.style.animationName = 'scroll-left';
+
+                // Compute offset from wall-clock so position appears continuous across reloads.
+                // Use milliseconds modulo duration to get progress within cycle.
+                const progress = Date.now() % DURATION_MS;
+
+                // set negative delay so the animation's current frame corresponds to wall-clock progress
+                el.style.animationDelay = `-${progress}ms`;
+
+                // Force reflow to ensure the style is applied
+                void el.offsetWidth;
+            }
+
+            // initialize
+            const data = await fetchNotices();
+            renderNotices(data);
+
+            // Wait a tick to ensure content width/padding applied, then set animation
+            // (small timeout helps ensure DOM updated)
+            setTimeout(() => {
+                applyTimeSyncedAnimation();
+            }, 30);
+
+            // OPTIONAL: refresh notices in background periodically (without restarting visual continuity)
+            // This will update the innerHTML if new notices arrive but maintain the animation synced by time.
+            setInterval(async () => {
+                const newData = await fetchNotices();
+                // naive check: if different length or first title changed, re-render
+                if (JSON.stringify(newData) !== JSON.stringify(data)) {
+                    renderNotices(newData);
+                    // reapply animation sync so position remains consistent
+                    applyTimeSyncedAnimation();
+                }
+            }, 60_000); // every 60s
+
+        })();
+    </script>
+
+
+
+
+
 
 
 
