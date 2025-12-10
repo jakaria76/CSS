@@ -1,80 +1,150 @@
-﻿
-
-
-
-@model List<CSS.Models.Notice>
+﻿@model List<CSS.Models.Notice>
 
 @{
     ViewData["Title"] = "Home";
     int currentPage = ViewBag.CurrentPage;
     int totalPages = ViewBag.TotalPages;
+    var upcoming = ViewBag.UpcomingEvents as List<CSS.Models.Event>;
 }
 
-<!-- ================= CSS ================= -->
 <style>
 
+    /* ================= GLOBAL ================= */
+    body {
+        background: #f7f9ff;
+    }
+
+    /* ================= SLIDER (Fully Responsive) ================= */
+    .css-slide-img {
+        width: 100%;
+        height: 450px;
+        object-fit: cover;
+        border-radius: 14px;
+    }
+
+    /* Tablet view */
+    @@media (max-width: 768px) {
+        .css-slide-img
+
+    {
+        height: 200px;
+        border-radius: 12px;
+    }
+
+    }
+
+    /* Small phones */
+    @@media (max-width: 480px) {
+        .css-slide-img
+
+    {
+        height: 140px;
+        border-radius: 10px;
+    }
+
+    }
+
+    /* ================= NOTICE CARD ================= */
     .notice-card {
-        background: #ffffff;
-        border-radius: 16px;
-        border: 1px solid #dfe3f7;
+        background: white;
+        border-radius: 18px;
+        border: 1px solid #e2e6f4;
+        box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+        padding: 25px;
     }
 
-    .table-header {
-        background: #e8edff;
+    .notice-header {
+        background: linear-gradient(90deg, #203a93, #4a7fff);
+        color: white;
+        padding: 14px 16px;
+        font-size: 18px;
         font-weight: 700;
-        color: #002b72;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
-    .notice-table th, .notice-table td {
-        padding: 14px 12px;
+    .notice-table {
+        width: 100%;
     }
 
-    .notice-table tbody tr:hover {
-        background-color: #f5f7ff;
-        transition: 0.2s;
+        .notice-table th, .notice-table td {
+            padding: 14px 12px;
+            font-size: 15px;
+        }
+
+        .notice-table tbody tr:hover {
+            background: #f2f6ff;
+            transition: 0.3s;
+        }
+
+    /* -------- MOBILE RESPONSIVE TABLE -------- */
+    /* MOBILE VIEW — KEEP TABLE SAME AS DESKTOP */
+    @@media (max-width: 768px) {
+        .notice-table thead
+
+    {
+        display: table-header-group;
     }
 
-    .pdf-icon {
-        width: 30px;
+    .notice-table tr {
+        display: table-row;
+        background: white !important;
+        box-shadow: none !important;
     }
 
-    .pdf-btn:hover {
-        transform: scale(1.1);
-        transition: 0.2s;
+    .notice-table td {
+        display: table-cell;
+        padding: 10px 6px;
     }
 
+        .notice-table td::before {
+            content: "";
+            display: none;
+        }
+
+    }
+
+
+    /* ================= BADGE ================= */
     .date-badge {
-        background: #eef2ff;
-        padding: 5px 14px;
-        border-radius: 20px;
+        background: #dce4ff;
+        padding: 6px 14px;
+        border-radius: 25px;
         font-weight: 600;
-        color: #2536b5;
+        color: #001d6e;
+        font-size: 13px;
     }
 
-    /* Pagination Styling */
+    /* ================= PAGINATION ================= */
     .pagination .page-link {
-        color: #002b72;
+        background: #ffffff;
+        border-radius: 10px;
         font-weight: 600;
+        padding: 10px 16px;
+        border: 1px solid #cfd9ff;
+        transition: 0.3s;
     }
+
+        .pagination .page-link:hover {
+            background: #203a93;
+            color: white;
+        }
 
     .pagination .active .page-link {
-        background: #002b72 !important;
+        background: #203a93 !important;
         color: white !important;
-        border-color: #002b72 !important;
+        border-color: #203a93 !important;
     }
 
 </style>
 
 
 
-<!-- ==================== FULL WIDTH SLIDER ==================== -->
-<div id="cssSlider" class="carousel slide" data-bs-ride="carousel">
-
-    <div class="carousel-indicators">
-        <button type="button" data-bs-target="#cssSlider" data-bs-slide-to="0" class="active"></button>
-        <button type="button" data-bs-target="#cssSlider" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#cssSlider" data-bs-slide-to="2"></button>
-    </div>
+<!-- ==================== SLIDER ==================== -->
+<div id="cssSlider" class="carousel slide mb-4" data-bs-ride="carousel">
 
     <div class="carousel-inner">
         <div class="carousel-item active">
@@ -99,79 +169,63 @@
 </div>
 
 
+
 <!-- ==================== NOTICE SECTION ==================== -->
 <section class="container mt-5">
 
-    <h4 class="fw-bold mb-3" style="color:#002b72;">
+    <h4 class="fw-bold mb-3" style="color:#203a93;">
         <i class="bi bi-megaphone-fill text-danger"></i> বিজ্ঞপ্তিসমূহ
     </h4>
 
-    <div class="card p-4 shadow-sm border-0 rounded-4 notice-card">
+    <div class="notice-card">
 
-        <table class="table table-hover notice-table align-middle">
-            <thead class="table-header">
-                <tr>
-                    <th style="width:70px;">SL No.</th>
-                    <th>শিরোনাম</th>
-                    <th style="width:150px;">তারিখ</th>
-                    <th style="width:120px;" class="text-center">ডাউনলোড</th>
-                </tr>
-            </thead>
+        <div class="notice-header">
+            <span>সকল বিজ্ঞপ্তি</span>
+            <i class="bi bi-bell-fill"></i>
+        </div>
 
+        <table class="table notice-table align-middle">
             <tbody>
                 @{
-
-                    int sl = (currentPage - 1) * 10 + 1;
+                    int sl = (currentPage - 1) * 5 + 1;
 
                     foreach (var item in Model)
                     {
                         <tr>
-                            <td>@sl</td>
+                            <td data-title="ক্রমিক"><b>@sl</b></td>
 
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-file-earmark-text text-primary me-2"></i>
-                                    @item.Title
-                                </div>
+                            <td data-title="শিরোনাম">
+                                <i class="bi bi-file-earmark-text text-primary me-2"></i>
+                                @item.Title
                             </td>
 
-                            <td>
-                                <span class="date-badge">
-                                    @item.PublishDate.ToString("dd/MM/yyyy")
-                                </span>
+                            <td data-title="তারিখ">
+                                <span class="date-badge">@item.PublishDate.ToString("dd/MM/yyyy")</span>
                             </td>
 
-                            <td class="text-center">
+                            <td data-title="PDF" class="text-center">
                                 <a asp-controller="Notice"
                                    asp-action="ViewPdf"
                                    asp-route-id="@item.Id"
                                    class="pdf-btn"
                                    target="_blank">
-                                    <img src="/images/icons/pdf-icon.png" class="pdf-icon" />
+                                    <img src="/images/icons/pdf-icon.png" width="30" />
                                 </a>
                             </td>
                         </tr>
-
                         sl++;
                     }
-
                 }
             </tbody>
         </table>
 
-
-        <!-- ==================== PAGINATION ==================== -->
+        <!-- PAGINATION -->
         <nav>
             <ul class="pagination justify-content-center mt-3">
-
-                <!-- Previous Button -->
                 <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" href="/Home/Index?page=@(currentPage - 1)">
-                        Previous
-                    </a>
+                    <a class="page-link" href="/Home/Index?page=@(currentPage - 1)">পূর্ববর্তী</a>
                 </li>
 
-                <!-- Page Numbers -->
                 @for (int p = 1; p <= totalPages; p++)
                 {
                     <li class="page-item @(p == currentPage ? "active" : "")">
@@ -179,19 +233,41 @@
                     </li>
                 }
 
-                <!-- Next Button -->
                 <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                    <a class="page-link" href="/Home/Index?page=@(currentPage + 1)">
-                        Next
-                    </a>
+                    <a class="page-link" href="/Home/Index?page=@(currentPage + 1)">পরবর্তী</a>
                 </li>
-
             </ul>
         </nav>
-
 
     </div>
 
 </section>
 
 
+
+<!-- ==================== UPCOMING EVENTS SECTION ==================== -->
+<section class="container mt-5">
+
+    <h4 class="fw-bold mb-3" style="color:#203a93;">
+        <i class="bi bi-calendar-check-fill text-success"></i> আসন্ন কার্যক্রম
+    </h4>
+
+    <div class="row g-4">
+
+        @if (upcoming != null && upcoming.Any())
+        {
+            foreach (var e in upcoming)
+            {
+                <div class="col-md-4 col-12">
+                    <partial name="_EventCard" model="e" />
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">কোনো আসন্ন ইভেন্ট নেই।</p>
+        }
+
+    </div>
+
+</section>
