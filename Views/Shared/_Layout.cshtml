@@ -143,43 +143,67 @@
 
 
     <!-- ============ PREMIUM FOOTER ============ -->
+    <
     <footer class="footer-section">
-        <div class="container footer-content pt-3 pb-2">
-            <div class="row">
+        <div class="container footer-content pt-4 pb-4">
+            <div class="row gy-4">
 
-                <div class="col-lg-4 col-md-6 col-12 mb-2">
+                <!-- COLUMN 1 : About + Contact -->
+                <div class="col-lg-4 col-md-6 col-12">
                     <h5 class="footer-title">CONSCIOUS STUDENT SOCIETY</h5>
+
+                    <p class="footer-text">
+                        সচেতন ছাত্র সমাজ একটি অরাজনৈতিক সংগঠন যা গরিব শিক্ষার্থী,
+                        অসহায় মানুষ ও রক্ত সেবায় কাজ করে।
+                    </p>
+
                     <ul class="footer-list">
                         <li><i class="fa-solid fa-envelope"></i> consciousstudentsociety@gmail.com</li>
                         <li><i class="fa-solid fa-phone"></i> +880-1700-000000</li>
-                        <li><i class="fa-solid fa-location-dot"></i> Chouhali Rajshahi Bangladesh</li>
+                        <li><i class="fa-solid fa-location-dot"></i> Chouhali, Rajshahi, Bangladesh</li>
                     </ul>
+
+                    <div class="footer-hotline">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        জরুরি রক্ত সহায়তা: <b>+880-1700-000000</b>
+                    </div>
                 </div>
 
-                <div class="col-lg-4 col-md-6 col-12 mb-2">
+                <!-- COLUMN 2 : Useful Links -->
+                <div class="col-lg-4 col-md-6 col-12">
                     <h5 class="footer-title">USEFUL LINKS</h5>
-                    <ul class="footer-list">
-                        <li><i class="fa-solid fa-angle-right"></i> সচেতন ছাত্র সমাজ (CSS)</li>
+
+                    <ul class="footer-list footer-links">
+                        <li><a href="/Home">হোম</a></li>
+                        <li><a href="/About">আমাদের সম্পর্কে</a></li>
+                        <li><a href="/Contact">যোগাযোগ</a></li>
+                        <li><a href="/Committee">কমিটি</a></li>
+                        <li><a href="/Events">ইভেন্টস</a></li>
+                        <li><a href="/Blood">রক্ত সেবা</a></li>
                     </ul>
                 </div>
 
-                <div class="col-lg-4 col-md-12 col-12 mb-2">
+                <!-- COLUMN 3 : Social + Facebook Page Preview -->
+                <div class="col-lg-4 col-md-12 col-12">
                     <h5 class="footer-title">FOLLOW US</h5>
 
-                    <div class="footer-social mb-2">
+                    <div class="footer-social mb-3">
                         <a href="https://www.facebook.com/organizationofcss"><i class="fa-brands fa-facebook"></i></a>
                         <a href="https://www.youtube.com/channel/UCuLiRjE32T6-Vrnktyu5yuA"><i class="fa-brands fa-youtube"></i></a>
                         <a href="https://www.facebook.com/groups/cssbd2015"><i class="fa-brands fa-facebook"></i></a>
                     </div>
 
-                    <iframe src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/edenmohilacollege&tabs=timeline&width=330&height=180&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true"
-                            width="100%" height="180"
-                            style="border:none;overflow:hidden;border-radius:10px;"
-                            scrolling="no"
-                            frameborder="0"
-                            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                            allowfullscreen="true">
-                    </iframe>
+                    <div class="footer-fb-box">
+                        <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Forganizationofcss&tabs=timeline&width=340&height=220&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true"
+                                width="100%"
+                                height="220"
+                                style="border:none; overflow:hidden; border-radius:10px;"
+                                frameborder="0"
+                                scrolling="no"
+                                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                                allowfullscreen="true">
+                        </iframe>
+                    </div>
                 </div>
 
             </div>
@@ -190,52 +214,112 @@
         </div>
     </footer>
 
+
+
+
+
     <style>
+
         .footer-section {
-            background: linear-gradient(to bottom right, #102027, #263238);
+            background: #0d1b22;
             color: #e0e0e0;
-            padding-top: 10px;
         }
 
         .footer-title {
             font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 12px;
         }
 
-        .footer-list li {
-            margin-bottom: 6px;
+        .footer-text {
             font-size: 14px;
-            color: #d0d0d0;
+            color: #cfd8dc;
+            margin-bottom: 14px;
+        }
+
+        /* List Items */
+        .footer-list li {
+            margin-bottom: 8px;
+            font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .footer-list i {
             color: #ff5252;
         }
 
+        /* Links */
+        .footer-links a {
+            color: #d0d0d0;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+            .footer-links a:hover {
+                color: white;
+                margin-left: 4px;
+            }
+
+        /* Hotline */
+        .footer-hotline {
+            background: #ff5252;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 14px;
+            color: white;
+        }
+
+        /* Social Icons */
         .footer-social a {
-            margin-right: 10px;
-            font-size: 20px;
+            font-size: 22px;
+            margin-right: 12px;
             color: #ff5252;
             transition: 0.3s;
         }
 
             .footer-social a:hover {
                 color: #ff1744;
-                transform: scale(1.1);
+                transform: scale(1.15);
             }
 
+        /* Facebook box space */
+        .footer-fb-box {
+            margin-top: 10px;
+        }
+
+        /* Footer bottom */
         .footer-bottom {
-            background: #0d1b22;
-            color: #b0bec5;
+            background: #091319;
             font-size: 13px;
-            border-top: 1px solid #37474f;
+            border-top: 1px solid #1a2a33;
+        }
+
+        /* MOBILE RESPONSIVE */
+        @@media (max-width: 768px) {
+            .footer-section
+
+        {
+            text-align: center;
+        }
+
+        .footer-list li {
+            justify-content: center;
+        }
+
+        .footer-social a {
+            margin-right: 10px;
+        }
+
+        iframe {
+            height: 200px;
+        }
+
         }
     </style>
+
 
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
