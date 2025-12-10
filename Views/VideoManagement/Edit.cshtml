@@ -1,0 +1,67 @@
+﻿@model CSS.Models.Video
+@{
+    ViewData["Title"] = "Edit Video";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+<style>
+    .form-box {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        max-width: 650px;
+        margin: auto;
+    }
+
+    .form-title {
+        background: linear-gradient(90deg, #203a93, #4a7fff);
+        padding: 14px 20px;
+        color: white;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    label {
+        font-weight: 600;
+    }
+</style>
+
+<div class="form-box mt-4">
+    <div class="form-title">
+        <i class="bi bi-pencil-square"></i> Edit Video
+    </div>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="YouTubeUrl"></label>
+            <input asp-for="YouTubeUrl" class="form-control" />
+            <span asp-validation-for="YouTubeUrl" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Title"></label>
+            <input asp-for="Title" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="SortOrder"></label>
+            <input asp-for="SortOrder" class="form-control" />
+        </div>
+
+        <button class="btn btn-primary px-4 fw-bold">
+            <i class="bi bi-check-circle"></i> Update
+        </button>
+
+        @Html.AntiForgeryToken()
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

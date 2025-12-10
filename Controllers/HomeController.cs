@@ -18,6 +18,7 @@ namespace CSS.Controllers
         {
             int pageSize = 5;
 
+            // ===================== NOTICE PAGINATION =====================
             var totalNotices = await _db.Notices.CountAsync();
             var totalPages = (int)Math.Ceiling(totalNotices / (double)pageSize);
 
@@ -27,19 +28,36 @@ namespace CSS.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Upcoming events (Uses StartDateTime and IsPublished)
+
+            // ===================== UPCOMING EVENTS =====================
             var upcomingEvents = await _db.Events
                 .Where(e => e.StartDateTime != null
                          && e.StartDateTime > DateTime.Now
                          && e.IsPublished == true)
                 .OrderBy(e => e.StartDateTime)
-                .Take(3)
+                .Take(4)
                 .ToListAsync();
 
             ViewBag.UpcomingEvents = upcomingEvents;
+
+
+            // ===================== LATEST / SORTED VIDEOS =====================
+            var videos = await _db.Videos
+                .OrderBy(v => v.SortOrder)            // Admin-defined sorting
+                .ThenByDescending(v => v.CreatedAt)   // Latest first
+                .Take(6)
+                .ToListAsync();                       // IMPORTANT: No Select()
+
+
+            ViewBag.VideoList = videos;  // Now this contains List<Video>
+
+
+            // ===================== NOTICE PAGINATION VIEWBAG =====================
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
 
+
+            // RETURN VIEW
             return View(notices);
         }
 

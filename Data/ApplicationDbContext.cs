@@ -26,6 +26,7 @@ namespace CSS.Data
         public DbSet<ContactInfo> ContactInfos { get; set; }
 
         public DbSet<Notice> Notices { get; set; }
+        public DbSet<Video> Videos { get; set; }
 
 
 
