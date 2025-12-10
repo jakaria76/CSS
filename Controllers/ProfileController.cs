@@ -25,7 +25,7 @@ namespace CSS.Controllers
         }
 
         // ===========================================================
-        // SAVE PUSH SUBSCRIPTION (Web Push)
+        // SAVE PUSH SUBSCRIPTION
         // ===========================================================
         public class PushSubscriptionModel
         {
@@ -40,7 +40,6 @@ namespace CSS.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> SaveSubscription([FromBody] PushSubscriptionModel model)
         {
             if (model == null || string.IsNullOrWhiteSpace(model.endpoint))
@@ -60,19 +59,21 @@ namespace CSS.Controllers
         }
 
         // ===========================================================
-        // SHOW LOGGED-IN PROFILE
+        // SHOW LOGGED-IN USER PROFILE
         // ===========================================================
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null) return RedirectToAction("Login", "Account");
+            var loggedUser = await _userManager.GetUserAsync(User);
+            if (loggedUser == null)
+                return RedirectToAction("Login", "Account");
 
-            return View(user);
+            return View(loggedUser);
         }
 
         // ===========================================================
-        // VIEW PUBLIC PROFILE /Profile/View/{id}
+        // PUBLIC PROFILE VIEW  /Profile/View/{id}
         // ===========================================================
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> View(string id)
         {
@@ -87,13 +88,17 @@ namespace CSS.Controllers
         }
 
         // ===========================================================
-        // EDIT PROFILE — GET
+        // EDIT PROFILE — ONLY OWNER CAN ACCESS
         // ===========================================================
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null) return RedirectToAction("Login", "Account");
+            var loggedUser = await _userManager.GetUserAsync(User);
+            if (loggedUser == null)
+                return RedirectToAction("Login", "Account");
+
+            // Only the logged-in user may edit their own profile
+            var user = loggedUser;
 
             var vm = new ProfileVM
             {
@@ -163,13 +168,20 @@ namespace CSS.Controllers
         }
 
         // ===========================================================
-        // EDIT PROFILE — POST
+        // EDIT PROFILE — POST (OWNER ONLY)
         // ===========================================================
         [HttpPost]
         public async Task<IActionResult> Edit(ProfileVM model)
         {
-            var user = await _userManager.FindByIdAsync(model.Id);
-            if (user == null) return RedirectToAction("Login", "Account");
+            var loggedUser = await _userManager.GetUserAsync(User);
+            if (loggedUser == null)
+                return RedirectToAction("Login", "Account");
+
+            // SECURITY: Prevent editing other users
+            if (loggedUser.Id != model.Id)
+                return Unauthorized();
+
+            var user = loggedUser;
 
             // BASIC
             user.FullName = model.FullName;
@@ -218,11 +230,11 @@ namespace CSS.Controllers
             user.FutureGoals = model.FutureGoals;
             user.Hobbies = model.Hobbies;
 
-            // SOCIAL LINKS
+            // SOCIAL
             user.Facebook = model.Facebook;
             user.PortfolioWebsite = model.PortfolioWebsite;
 
-            // LOCATION SAVE
+            // LOCATION
             user.Latitude = model.Latitude;
             user.Longitude = model.Longitude;
 
@@ -259,7 +271,7 @@ namespace CSS.Controllers
         }
 
         // ===========================================================
-        // HELPER: Convert Decimal → DMS (for map coordinate display)
+        // HELPERS
         // ===========================================================
         private string ConvertToDms(double coordinate, bool isLatitude)
         {
@@ -270,8 +282,8 @@ namespace CSS.Controllers
             var seconds = Math.Round((minutesRaw - minutes) * 60, 2);
 
             string direction =
-                isLatitude ? (coordinate >= 0 ? "N" : "S") :
-                             (coordinate >= 0 ? "E" : "W");
+                isLatitude ? (coordinate >= 0 ? "N" : "S")
+                           : (coordinate >= 0 ? "E" : "W");
 
             return $"{degrees}°{minutes}'{seconds}\"{direction}";
         }

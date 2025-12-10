@@ -1,0 +1,206 @@
+﻿@model List<CSS.ViewModels.CommitteeMemberVM>
+@{
+    ViewData["Title"] = "Committee Members";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+
+<style>
+
+    /* Header Section */
+    .committee-header {
+        background: linear-gradient(135deg, #1a237e, #3949ab);
+        padding: 40px 20px;
+        border-radius: 18px;
+        text-align: center;
+        color: white;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        margin-bottom: 35px;
+    }
+
+        .committee-header h2 {
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+    .header-subtitle {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin-top: 5px;
+    }
+
+    /* Search Bar */
+    .search-bar {
+        width: 100%;
+        max-width: 420px;
+        border-radius: 35px;
+        padding: 12px 20px;
+        border: 2px solid #d1d1d1;
+        transition: .3s;
+        font-size: 1rem;
+    }
+
+        .search-bar:focus {
+            border-color: #1a237e;
+            box-shadow: 0 0 10px rgba(26, 35, 126, 0.40);
+        }
+
+    /* Filter Buttons */
+    .filter-btn {
+        border-radius: 30px;
+        padding: 8px 20px;
+        font-weight: 600;
+        margin: 4px;
+        transition: .3s ease;
+    }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #1a237e !important;
+            color: white !important;
+        }
+
+    /* Fixed-Size Member Cards */
+    .committee-card {
+        border-radius: 18px;
+        transition: all .35s ease-in-out;
+        padding: 15px 10px;
+        position: relative;
+        overflow: hidden;
+        min-height: 230px;
+    }
+
+        .committee-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.20);
+        }
+
+        /* Decorative gradient glow */
+        .committee-card::before {
+            content: "";
+            position: absolute;
+            height: 120px;
+            width: 120px;
+            background: rgba(26,35,126,0.12);
+            top: -40px;
+            right: -40px;
+            border-radius: 50%;
+            transition: .4s;
+        }
+
+        .committee-card:hover::before {
+            background: rgba(26,35,126,0.25);
+        }
+
+    .profile-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border: 3px solid #1a237e;
+        border-radius: 50%;
+        margin-bottom: 12px;
+        box-shadow: 0 0 6px rgba(26,35,126,0.3);
+    }
+
+    .member-name {
+        font-weight: 800;
+        font-size: 1rem;
+        margin-bottom: 2px;
+        color: #1a237e;
+    }
+
+    .position-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        background: #e8eaf6;
+        color: #1a237e;
+        border-radius: 20px;
+        font-size: .75rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+</style>
+
+
+<div class="container my-5">
+
+    <!-- HEADER -->
+    <div class="committee-header">
+        <h2><i class="fa-solid fa-users-gear"></i> Committee Members</h2>
+        <div class="header-subtitle">
+            Meet the leadership and executive team of Conscious Student Society
+        </div>
+    </div>
+
+
+    <!-- TOP BAR -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+
+        <!-- Search -->
+        <input id="searchInput"
+               type="text"
+               placeholder="Search members..."
+               class="form-control search-bar shadow-sm" />
+
+        <!-- Filters -->
+        <div class="text-center mt-3 mt-md-0">
+            <a asp-action="Index" asp-route-category="" class="btn btn-outline-primary filter-btn">All</a>
+            <a asp-action="Index" asp-route-category="Top" class="btn btn-outline-primary filter-btn">Top-Level</a>
+            <a asp-action="Index" asp-route-category="Executive" class="btn btn-outline-primary filter-btn">Executive</a>
+            <a asp-action="Index" asp-route-category="Members" class="btn btn-outline-primary filter-btn">Members</a>
+        </div>
+
+    </div>
+
+
+    <!-- CARDS GRID -->
+    <div class="row g-4" id="committeeGrid">
+
+        @foreach (var m in Model)
+        {
+            <div class="col-6 col-lg-3 committee-item">
+
+                <div class="card committee-card shadow-sm text-center">
+
+                    <img src="@m.ProfileImagePath"
+                         class="profile-img"
+                         alt="Profile Image" />
+
+                    <h5 class="member-name">@m.FullName</h5>
+
+                    <div class="position-badge">@m.CommitteePosition</div>
+
+                    <a asp-controller="Profile"
+                       asp-action="View"
+                       asp-route-id="@m.Id"
+                       class="btn btn-sm btn-primary">
+                        View Profile
+                    </a>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+
+</div>
+
+
+<!-- LIVE SEARCH SCRIPT -->
+<script>
+    const searchInput = document.getElementById("searchInput");
+
+    searchInput.addEventListener("keyup", function () {
+        const query = this.value.toLowerCase();
+        const cards = document.querySelectorAll(".committee-item");
+
+        cards.forEach(card => {
+            const text = card.innerText.toLowerCase();
+            card.style.display = text.includes(query) ? "block" : "none";
+        });
+    });
+</script>
