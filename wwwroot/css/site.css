@@ -287,3 +287,60 @@ body {
     }
 }
 
+/* =================== Notice Tabs ==================== */
+.notice-tabs .tab-btn {
+    background: #ffffff;
+    border: 2px solid #b5c7ff;
+    color: #002b80;
+    padding: 7px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+    .notice-tabs .tab-btn:hover {
+        background: #e8eeff;
+    }
+
+.notice-tabs .active {
+    background: #002b80;
+    color: #ffffff;
+    border-color: #002b80;
+}
+
+/* =================== Notice Table ==================== */
+.notice-box {
+    border: 1px solid #daddf1 !important;
+}
+
+.notice-table th {
+    background: #f1f4ff;
+    color: #002b80;
+    font-weight: 700;
+    border-color: #d4dbf9 !important;
+}
+
+.notice-table td {
+    border-color: #e2e6f8 !important;
+    vertical-align: middle;
+    font-size: 15px;
+}
+
+.notice-table tr:hover {
+    background: #f9fbff;
+}
+
+/* PDF Icon */
+.pdf-icon {
+    width: 38px;
+    transition: 0.2s;
+}
+
+    .pdf-icon:hover {
+        transform: scale(1.07);
+    }
+
+/* Table Box */
+.notice-box {
+    border-radius: 12px;
+}
