@@ -16,7 +16,7 @@ namespace CSS.Controllers
 
         public async Task<IActionResult> Index(int page = 1)
         {
-            int pageSize = 10; // ????? ???? 10?? notice
+            int pageSize = 5;
 
             var totalNotices = await _db.Notices.CountAsync();
             var totalPages = (int)Math.Ceiling(totalNotices / (double)pageSize);
@@ -27,6 +27,16 @@ namespace CSS.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
+            // Upcoming events (Uses StartDateTime and IsPublished)
+            var upcomingEvents = await _db.Events
+                .Where(e => e.StartDateTime != null
+                         && e.StartDateTime > DateTime.Now
+                         && e.IsPublished == true)
+                .OrderBy(e => e.StartDateTime)
+                .Take(3)
+                .ToListAsync();
+
+            ViewBag.UpcomingEvents = upcomingEvents;
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
 
