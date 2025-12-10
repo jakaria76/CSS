@@ -12,6 +12,22 @@ namespace CSS.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Advisors",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Bio = table.Column<string>(type: "nvarchar(800)", maxLength: 800, nullable: true),
+                    ImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Advisors", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -76,6 +92,9 @@ namespace CSS.Migrations
                     Latitude = table.Column<double>(type: "float", nullable: true),
                     Longitude = table.Column<double>(type: "float", nullable: true),
                     LocationDms = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PushEndpoint = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PushP256dh = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PushAuth = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -97,6 +116,23 @@ namespace CSS.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContactInfos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
+                    FacebookUrl = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    WebsiteUrl = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContactInfos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Events",
                 columns: table => new
                 {
@@ -106,7 +142,7 @@ namespace CSS.Migrations
                     Tag = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ShortDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FullDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StartDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Venue = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Latitude = table.Column<double>(type: "float", nullable: true),
@@ -120,6 +156,7 @@ namespace CSS.Migrations
                     IsFeatured = table.Column<bool>(type: "bit", nullable: false),
                     BannerImage = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     BannerImageType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -142,6 +179,132 @@ namespace CSS.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GalleryImages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LeadershipMembers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Position = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    ShortMessage = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    ImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LeadershipMembers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MissionPoints",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Text = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MissionPoints", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
+                    FileData = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PublishDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notices", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrganizationOverviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FoundedYear = table.Column<int>(type: "int", nullable: false),
+                    Purpose = table.Column<string>(type: "nvarchar(1500)", maxLength: 1500, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrganizationOverviews", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OurStories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OurStories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PreviousPresidents",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    TenureStart = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TenureEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LegacyNote = table.Column<string>(type: "nvarchar(800)", maxLength: 800, nullable: true),
+                    ImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PreviousPresidents", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Videos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    YouTubeUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    YouTubeId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SortOrder = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Videos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WhatWeDoItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    IconClass = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WhatWeDoItems", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -279,10 +442,18 @@ namespace CSS.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EventId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Mobile = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Department = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Mobile = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InstituteName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClassName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     WillVolunteer = table.Column<bool>(type: "bit", nullable: false),
+                    WhyJoin = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserImage = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    UserImageType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RegisteredAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -295,6 +466,39 @@ namespace CSS.Migrations
                         principalTable: "Events",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PaymentTransactions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    RegistrationId = table.Column<int>(type: "int", nullable: true),
+                    TranId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    RequestId = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentGateway = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GatewayResponse = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PayerFullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PayerMobile = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PayerEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PayerDataJson = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentTransactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PaymentTransactions_EventRegistrations_RegistrationId",
+                        column: x => x.RegistrationId,
+                        principalTable: "EventRegistrations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateIndex(
@@ -342,14 +546,23 @@ namespace CSS.Migrations
                 column: "EventId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EventRegistrations_EventId",
+                name: "IX_EventRegistration_EventId_Mobile_UQ",
                 table: "EventRegistrations",
-                column: "EventId");
+                columns: new[] { "EventId", "Mobile" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentTransactions_RegistrationId",
+                table: "PaymentTransactions",
+                column: "RegistrationId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Advisors");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -366,19 +579,49 @@ namespace CSS.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ContactInfos");
+
+            migrationBuilder.DropTable(
                 name: "EventImages");
 
             migrationBuilder.DropTable(
-                name: "EventRegistrations");
+                name: "GalleryImages");
 
             migrationBuilder.DropTable(
-                name: "GalleryImages");
+                name: "LeadershipMembers");
+
+            migrationBuilder.DropTable(
+                name: "MissionPoints");
+
+            migrationBuilder.DropTable(
+                name: "Notices");
+
+            migrationBuilder.DropTable(
+                name: "OrganizationOverviews");
+
+            migrationBuilder.DropTable(
+                name: "OurStories");
+
+            migrationBuilder.DropTable(
+                name: "PaymentTransactions");
+
+            migrationBuilder.DropTable(
+                name: "PreviousPresidents");
+
+            migrationBuilder.DropTable(
+                name: "Videos");
+
+            migrationBuilder.DropTable(
+                name: "WhatWeDoItems");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "EventRegistrations");
 
             migrationBuilder.DropTable(
                 name: "Events");
