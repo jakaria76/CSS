@@ -30,10 +30,25 @@ namespace CSS.Controllers
             if (notice == null)
                 return NotFound();
 
-            // Browser shows PDF instead of auto-download
+            // Browser will OPEN the PDF instead of downloading
             Response.Headers.Append("Content-Disposition", $"inline; filename={notice.FileName}");
 
             return File(notice.FileData, "application/pdf");
         }
+
+
+        public async Task<IActionResult> LatestNotices()
+        {
+            var latest = await _db.Notices
+                .OrderByDescending(n => n.PublishDate)
+                .Select(n => new { n.Id, n.Title })
+                .Take(3)
+                .ToListAsync();
+
+            return Json(latest);
+        }
+
+
+
     }
 }
