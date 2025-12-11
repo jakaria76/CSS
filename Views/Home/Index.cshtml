@@ -2,14 +2,14 @@
 
 @{
     ViewData["Title"] = "Home";
-    int currentPage = ViewBag.CurrentPage;
-    int totalPages = ViewBag.TotalPages;
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
     var upcoming = ViewBag.UpcomingEvents as List<CSS.Models.Event>;
     var videos = ViewBag.VideoList as List<CSS.Models.Video>;
 }
 
-<style>
 
+<style>
     /* ================= GLOBAL ================= */
     body {
         background: #f7f9ff;
@@ -21,33 +21,42 @@
         height: 450px;
         object-fit: cover;
         border-radius: 14px;
+        display: block;
     }
 
     @@media (max-width: 768px) {
-        .css-slide-img {
-            height: 200px;
-        }
+        .css-slide-img
+
+    {
+        height: 220px;
+    }
+
     }
 
     @@media (max-width: 480px) {
-        .css-slide-img {
-            height: 140px;
-        }
+        .css-slide-img
+
+    {
+        height: 140px;
+        border-radius: 10px;
     }
+
+    }
+
 
     /* ================= NOTICE CARD ================= */
     .notice-card {
-        background: white;
+        background: #ffffff;
         border-radius: 18px;
         border: 1px solid #e2e6f4;
         box-shadow: 0 8px 18px rgba(0,0,0,0.06);
-        padding: 25px;
+        padding: 20px;
     }
 
     .notice-header {
         background: linear-gradient(90deg, #203a93, #4a7fff);
         color: white;
-        padding: 14px 16px;
+        padding: 12px 16px;
         font-size: 18px;
         font-weight: 700;
         border-radius: 12px;
@@ -57,35 +66,85 @@
         align-items: center;
     }
 
-    .notice-table th,
-    .notice-table td {
-        padding: 14px 12px;
-        font-size: 15px;
+
+    /* ================= NOTICE TABLE ================= */
+
+    .notice-table-wrapper {
+        overflow: hidden; /* TABLE NEVER SCROLL */
+        width: 100%;
     }
 
+    .notice-table {
+        width: 100%;
+        min-width: 100%;
+    }
+
+        .notice-table th,
+        .notice-table td {
+            padding: 10px 6px;
+            font-size: 15px;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+
+    /* ================= DESKTOP TITLE (FULL WIDTH) ================= */
+    .notice-title {
+        display: inline-block;
+        max-width: none; /* DESKTOP → Full title */
+        overflow: visible; /* DESKTOP → No scroll */
+        white-space: nowrap;
+    }
+
+
+    /* ================= MOBILE VIEW (Scroll Title) ================= */
+    @@media (max-width: 576px) {
+        .notice-title
+
+    {
+        max-width: 110px; /* Smaller preview */
+        overflow-x: auto; /* Scroll enabled */
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .notice-title::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .notice-title::-webkit-scrollbar-thumb {
+        background: #bfc3c7;
+        border-radius: 10px;
+    }
+
+    }
+
+
+    /* Hover highlight */
     .notice-table tbody tr:hover {
-        background: #f2f6ff;
-        transition: 0.3s;
+        background: #f3f6ff;
+        transition: 0.25s;
     }
 
-    /* ================= BADGE ================= */
+    /* DATE BADGE */
     .date-badge {
         background: #dce4ff;
-        padding: 6px 14px;
-        border-radius: 25px;
-        font-weight: 600;
-        color: #001d6e;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        white-space: nowrap;
         font-size: 13px;
     }
+
 
     /* ================= PAGINATION ================= */
     .pagination .page-link {
         background: white;
         border-radius: 10px;
         font-weight: 600;
-        padding: 10px 16px;
+        padding: 8px 14px;
         border: 1px solid #cfd9ff;
-        transition: 0.3s;
+        transition: background 0.2s, color 0.2s;
     }
 
         .pagination .page-link:hover {
@@ -99,35 +158,46 @@
         border-color: #203a93 !important;
     }
 
+
+    /* ================= VIDEO CARD ================= */
+    .video-card {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #e8eefc;
+    }
 </style>
 
+
+
+
+
+
+
 <!-- ==================== SLIDER ==================== -->
-<div id="cssSlider" class="carousel slide mb-4" data-bs-ride="carousel">
+<div id="cssSlider" class="carousel slide mb-4" data-bs-ride="carousel" aria-label="CSS Slider">
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img src="/images/slider/slide1.jpg" class="css-slide-img" />
+            <img src="/images/slider/slide1.jpg" class="css-slide-img d-block w-100" alt="slide 1" />
         </div>
         <div class="carousel-item">
-            <img src="/images/slider/slide2.jpg" class="css-slide-img" />
+            <img src="/images/slider/slide2.jpg" class="css-slide-img d-block w-100" alt="slide 2" />
         </div>
         <div class="carousel-item">
-            <img src="/images/slider/slide3.jpg" class="css-slide-img" />
+            <img src="/images/slider/slide3.jpg" class="css-slide-img d-block w-100" alt="slide 3" />
         </div>
     </div>
 
-    <button class="carousel-control-prev" type="button" data-bs-target="#cssSlider" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
+    <button class="carousel-control-prev" type="button" data-bs-target="#cssSlider" data-bs-slide="prev" aria-label="Previous slide">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
     </button>
 
-    <button class="carousel-control-next" type="button" data-bs-target="#cssSlider" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
+    <button class="carousel-control-next" type="button" data-bs-target="#cssSlider" data-bs-slide="next" aria-label="Next slide">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
     </button>
 </div>
 
-
 <!-- ==================== NOTICE SECTION ==================== -->
-<section class="container mt-5">
-
+<section class="container mt-4">
     <h4 class="fw-bold mb-3" style="color:#203a93;">
         <i class="bi bi-megaphone-fill text-danger"></i> বিজ্ঞপ্তিসমূহ
     </h4>
@@ -139,75 +209,97 @@
             <i class="bi bi-bell-fill"></i>
         </div>
 
-        <table class="table notice-table align-middle">
-            <tbody>
-                @{
-                    int sl = (currentPage - 1) * 5 + 1;
+        <div class="notice-table-wrapper">
+            <table class="table notice-table align-middle mb-0">
 
-                    foreach (var item in Model)
-                    {
-                        <tr>
-                            <td><b>@sl</b></td>
+                <thead>
+                    <tr>
+                        <th style="width:40px;">#</th>
+                        <th>শিরোনাম</th>
+                        <th style="width:140px;">প্রকাশিত</th>
+                        <th style="width:60px;" class="text-center">PDF</th>
+                    </tr>
+                </thead>
 
-                            <td>
-                                <i class="bi bi-file-earmark-text text-primary me-2"></i>
-                                @item.Title
-                            </td>
+                <tbody>
+                    @{
+                        int sl = (currentPage - 1) * 5 + 1;
 
-                            <td>
-                                <span class="date-badge">@item.PublishDate.ToString("dd/MM/yyyy")</span>
-                            </td>
+                        foreach (var item in Model)
+                        {
+                            <tr>
 
-                            <td class="text-center">
-                                <a asp-controller="Notice"
-                                   asp-action="ViewPdf"
-                                   asp-route-id="@item.Id"
-                                   target="_blank">
-                                    <img src="/images/icons/pdf-icon.png" width="30" />
-                                </a>
-                            </td>
-                        </tr>
+                                <td><b>@sl</b></td>
 
-                        sl++;
+                                <td style="max-width:180px;">
+                                    <span class="notice-title">
+                                        @item.Title
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="date-badge">
+                                        @item.PublishDate.ToString("dd/MM/yyyy")
+                                    </span>
+                                </td>
+
+                                <td class="text-center">
+                                    <a asp-controller="Notice"
+                                       asp-action="ViewPdf"
+                                       asp-route-id="@item.Id"
+                                       target="_blank">
+                                        <img src="/images/icons/pdf-icon.png" width="28" />
+                                    </a>
+                                </td>
+
+                            </tr>
+
+                            sl++;
+                        }
                     }
-                }
-            </tbody>
-        </table>
+                </tbody>
 
-        <!-- PAGINATION -->
+            </table>
+        </div>
+
+        <!-- Pagination -->
         <nav>
-            <ul class="pagination justify-content-center mt-3">
-                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" href="/Home/Index?page=@(currentPage - 1)">পূর্ববর্তী</a>
+            <ul class="pagination justify-content-center mt-3 mb-0">
+
+                <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", "Home", new { page = currentPage - 1 })">
+                        পূর্ববর্তী
+                    </a>
                 </li>
 
                 @for (int p = 1; p <= totalPages; p++)
                 {
                     <li class="page-item @(p == currentPage ? "active" : "")">
-                        <a class="page-link" href="/Home/Index?page=@p">@p</a>
+                        <a class="page-link" href="@Url.Action("Index", "Home", new { page = p })">@p</a>
                     </li>
                 }
 
-                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                    <a class="page-link" href="/Home/Index?page=@(currentPage + 1)">পরবর্তী</a>
+                <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", "Home", new { page = currentPage + 1 })">
+                        পরবর্তী
+                    </a>
                 </li>
+
             </ul>
         </nav>
 
     </div>
-
 </section>
+
 
 
 <!-- ==================== UPCOMING EVENTS SECTION ==================== -->
 <section class="container mt-5">
-
     <h4 class="fw-bold mb-3" style="color:#203a93;">
         <i class="bi bi-calendar-check-fill text-success"></i> আসন্ন কার্যক্রম
     </h4>
 
     <div class="row g-4">
-
         @if (upcoming != null && upcoming.Any())
         {
             foreach (var e in upcoming)
@@ -219,16 +311,15 @@
         }
         else
         {
-            <p class="text-muted">কোনো আসন্ন ইভেন্ট নেই।</p>
+            <div class="col-12">
+                <p class="text-muted">কোনো আসন্ন ইভেন্ট নেই।</p>
+            </div>
         }
-
     </div>
-
 </section>
 
-
 <!-- ==================== VIDEO GALLERY SECTION ==================== -->
-<section class="container mt-5">
+<section class="container mt-5 mb-5">
     <h4 class="fw-bold mb-3" style="color:#203a93;">
         <i class="bi bi-play-circle-fill text-danger"></i> ভিডিও গ্যালারি
     </h4>
@@ -239,16 +330,17 @@
             foreach (var v in videos)
             {
                 <div class="col-lg-4 col-md-6 col-12">
-                    <div class="card" style="border-radius:10px; overflow:hidden;">
+                    <div class="video-card">
                         <div class="ratio ratio-16x9">
-                            <iframe src="https://www.youtube.com/embed/@v.YouTubeId?rel=0"
+                            @* Correct Razor interpolation for YouTube id *@
+                            <iframe src="https://www.youtube.com/embed/@(v.YouTubeId)?rel=0"
                                     title="@v.Title"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowfullscreen>
                             </iframe>
                         </div>
-                        <div class="card-body">
-                            <h6 class="card-title mb-0">@v.Title</h6>
+                        <div class="p-3">
+                            <h6 class="mb-0">@v.Title</h6>
                         </div>
                     </div>
                 </div>
@@ -256,7 +348,34 @@
         }
         else
         {
-            <p class="text-muted">কোনো ভিডিও নেই।</p>
+            <div class="col-12">
+                <p class="text-muted">কোনো ভিডিও নেই।</p>
+            </div>
         }
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        // Ensure Bootstrap's carousel behaves responsively on small screens.
+        (function () {
+            var slider = document.getElementById('cssSlider');
+            if (!slider) return;
+
+            // Pause automatic sliding on small devices for better UX
+            if (window.matchMedia('(max-width: 768px)').matches) {
+                var carousel = bootstrap.Carousel.getOrCreateInstance(slider, { interval: false });
+                carousel.pause();
+            }
+
+            // Re-evaluate on resize
+            window.addEventListener('resize', function () {
+                if (window.matchMedia('(max-width: 768px)').matches) {
+                    bootstrap.Carousel.getOrCreateInstance(slider).pause();
+                } else {
+                    bootstrap.Carousel.getOrCreateInstance(slider).cycle();
+                }
+            });
+        })();
+    </script>
+}
