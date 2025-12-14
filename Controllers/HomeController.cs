@@ -1,7 +1,7 @@
 using CSS.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
 using CSS.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CSS.Controllers
 {
@@ -18,7 +18,9 @@ namespace CSS.Controllers
         {
             int pageSize = 5;
 
-            // ===================== NOTICE PAGINATION =====================
+            // ============================================================
+            // NOTICE PAGINATION
+            // ============================================================
             var totalNotices = await _db.Notices.CountAsync();
             var totalPages = (int)Math.Ceiling(totalNotices / (double)pageSize);
 
@@ -28,40 +30,59 @@ namespace CSS.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-
-            // ===================== UPCOMING EVENTS =====================
+            // ============================================================
+            // UPCOMING EVENTS (HOME PAGE)
+            // ============================================================
             var upcomingEvents = await _db.Events
-                .Where(e => e.StartDateTime != null
-                         && e.StartDateTime > DateTime.Now
-                         && e.IsPublished == true)
+                .Where(e =>
+                    e.StartDateTime != null &&
+                    e.StartDateTime > DateTime.Now &&
+                    e.IsPublished == true)
                 .OrderBy(e => e.StartDateTime)
                 .Take(4)
                 .ToListAsync();
 
             ViewBag.UpcomingEvents = upcomingEvents;
 
-
-            // ===================== LATEST / SORTED VIDEOS =====================
+            // ============================================================
+            // VIDEO GALLERY (SORTED)
+            // ============================================================
             var videos = await _db.Videos
-                .OrderBy(v => v.SortOrder)            // Admin-defined sorting
-                .ThenByDescending(v => v.CreatedAt)   // Latest first
+                .OrderBy(v => v.SortOrder)              // Admin-defined order
+                .ThenByDescending(v => v.CreatedAt)     // Latest fallback
                 .Take(6)
-                .ToListAsync();                       // IMPORTANT: No Select()
+                .ToListAsync();
+
+            ViewBag.VideoList = videos;
+
+            // ============================================================
+            // ADVISORS (RIGHT SIDEBAR)
+            // ============================================================
+            var advisors = await _db.Advisors
+               .OrderBy(a => a.Name)   // ?? Id / CreatedAt
+               .Take(3)
+               .ToListAsync();
+
+            ViewBag.Advisors = advisors;
 
 
-            ViewBag.VideoList = videos;  // Now this contains List<Video>
 
-
-            // ===================== NOTICE PAGINATION VIEWBAG =====================
+            // ============================================================
+            // PAGINATION INFO
+            // ============================================================
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
 
-
+            // ============================================================
             // RETURN VIEW
+            // ============================================================
             return View(notices);
         }
 
-        public IActionResult Privacy() => View();
+        public IActionResult Privacy()
+        {
+            return View();
+        }
 
         public IActionResult Error()
         {

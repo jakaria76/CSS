@@ -6,8 +6,8 @@
     int totalPages = ViewBag.TotalPages ?? 1;
     var upcoming = ViewBag.UpcomingEvents as List<CSS.Models.Event>;
     var videos = ViewBag.VideoList as List<CSS.Models.Video>;
+    var advisors = ViewBag.Advisors as List<CSS.Models.Advisor>;
 }
-
 
 <style>
     /* ================= GLOBAL ================= */
@@ -43,7 +43,6 @@
 
     }
 
-
     /* ================= NOTICE CARD ================= */
     .notice-card {
         background: #ffffff;
@@ -66,11 +65,9 @@
         align-items: center;
     }
 
-
-    /* ================= NOTICE TABLE ================= */
-
+    /* ================= NOTICE TABLE (DESKTOP DEFAULT) ================= */
     .notice-table-wrapper {
-        overflow: hidden; /* TABLE NEVER SCROLL */
+        overflow: hidden;
         width: 100%;
     }
 
@@ -87,38 +84,13 @@
             vertical-align: middle;
         }
 
-
-    /* ================= DESKTOP TITLE (FULL WIDTH) ================= */
+    /* Desktop title → full view */
     .notice-title {
         display: inline-block;
-        max-width: none; /* DESKTOP → Full title */
-        overflow: visible; /* DESKTOP → No scroll */
+        max-width: none;
+        overflow: visible;
         white-space: nowrap;
     }
-
-
-    /* ================= MOBILE VIEW (Scroll Title) ================= */
-    @@media (max-width: 576px) {
-        .notice-title
-
-    {
-        max-width: 110px; /* Smaller preview */
-        overflow-x: auto; /* Scroll enabled */
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .notice-title::-webkit-scrollbar {
-        height: 4px;
-    }
-
-    .notice-title::-webkit-scrollbar-thumb {
-        background: #bfc3c7;
-        border-radius: 10px;
-    }
-
-    }
-
 
     /* Hover highlight */
     .notice-table tbody tr:hover {
@@ -126,7 +98,7 @@
         transition: 0.25s;
     }
 
-    /* DATE BADGE */
+    /* Date badge */
     .date-badge {
         background: #dce4ff;
         padding: 6px 12px;
@@ -136,6 +108,34 @@
         font-size: 13px;
     }
 
+    /* ================= NOTICE TABLE (MOBILE OVERRIDE) ================= */
+    @@media (max-width: 576px) {
+        .notice-table th, .notice-table td
+
+    {
+        padding: 8px 4px;
+        font-size: 13px;
+    }
+
+    /* Mobile title → scroll like 2nd CSS */
+    .notice-title {
+        max-width: 110px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+        .notice-title::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .notice-title::-webkit-scrollbar-thumb {
+            background: #bfc3c7;
+            border-radius: 10px;
+        }
+
+    }
 
     /* ================= PAGINATION ================= */
     .pagination .page-link {
@@ -158,202 +158,473 @@
         border-color: #203a93 !important;
     }
 
-
     /* ================= VIDEO CARD ================= */
     .video-card {
         border-radius: 10px;
         overflow: hidden;
         border: 1px solid #e8eefc;
     }
+
+    /* ================= ADVISOR SIDEBAR ================= */
+    .advisor-sidebar {
+        position: sticky;
+        top: 100px;
+    }
+
+    .advisor-header {
+        background: #203a93;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+        font-weight: 700;
+        border-radius: 8px;
+        margin-bottom: 12px;
+    }
+
+    .advisor-card {
+        background: #fff;
+        border: 1px solid #e1e6f5;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+        margin-bottom: 12px;
+        box-shadow: 0 6px 16px rgba(0,0,0,.08);
+        transition: all .25s ease;
+    }
+
+        .advisor-card img {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            object-fit: contain; /* FULL IMAGE – NO CROP */
+            border-radius: 6px;
+            margin-bottom: 6px;
+            background: #f4f6ff;
+        }
+
+    .advisor-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+        .advisor-link:hover .advisor-card {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+            cursor: pointer;
+        }
+
+    @@media (max-width: 768px) {
+        .advisor-sidebar
+
+    {
+        position: static;
+        margin-top: 20px;
+    }
+
+    }
+    /* ================= MOBILE NOTICE TABLE FIX ================= */
+    /* ================= MOBILE NOTICE TABLE – FINAL FIX ================= */
+    @@media (max-width: 576px) {
+        /* Table structure */
+        .notice-table
+
+    {
+        width: 100%;
+        table-layout: fixed; /* MOST IMPORTANT */
+    }
+
+    /* SL */
+    .notice-table th:nth-child(1),
+    .notice-table td:nth-child(1) {
+        width: 32px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    /* TITLE (scrollable) */
+    .notice-table th:nth-child(2),
+    .notice-table td:nth-child(2) {
+        width: 140px;
+    }
+
+    .notice-title {
+        display: block;
+        max-width: 140px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+        .notice-title::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .notice-title::-webkit-scrollbar-thumb {
+            background: #bfc3c7;
+            border-radius: 10px;
+        }
+
+    /* DATE */
+    .notice-table th:nth-child(3),
+    .notice-table td:nth-child(3) {
+        width: 88px;
+        text-align: center;
+    }
+
+    /* PDF */
+    .notice-table th:nth-child(4),
+    .notice-table td:nth-child(4) {
+        width: 36px;
+        text-align: center;
+    }
+
+    /* Compact spacing */
+    .notice-table th,
+    .notice-table td {
+        font-size: 13px;
+        padding: 6px 4px;
+        vertical-align: middle;
+    }
+
+    /* Prevent page overflow */
+    .notice-card,
+    .notice-table-wrapper {
+        overflow-x: hidden;
+    }
+
+    }
+
+    /* ================= ADVISOR NAME & ROLE ================= */
+
+    .advisor-name {
+        display: block;
+        font-size: 16px;
+        font-weight: 700;
+        color: #203a93;
+        margin-top: 6px;
+        line-height: 1.25;
+        letter-spacing: 0.2px;
+    }
+
+    .advisor-role {
+        font-size: 13px;
+        font-weight: 600;
+        color: #6c757d;
+        margin: 2px 0 0;
+        line-height: 1.2;
+    }
+
+        /* Subtle divider look */
+        .advisor-role::before {
+            content: "";
+            display: block;
+            width: 36px;
+            height: 2px;
+            background: linear-gradient(90deg, #4a7fff, #203a93);
+            margin: 6px auto 4px;
+            border-radius: 4px;
+        }
+
+    /* Hover polish */
+    .advisor-link:hover .advisor-name {
+        color: #0d6efd;
+    }
+
+    .advisor-link:hover .advisor-role {
+        color: #495057;
+    }
+
+    /* ================= MOBILE TUNING ================= */
+    @@media (max-width: 576px) {
+        .advisor-name
+
+    {
+        font-size: 15px;
+    }
+
+    .advisor-role {
+        font-size: 12px;
+    }
+
+    }
+
+    /* ================= IMPACT STATISTICS ================= */
+    .impact-section {
+        padding: 60px 0 50px;
+        background: linear-gradient(135deg, #eef4ff, #f9fbff);
+    }
+
+    .impact-header .impact-title {
+        font-weight: 800;
+        color: #203a93;
+        letter-spacing: 0.4px;
+    }
+
+    .impact-subtitle {
+        color: #6c757d;
+        font-size: 15px;
+        max-width: 520px;
+        margin: auto;
+    }
+
+    .impact-card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 26px 18px;
+        text-align: center;
+        border: 1px solid #e3e9ff;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+        .impact-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 32px rgba(0,0,0,0.12);
+        }
+
+    .impact-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin: 0 auto 12px;
+    }
+
+    .impact-number {
+        font-size: 30px;
+        font-weight: 800;
+        color: #1b2a6b;
+        margin: 4px 0;
+    }
+
+    .impact-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #6c757d;
+    }
+
+    /* ================= MOBILE ================= */
+    @@media (max-width: 576px) {
+        .impact-section
+
+    {
+        padding: 40px 0;
+    }
+
+    .impact-number {
+        font-size: 26px;
+    }
+
+    .impact-label {
+        font-size: 13px;
+    }
+
+    }
 </style>
 
 
 
-
-
-
-
-<!-- ==================== SLIDER ==================== -->
-<div id="cssSlider" class="carousel slide mb-4" data-bs-ride="carousel" aria-label="CSS Slider">
+<!-- SLIDER -->
+<div id="cssSlider" class="carousel slide mb-4" data-bs-ride="carousel">
     <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img src="/images/slider/slide1.jpg" class="css-slide-img d-block w-100" alt="slide 1" />
-        </div>
-        <div class="carousel-item">
-            <img src="/images/slider/slide2.jpg" class="css-slide-img d-block w-100" alt="slide 2" />
-        </div>
-        <div class="carousel-item">
-            <img src="/images/slider/slide3.jpg" class="css-slide-img d-block w-100" alt="slide 3" />
-        </div>
+        <div class="carousel-item active"><img src="/images/slider/slide1.jpg" class="css-slide-img"></div>
+        <div class="carousel-item"><img src="/images/slider/slide2.jpg" class="css-slide-img"></div>
+        <div class="carousel-item"><img src="/images/slider/slide3.jpg" class="css-slide-img"></div>
     </div>
-
-    <button class="carousel-control-prev" type="button" data-bs-target="#cssSlider" data-bs-slide="prev" aria-label="Previous slide">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    </button>
-
-    <button class="carousel-control-next" type="button" data-bs-target="#cssSlider" data-bs-slide="next" aria-label="Next slide">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    </button>
 </div>
 
-<!-- ==================== NOTICE SECTION ==================== -->
-<section class="container mt-4">
-    <h4 class="fw-bold mb-3" style="color:#203a93;">
-        <i class="bi bi-megaphone-fill text-danger"></i> বিজ্ঞপ্তিসমূহ
-    </h4>
+<!-- CONTENT -->
+<div class="container mt-4">
+    <!-- ================= IMPACT STATISTICS ================= -->
+    <section class="impact-section">
+        <div class="container">
 
-    <div class="notice-card">
-
-        <div class="notice-header">
-            <span>সকল বিজ্ঞপ্তি</span>
-            <i class="bi bi-bell-fill"></i>
-        </div>
-
-        <div class="notice-table-wrapper">
-            <table class="table notice-table align-middle mb-0">
-
-                <thead>
-                    <tr>
-                        <th style="width:40px;">#</th>
-                        <th>শিরোনাম</th>
-                        <th style="width:140px;">প্রকাশিত</th>
-                        <th style="width:60px;" class="text-center">PDF</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @{
-                        int sl = (currentPage - 1) * 5 + 1;
-
-                        foreach (var item in Model)
-                        {
-                            <tr>
-
-                                <td><b>@sl</b></td>
-
-                                <td style="max-width:180px;">
-                                    <span class="notice-title">
-                                        @item.Title
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span class="date-badge">
-                                        @item.PublishDate.ToString("dd/MM/yyyy")
-                                    </span>
-                                </td>
-
-                                <td class="text-center">
-                                    <a asp-controller="Notice"
-                                       asp-action="ViewPdf"
-                                       asp-route-id="@item.Id"
-                                       target="_blank">
-                                        <img src="/images/icons/pdf-icon.png" width="28" />
-                                    </a>
-                                </td>
-
-                            </tr>
-
-                            sl++;
-                        }
-                    }
-                </tbody>
-
-            </table>
-        </div>
-
-        <!-- Pagination -->
-        <nav>
-            <ul class="pagination justify-content-center mt-3 mb-0">
-
-                <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Index", "Home", new { page = currentPage - 1 })">
-                        পূর্ববর্তী
-                    </a>
-                </li>
-
-                @for (int p = 1; p <= totalPages; p++)
-                {
-                    <li class="page-item @(p == currentPage ? "active" : "")">
-                        <a class="page-link" href="@Url.Action("Index", "Home", new { page = p })">@p</a>
-                    </li>
-                }
-
-                <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Index", "Home", new { page = currentPage + 1 })">
-                        পরবর্তী
-                    </a>
-                </li>
-
-            </ul>
-        </nav>
-
-    </div>
-</section>
-
-
-
-<!-- ==================== UPCOMING EVENTS SECTION ==================== -->
-<section class="container mt-5">
-    <h4 class="fw-bold mb-3" style="color:#203a93;">
-        <i class="bi bi-calendar-check-fill text-success"></i> আসন্ন কার্যক্রম
-    </h4>
-
-    <div class="row g-4">
-        @if (upcoming != null && upcoming.Any())
-        {
-            foreach (var e in upcoming)
-            {
-                <div class="col-lg-3 col-md-6 col-12">
-                    <partial name="_EventCard" model="e" />
-                </div>
-            }
-        }
-        else
-        {
-            <div class="col-12">
-                <p class="text-muted">কোনো আসন্ন ইভেন্ট নেই।</p>
+            <div class="impact-header text-center mb-4">
+                <h2 class="impact-title">
+                    আমাদের প্রভাব
+                </h2>
+                <p class="impact-subtitle">
+                    সচেতনতা ও মানবতার পথে আমাদের কার্যক্রমের সংক্ষিপ্ত চিত্র
+                </p>
             </div>
-        }
-    </div>
-</section>
 
-<!-- ==================== VIDEO GALLERY SECTION ==================== -->
-<section class="container mt-5 mb-5">
-    <h4 class="fw-bold mb-3" style="color:#203a93;">
-        <i class="bi bi-play-circle-fill text-danger"></i> ভিডিও গ্যালারি
-    </h4>
+            <div class="row g-4">
 
-    <div class="row g-4">
-        @if (videos != null && videos.Any())
-        {
-            foreach (var v in videos)
-            {
-                <div class="col-lg-4 col-md-6 col-12">
-                    <div class="video-card">
-                        <div class="ratio ratio-16x9">
-                            @* Correct Razor interpolation for YouTube id *@
-                            <iframe src="https://www.youtube.com/embed/@(v.YouTubeId)?rel=0"
-                                    title="@v.Title"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen>
-                            </iframe>
+                <!-- CARD 1 -->
+                <div class="col-lg-3 col-md-6 col-6">
+                    <div class="impact-card">
+                        <div class="impact-icon bg-primary">
+                            <i class="bi bi-people-fill"></i>
                         </div>
-                        <div class="p-3">
-                            <h6 class="mb-0">@v.Title</h6>
-                        </div>
+                        <h3 class="impact-number" data-target="1200">0</h3>
+                        <p class="impact-label">সক্রিয় সদস্য</p>
                     </div>
                 </div>
-            }
-        }
-        else
-        {
-            <div class="col-12">
-                <p class="text-muted">কোনো ভিডিও নেই।</p>
+
+                <!-- CARD 2 -->
+                <div class="col-lg-3 col-md-6 col-6">
+                    <div class="impact-card">
+                        <div class="impact-icon bg-success">
+                            <i class="bi bi-mortarboard-fill"></i>
+                        </div>
+                        <h3 class="impact-number" data-target="350">0</h3>
+                        <p class="impact-label">শিক্ষার্থী সহায়তা</p>
+                    </div>
+                </div>
+
+                <!-- CARD 3 -->
+                <div class="col-lg-3 col-md-6 col-6">
+                    <div class="impact-card">
+                        <div class="impact-icon bg-danger">
+                            <i class="bi bi-droplet-fill"></i>
+                        </div>
+                        <h3 class="impact-number" data-target="900">0</h3>
+                        <p class="impact-label">রক্তদান কার্যক্রম</p>
+                    </div>
+                </div>
+
+                <!-- CARD 4 -->
+                <div class="col-lg-3 col-md-6 col-6">
+                    <div class="impact-card">
+                        <div class="impact-icon bg-warning">
+                            <i class="bi bi-calendar-event-fill"></i>
+                        </div>
+                        <h3 class="impact-number" data-target="85">0</h3>
+                        <p class="impact-label">সফল ইভেন্ট</p>
+                    </div>
+                </div>
+
             </div>
-        }
+        </div>
+    </section>
+
+    <div class="row">
+
+        <!-- LEFT -->
+        <div class="col-lg-9 col-md-8 col-12">
+
+            <h4 class="fw-bold mb-3 text-primary">
+                <i class="bi bi-megaphone-fill text-danger"></i> বিজ্ঞপ্তিসমূহ
+            </h4>
+
+            <div class="notice-card mb-5">
+                <div class="notice-header">
+                    <span>সকল বিজ্ঞপ্তি</span>
+                    <i class="bi bi-bell-fill"></i>
+                </div>
+
+                <table class="table notice-table mb-0">
+                    <tbody>
+                        @{
+                            int sl = (currentPage - 1) * 5 + 1;
+                            foreach (var n in Model)
+                            {
+                                <tr>
+                                    <td>@sl</td>
+
+                                    <!-- IMPORTANT FIX HERE -->
+                                    <td>
+                                        <span class="notice-title">@n.Title</span>
+                                    </td>
+
+                                    <td>
+                                        <span class="date-badge">
+                                            @n.PublishDate.ToString("dd/MM/yyyy")
+                                        </span>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <a asp-controller="Notice"
+                                           asp-action="ViewPdf"
+                                           asp-route-id="@n.Id"
+                                           target="_blank">
+                                            <img src="/images/icons/pdf-icon.png" width="26" />
+                                        </a>
+                                    </td>
+                                </tr>
+                                sl++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+
+            <h4 class="fw-bold mb-3 text-primary">
+                <i class="bi bi-calendar-check-fill text-success"></i> আসন্ন কার্যক্রম
+            </h4>
+
+            <div class="row g-4 mb-5">
+                @if (upcoming != null)
+                {
+                    foreach (var e in upcoming)
+                    {
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <partial name="_EventCard" model="e" />
+                        </div>
+                    }
+                }
+            </div>
+
+            <h4 class="fw-bold mb-3 text-primary">
+                <i class="bi bi-play-circle-fill text-danger"></i> ভিডিও গ্যালারি
+            </h4>
+
+            <div class="row g-4 mb-5">
+                @if (videos != null)
+                {
+                    foreach (var v in videos)
+                    {
+                        <div class="col-lg-4 col-md-6 col-12">
+                            <iframe class="w-100" style="height:200px"
+                                    src="https://www.youtube.com/embed/@(v.YouTubeId)" allowfullscreen></iframe>
+                        </div>
+                    }
+                }
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col-lg-3 col-md-4 col-12">
+            <div class="advisor-sidebar">
+                <div class="advisor-header">মাননীয় উপদেষ্টা</div>
+
+                @if (advisors != null)
+                {
+                    foreach (var a in advisors)
+                    {
+                        <a asp-controller="About"
+                           asp-action="AdvisorDetails"
+                           asp-route-id="@a.Id"
+                           class="advisor-link">
+
+                            <div class="advisor-card">
+                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(a.ImageData)" />
+
+                                <strong class="advisor-name">@a.Name</strong>
+                                <p class="advisor-role">@a.Role</p>
+                            </div>
+
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+
+
+
     </div>
-</section>
+</div>
+
 
 @section Scripts {
     <script>
@@ -378,4 +649,40 @@
             });
         })();
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const counters = document.querySelectorAll('.impact-number');
+            let started = false;
+
+            function runCounters() {
+                counters.forEach(counter => {
+                    const target = +counter.getAttribute('data-target');
+                    let count = 0;
+                    const step = Math.ceil(target / 80);
+
+                    const interval = setInterval(() => {
+                        count += step;
+                        if (count >= target) {
+                            counter.innerText = target + "+";
+                            clearInterval(interval);
+                        } else {
+                            counter.innerText = count;
+                        }
+                    }, 20);
+                });
+            }
+
+            const observer = new IntersectionObserver(entries => {
+                if (entries[0].isIntersecting && !started) {
+                    runCounters();
+                    started = true;
+                }
+            }, { threshold: 0.4 });
+
+            observer.observe(document.querySelector('.impact-section'));
+        });
+    </script>
+
 }
